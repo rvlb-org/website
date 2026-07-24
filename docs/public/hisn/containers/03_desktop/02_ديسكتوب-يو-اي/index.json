@@ -1,0 +1,10 @@
+{
+  "files": [
+    "02_desktop_ui_drag_rs.html",
+    "03_desktop_ui_draw_rs.html",
+    "04_desktop_ui_icon_rs.html",
+    "05_desktop_ui_mod_rs.html",
+    "06_desktop_ui_window_rs.html",
+    "07_desktop_ui_window_draw_rs.html"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "desktop",
+  "name": "desktop",
+  "number": 2,
+  "timestamp": 1782265230,
+  "type": "GUI",
+  "icon": "🖥️",
+  "iconClass": "pr-icon--desktop",
+  "created_at": "24 يونيو 2026 (04:40 GMT+0300)",
+  "tags": ["GUI", "WM", "Compositor", "Framebuffer"],
+  "overview": "00_overview.html",
+  "groups": [
+    {
+      "label": "src/",
+      "files": [
+        { "name": "src/main.rs",                              "path": "containers/desktop/src/main.rs",                              "content_file": "01_main_rs.html" },
+        { "name": "src/cursor.rs",                            "path": "containers/desktop/src/cursor.rs",                            "content_file": "02_cursor_rs.html" }
+      ]
+    },
+    {
+      "label": "desktop_ui/",
+      "files": [
+        { "name": "src/desktop_ui/mod.rs (UIState)",          "path": "containers/desktop/src/desktop_ui/mod.rs",                    "content_file": "03_ui_state_rs.html" },
+        { "name": "src/desktop_ui/drag.rs",                   "path": "containers/desktop/src/desktop_ui/drag.rs",                   "content_file": "04_drag_rs.html" },
+        { "name": "src/desktop_ui/draw.rs",                   "path": "containers/desktop/src/desktop_ui/draw.rs",                   "content_file": "05_draw_rs.html" },
+        { "name": "src/desktop_ui/window.rs",                 "path": "containers/desktop/src/desktop_ui/window.rs",                 "content_file": "06_window_rs.html" },
+        { "name": "src/desktop_ui/window_draw.rs",            "path": "containers/desktop/src/desktop_ui/window_draw.rs",            "content_file": "07_window_draw_rs.html" }
+      ]
+    },
+    {
+      "label": "wm/",
+      "files": [
+        { "name": "src/desktop_ui/wm/compositor.rs",          "path": "containers/desktop/src/desktop_ui/wm/compositor.rs",          "content_file": "08_compositor_rs.html" },
+        { "name": "src/desktop_ui/wm/zorder.rs",              "path": "containers/desktop/src/desktop_ui/wm/zorder.rs",              "content_file": "09_zorder_rs.html" },
+        { "name": "src/desktop_ui/wm/taskbar.rs",             "path": "containers/desktop/src/desktop_ui/wm/taskbar.rs",             "content_file": "10_taskbar_rs.html" },
+        { "name": "src/desktop_ui/wm/focus.rs + layout.rs + shortcut.rs", "path": "containers/desktop/src/desktop_ui/wm/",           "content_file": "11_wm_others_rs.html" }
+      ]
+    }
+  ],
+  "files": [
+    { "name": "src/main.rs",                              "path": "containers/desktop/src/main.rs",                              "content_file": "01_main_rs.html" },
+    { "name": "src/cursor.rs",                            "path": "containers/desktop/src/cursor.rs",                            "content_file": "02_cursor_rs.html" },
+    { "name": "src/desktop_ui/mod.rs (UIState)",          "path": "containers/desktop/src/desktop_ui/mod.rs",                    "content_file": "03_ui_state_rs.html" },
+    { "name": "src/desktop_ui/drag.rs",                   "path": "containers/desktop/src/desktop_ui/drag.rs",                   "content_file": "04_drag_rs.html" },
+    { "name": "src/desktop_ui/draw.rs",                   "path": "containers/desktop/src/desktop_ui/draw.rs",                   "content_file": "05_draw_rs.html" },
+    { "name": "src/desktop_ui/window.rs",                 "path": "containers/desktop/src/desktop_ui/window.rs",                 "content_file": "06_window_rs.html" },
+    { "name": "src/desktop_ui/window_draw.rs",            "path": "containers/desktop/src/desktop_ui/window_draw.rs",            "content_file": "07_window_draw_rs.html" },
+    { "name": "src/desktop_ui/wm/compositor.rs",          "path": "containers/desktop/src/desktop_ui/wm/compositor.rs",          "content_file": "08_compositor_rs.html" },
+    { "name": "src/desktop_ui/wm/zorder.rs",              "path": "containers/desktop/src/desktop_ui/wm/zorder.rs",              "content_file": "09_zorder_rs.html" },
+    { "name": "src/desktop_ui/wm/taskbar.rs",             "path": "containers/desktop/src/desktop_ui/wm/taskbar.rs",             "content_file": "10_taskbar_rs.html" },
+    { "name": "src/desktop_ui/wm/focus + layout + shortcut", "path": "containers/desktop/src/desktop_ui/wm/",                   "content_file": "11_wm_others_rs.html" }
+  ]
+}

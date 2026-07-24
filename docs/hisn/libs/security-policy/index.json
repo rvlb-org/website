@@ -1,0 +1,16 @@
+{
+  "id": "security-policy",
+  "name": "security-policy",
+  "number": 12,
+  "timestamp": 1782763932,
+  "type": "System Core",
+  "icon": "🛡️",
+  "iconClass": "pr-icon--security-policy",
+  "created_at": "29 يونيو 2026 (13:12 GMT+3)",
+  "tags": ["Bare-Metal", "no_std", "Badge", "Security"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "Cargo.toml",           "path": "libs/security-policy/Cargo.toml",           "content_file": "01_Cargo_toml.html" },
+    { "name": "src/lib.rs",           "path": "libs/security-policy/src/lib.rs",           "content_file": "02_src_lib_rs.html" }
+  ]
+}

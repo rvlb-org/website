@@ -1,0 +1,17 @@
+<p><strong>المسارات:</strong> <code>libs/tor-circuit/src/lib.rs</code> | <code>libs/tor-stream/src/lib.rs</code></p>
+<p>مكتبات مخصصة لتمثيل دوائر Tor (Circuits) وتدفقاتها (Streams) بدون استخدام Heap.</p>
+
+<h3>1. إدارة الدوائر (tor-circuit)</h3>
+<ul>
+  <li>يدعم حتى 3 قفزات (<code>MAX_HOPS = 3</code>: Entry, Middle, Exit).</li>
+  <li><code>HopLayer</code>: يحمل مفتاح التشفير الأمامي (Kf) ومفتاح فك التشفير الخلفي (Kb) باستخدام <strong>ChaCha20</strong>.</li>
+  <li><code>wrap_relay(payload)</code>: لتغليف خلية للخروج، تُشفر الخلية من القفزة الأخيرة (Exit) رجوعاً إلى الأولى (Entry) - تأثير البصلة (Onion Layering).</li>
+  <li><code>unwrap_relay(cell)</code>: لفك الخلايا الواردة من الأولى إلى الأخيرة.</li>
+</ul>
+
+<h3>2. إدارة التدفقات (tor-stream)</h3>
+<ul>
+  <li>يُجرد اتصال TCP ليعمل فوق الـ Circuit بـ API مشابه للـ Sockets العادية (<code>read</code>, <code>write</code>).</li>
+  <li><code>StreamManager</code>: يدعم حتى <code>MAX_STREAMS = 8</code> تدفقات متزامنة فوق Circuit واحدة.</li>
+  <li><code>write(data)</code>: يُقسم البيانات الطويلة (مثل طلب HTTP) إلى كتل بحجم أقصاه <code>MAX_CELL_DATA = 498</code> بايت، ويطلب من الـ Circuit تغليفها كـ Relay Cells جاهزة للإرسال في شبكة Tor.</li>
+</ul>

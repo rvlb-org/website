@@ -1,0 +1,16 @@
+{
+  "id": "disk",
+  "name": "disk",
+  "number": 8,
+  "timestamp": 1784237478,
+  "type": "Driver",
+  "icon": "💽",
+  "iconClass": "pr-icon--disk",
+  "created_at": "17 يوليو 2026 (00:31 GMT+0300)",
+  "tags": ["Storage", "ATA PIO", "LBA28", "Hardware", "IOPort", "Zero-Copy"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "init/src/disk_setup.rs", "path": "containers/init/src/disk_setup.rs", "content_file": "02_disk_setup_rs.html" },
+    { "name": "src/main.rs",            "path": "containers/disk/src/main.rs",       "content_file": "01_main_rs.html" }
+  ]
+}

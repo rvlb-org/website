@@ -1,0 +1,141 @@
+
+<style>
+  /* ═══ RVLB THEME OVERRIDE ═══ */
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg:         #030303;
+    --surface:    #0d0d0d;
+    --surface2:   #141414;
+    --border:     rgba(255,255,255,0.07);
+    --accent:     #00d4ff;
+    --accent2:    #ff6b35;
+    --text-main:  #e8e8e8;
+    --text-muted: #888;
+    --radius:     14px;
+    --glow:       0 0 30px rgba(0,212,255,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-main);
+    font-family: 'Cairo', sans-serif;
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── شريط التنقل العلوي ── */
+  .rvlb-topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: rgba(3,3,3,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 9999;
+    gap: 16px;
+  }
+  .rvlb-topbar-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+  .rvlb-topbar-title {
+    font-size: 14px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rvlb-topbar-back {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 5px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .rvlb-topbar-back:hover {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* ── تعديل الـ body padding ── */
+  body > *:not(.rvlb-topbar) { padding-top: 56px !important; }
+
+  /* ── بطاقات وعناصر ── */
+  pre, code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #a8ff78;
+    padding: 2px 8px;
+  }
+  pre { padding: 16px; overflow-x: auto; line-height: 1.7; }
+  pre code { background: none; border: none; padding: 0; }
+
+  h1, h2, h3, h4 {
+    font-family: 'Cairo', sans-serif;
+    color: var(--text-main);
+    line-height: 1.4;
+  }
+  h1 { font-size: 2rem; font-weight: 900; margin-bottom: 16px; }
+  h2 { font-size: 1.4rem; font-weight: 800; margin: 24px 0 12px; color: var(--accent); }
+  h3 { font-size: 1.1rem; font-weight: 700; margin: 16px 0 8px; }
+
+  p { line-height: 1.8; color: var(--text-muted); margin-bottom: 12px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  strong { color: var(--text-main); font-weight: 700; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    text-align: right;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  td {
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    color: var(--text-muted);
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+</style>
+<h2>🖥️ استقرار واجهة سطح المكتب (Desktop GUI Stabilization)</h2>
+<p><strong>تاريخ الإنجاز:</strong> 2026-07-05 — 17:30</p>
+<p><strong>التصنيف:</strong> GUI / Memory Management</p>
+<p>تم حل مشكلة التوقف (Crash) والشاشة السوداء الناتجة عن نفاد مساحة الـ Stack في الـ no_std. تم نقل الهيكل الضخم <code>UIState</code> ليكون في الـ BSS Static Memory، بالإضافة إلى فصل عملية تهيئة الأيقونات. يتم الآن قراءة البيانات من <code>manifest.bin</code> (في الـ <code>.rodata</code>) مباشرة باستخدام المؤشرات الآمنة <code>read_unaligned</code> ونقلها إلى متغيرات <code>static mut</code> مما منع التوقف الفوري للنظام عند محاولة قراءة حزم البرامج والسماح لسطح المكتب بالعمل باستقرار.</p>

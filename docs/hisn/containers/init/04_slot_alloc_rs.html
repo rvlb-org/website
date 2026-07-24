@@ -1,0 +1,19 @@
+<p>
+  مُخصِّص فتحات CNode (CNode Slot Allocator) — الأبسط والأهم في النظام.
+</p>
+<p>
+  في seL4، كل كائن جديد (TCB، Endpoint، Page، …) يحتاج إلى "فتحة" (Slot) فارغة في جدول الصلاحيات (CNode) ليضع فيها النواة صلاحية الوصول (Capability) للكائن الجديد. الهيكل:
+</p>
+<ul>
+  <li><code>current: seL4_Word</code> — الفتحة المتاحة التالية</li>
+  <li><code>end: seL4_Word</code> — نهاية نطاق الفتحات الفارغة</li>
+</ul>
+<p>الدوال:</p>
+<ul>
+  <li><code>new(start, end)</code>: يأخذ <code>boot_info.empty.start</code> و <code>boot_info.empty.end</code> مباشرة</li>
+  <li><code>alloc()</code>: يُعيد الفتحة الحالية ويزيد <code>current</code> بواحد — O(1) مضمونة. يُعيد <code>None</code> عند النفاد.</li>
+  <li><code>available()</code>: عدد الفتحات المتبقية (للتشخيص فقط)</li>
+</ul>
+<p>
+  قرار تصميمي: لا يوجد Dealloc — الفتحات المُخصَّصة لا تُعاد أبداً، وهذا مقبول لأن <code>init</code> لا تُحرر الحاويات بعد تشغيلها.
+</p>

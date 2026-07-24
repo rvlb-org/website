@@ -1,0 +1,11 @@
+<p>
+  <code>setup_bus_vault()</code> — الأكثر تعقيداً في توزيع الـ Capabilities. يتلقى مؤشرَي <code>fs_ep</code> و <code>auth_ep</code> من <code>init</code> ويُوزّعها داخل CNode الـ Bus:
+</p>
+<ul>
+  <li><strong>Slot 0</strong>: Endpoint الخاص بـ Bus_Vault (للاستقبال)</li>
+  <li><strong>Slot 1</strong>: نسخة من FS_Vault Endpoint → <code>seL4_CNode_Copy(cnode, 1, 64, 2, fs_ep, 64)</code></li>
+  <li><strong>Slot 2</strong>: نسخة من Auth_Vault Endpoint → <code>seL4_CNode_Copy(cnode, 2, 64, 2, auth_ep, 64)</code></li>
+</ul>
+<p>
+  هذا يعني أن Bus_Vault تولد عند إقلاعها مع "مفاتيح" جاهزة للتحدث مباشرة مع FS و Auth بدون أي إعداد إضافي. الـ Scratch address: <code>0xB00000</code>.
+</p>

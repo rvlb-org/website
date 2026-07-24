@@ -1,0 +1,17 @@
+{
+  "id": "tor-handshake",
+  "name": "tor-handshake",
+  "number": 11,
+  "timestamp": 1782763928,
+  "type": "Security & Net",
+  "icon": "🔐",
+  "iconClass": "pr-icon--tor-handshake",
+  "created_at": "29 يونيو 2026 (13:12 GMT+3)",
+  "tags": ["Bare-Metal", "no_std", "Tor", "ntor", "KDF"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "Cargo.toml",                   "path": "libs/tor-handshake/Cargo.toml",                   "content_file": "01_Cargo_toml.html" },
+    { "name": "src/lib.rs",                   "path": "libs/tor-handshake/src/lib.rs",                   "content_file": "02_src_lib_rs.html" },
+    { "name": "src/handshake_helpers.rs",     "path": "libs/tor-handshake/src/handshake_helpers.rs",     "content_file": "03_src_handshake_helpers_rs.html" }
+  ]
+}

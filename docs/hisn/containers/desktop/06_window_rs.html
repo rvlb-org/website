@@ -1,0 +1,17 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/window.rs</code></p>
+<p>
+  يُعرّف هيكل <code>Window</code> الذي يُمثّل نافذة واحدة:
+</p>
+<ul>
+  <li><code>x, y, w, h</code>: موقع وأبعاد النافذة الحالية</li>
+  <li><code>prev_x, prev_y, prev_w, prev_h</code>: الأبعاد قبل التكبير (لاستعادتها عند إلغاء Maximize)</li>
+  <li><code>title: [u8;32]</code>: عنوان النافذة (يتغير عند فتح ملف)</li>
+  <li><code>app_name: [u8;16]</code>: اسم التطبيق الداخلي للـ routing (<code>"calc"</code>, <code>"files"</code>, <code>"editor"</code>, <code>"viewer"</code>)</li>
+  <li><code>open, minimized, maximized: bool</code>: حالة النافذة</li>
+  <li><code>accent: Color</code>: لون التمييز للنافذة</li>
+</ul>
+<p>الدوال المُساعدة:</p>
+<ul>
+  <li><code>in_titlebar(cx, cy)</code>: يتحقق أن النقر في شريط العنوان (Y أقل من <code>TITLEBAR_H=28</code>)</li>
+  <li><code>in_close_btn / in_minimize_btn / in_maximize_btn</code>: حسابات hit-testing لأزرار التحكم</li>
+</ul>

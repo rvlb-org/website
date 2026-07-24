@@ -1,0 +1,27 @@
+---
+title: "🛡️ security-policy"
+description: "توثيق مكتبة security-policy في نظام Hisn-seL4 — System Core"
+---
+
+# 🛡️ security-policy
+
+
+## نظرة عامة
+
+<div class="overview-content">
+
+<p>مكتبة <code>security-policy</code> هي <strong>محرك سياسات الوصول المبني على الـ Badges</strong> في Hisn-seL4. بدلاً من تمرير المسارات والصلاحيات كنصوص يمكن تزويرها، تستخدم المكتبة ميزة الـ <strong>Badge</strong> الذرية في <code>seL4</code> (كلمة 64-بت لا يمكن تعديلها من قبل المرسل) لتشفير هوية التطبيق، مستوى الصلاحيات (RO/RW)، وتجزئة مسار الملف (Path Hash). يتم التشفير في حاوية الـ <code>init</code> الموثوقة، ويفك التشفير حاوية <code>FS_Vault</code> للتحقق قبل تنفيذ أي عملية.</p>
+
+</div>
+
+## الملفات البرمجية
+
+### `Cargo.toml`
+
+### `src/lib.rs`
+
+<div class="back-nav">
+
+[← العودة إلى المكتبات](/hisn/libs/)
+
+</div>

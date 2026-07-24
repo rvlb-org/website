@@ -1,0 +1,10 @@
+<p>
+  <code>setup_fs_vault()</code> — يُعيد ثلاث قيم: <code>(fs_ep, vspace_cptr, success)</code>. إعادة <code>vspace_cptr</code> ضرورية لأن <code>main.rs</code> يحتاجها لاحقاً لربط صفحة الذاكرة المشتركة في VSpace الـ FS.
+</p>
+<p>الخطوة الإضافية الفريدة:</p>
+<ul>
+  <li><strong>تمرير Disk_EP لـ FS</strong>: <code>seL4_CNode_Copy(cnode, 1, 12, 2, disk_ep, 64)</code> — يضع Endpoint الـ Disk_Vault في slot 1 من CNode الـ FS_Vault. هكذا تستطيع FS إرسال طلبات قراءة/كتابة القطاعات لـ Disk مباشرة.</li>
+  <li>الـ <code>depth=12</code> في الوجهة (vs 64 في المصدر): 12 هو عمق CNode الـ FS الجديد، 64 هو CNode الجذر للـ init.</li>
+  <li>ملاحظة: الكود يتجاهل ربط VirtIO MMIO (خاص بـ RISC-V) لأن x86_64 يستخدم PCI وـ IOPorts بدلاً منه.</li>
+</ul>
+<p>Scratch address: <code>0x900000</code></p>

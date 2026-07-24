@@ -1,0 +1,10 @@
+{
+  "files": [
+    "00_overview.html",
+    "01_circuit_model.html",
+    "02_Circuit_API.html",
+    "03_HopLayer.html",
+    "01_circuit_ops_rs.html",
+    "02_lib_rs.html"
+  ]
+}

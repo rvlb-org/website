@@ -1,0 +1,27 @@
+<p><strong>المسار:</strong> <code>containers/fs/src/ramfs.rs</code></p>
+<p>
+  تطبيق نظام ملفات مبني على مصفوفة ثابتة الحجم في الذاكرة (In-Memory, Zero-Heap). الحدود الثابتة:
+</p>
+<ul>
+  <li><code>MAX_FILES = 64</code> — الحد الأقصى للملفات والمجلدات</li>
+  <li><code>MAX_FILE_SIZE = 512</code> بايت (قطاع واحد) لكل ملف</li>
+  <li><code>MAX_PATH_LEN = 64</code> حرف للمسار</li>
+  <li><code>MAX_NAME_LEN = 32</code> حرف للاسم</li>
+</ul>
+<p>هيكل <code>FsEntry</code> (كل entry تحتل ذاكرة ثابتة ≈ 614 بايت):</p>
+<ul>
+  <li><code>name: [u8;32]</code>, <code>path: [u8;64]</code>, <code>data: [u8;512]</code></li>
+  <li><code>is_dir, used: bool</code>, <code>size: usize</code>, <code>sector: u32</code></li>
+</ul>
+<p>الدوال الرئيسية:</p>
+<ul>
+  <li><code>mkdir(path)</code>: يستخرج الاسم من آخر جزء من المسار (بحث يدوي عن '<code>/</code>' الأخير دون <code>rsplit</code> لتجنب SIMD instructions غير المدعومة)</li>
+  <li><code>write_file(path, data)</code>: يبحث أولاً عن ملف موجود لتحديثه (<em>in-place update</em>). إذا لم يجد، يُنشئ entry جديداً ويُخصص له رقم <code>sector</code> متزايد</li>
+  <li><code>read_file(path)</code>: يُعيد <code>Option&lt;&amp;[u8]&gt;</code> — slice مباشر من الذاكرة بدون نسخ</li>
+  <li><code>delete(path)</code>: يُعيّن <code>used=false</code> فقط (لا يُعيد ترتيب المصفوفة) — O(n) بحث خطي</li>
+  <li><code>rename(old, new)</code>: يُحدّث path وname في نفس الـ entry مباشرة</li>
+  <li><code>copy(src, dst)</code>: يُنشئ entry جديداً بنسخ بيانات الـ source كاملاً ثم تحديث path/name</li>
+</ul>
+<p>
+  تُستخدم <code>write_volatile</code> في جميع عمليات الكتابة لمنع تجاهل المترجم للكتابات في Bare-Metal بدون Cache.
+</p>

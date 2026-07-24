@@ -1,0 +1,17 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/main.rs</code></p>
+<p>
+  نقطة دخول الحاوية. يقوم بـ:
+</p>
+<ol>
+  <li><code>BumpAllocator::reset()</code> لتهيئة الذاكرة المؤقتة</li>
+  <li>استقبال معلومات الـ Framebuffer من <code>init</code> عبر أول رسالة IPC: <code>mr[0]=fb_vaddr, mr[1]=width, mr[2]=height, mr[3]=pitch</code></li>
+  <li>قراءة <code>launch_slot</code> و <code>fb_bpp</code> من IPC Buffer مباشرة (offset 5 و 7)</li>
+  <li>جلب تذكرة أمان من <code>Auth_Vault</code> (slot 3): يُرسل <code>mr[0]=0x100, mr[1]=1</code> ويستقبل الـ badge في <code>reply.mr[1]</code></li>
+  <li>تهيئة <code>UIState</code> في Static Storage ثابت عبر <code>UIState::init()</code></li>
+  <li>جلب ملفات سطح المكتب blocking قبل أول رسم (حتى تظهر الأيقونات فوراً)</li>
+  <li>رسم أول إطار + تهيئة المؤشر بمنطقة <code>CURSOR_BG</code> الثابتة</li>
+  <li>حلقة أحداث لا نهائية: تميّز بين <code>MouseEvent (0x0300)</code> و <code>KeyboardEvent (0x0301)</code></li>
+</ol>
+<p>
+  آلية الـ Dirty Rendering: لا تُعاد رسم الشاشة كاملاً في كل دورة — فقط عند حدوث تغيير فعلي (just_pressed, just_released, on_drag). كل 80 حدث ماوس: مزامنة ملفات Desktop. كل 60 حدث كيبورد: تحديث ملفات Desktop.
+</p>

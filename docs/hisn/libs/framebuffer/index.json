@@ -1,0 +1,18 @@
+{
+  "id": "framebuffer",
+  "name": "framebuffer",
+  "number": 14,
+  "timestamp": 1782763940,
+  "type": "System Core",
+  "icon": "🖥️",
+  "iconClass": "pr-icon--framebuffer",
+  "created_at": "29 يونيو 2026 (13:12 GMT+3)",
+  "tags": ["Bare-Metal", "no_std", "Graphics", "MMIO"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "Cargo.toml",       "path": "libs/framebuffer/Cargo.toml",       "content_file": "01_Cargo_toml.html" },
+    { "name": "src/lib.rs",       "path": "libs/framebuffer/src/lib.rs",       "content_file": "02_src_lib_rs.html" },
+    { "name": "src/color.rs",     "path": "libs/framebuffer/src/color.rs",     "content_file": "03_src_color_rs.html" },
+    { "name": "src/fb.rs",        "path": "libs/framebuffer/src/fb.rs",        "content_file": "04_src_fb_rs.html" }
+  ]
+}

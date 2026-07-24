@@ -1,0 +1,21 @@
+{
+  "id": "vault-crypto",
+  "name": "vault-crypto",
+  "number": 4,
+  "timestamp": 1782265812,
+  "type": "Security & Net",
+  "icon": "🔐",
+  "iconClass": "pr-icon--vault-crypto",
+  "created_at": "24 يونيو 2026 (04:50 GMT+3)",
+  "tags": ["Bare-Metal", "no_std", "AEAD", "RFC7539"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "Cargo.toml",              "path": "libs/vault-crypto/Cargo.toml",              "content_file": "01_Cargo_toml.html" },
+    { "name": "src/lib.rs",              "path": "libs/vault-crypto/src/lib.rs",              "content_file": "02_src_lib_rs.html" },
+    { "name": "src/chacha20.rs",         "path": "libs/vault-crypto/src/chacha20.rs",         "content_file": "03_src_chacha20_rs.html" },
+    { "name": "src/chacha20_impl.rs",    "path": "libs/vault-crypto/src/chacha20_impl.rs",    "content_file": "04_src_chacha20_impl_rs.html" },
+    { "name": "src/poly1305.rs",         "path": "libs/vault-crypto/src/poly1305.rs",         "content_file": "05_src_poly1305_rs.html" },
+    { "name": "src/poly1305_impl.rs",    "path": "libs/vault-crypto/src/poly1305_impl.rs",    "content_file": "06_src_poly1305_impl_rs.html" },
+    { "name": "src/chacha20poly1305.rs", "path": "libs/vault-crypto/src/chacha20poly1305.rs", "content_file": "07_src_chacha20poly1305_rs.html" }
+  ]
+}

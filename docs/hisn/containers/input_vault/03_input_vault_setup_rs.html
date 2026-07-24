@@ -1,0 +1,27 @@
+<p><strong>المسار:</strong> <code>containers/init/src/input_vault_setup.rs</code></p>
+<p>
+  يُمثّل هذا الملف مسؤولية حاوية <code>init</code> في تجهيز وبناء حاوية <code>input_vault</code> مع صلاحيات العتاد اللازمة (Capability injection). هذه هي الخطوة التي تسمح لـ Input Vault بالتعامل مع العتاد الفيزيائي في وضع المستخدم.
+</p>
+<p>الخطوات الرئيسية:</p>
+<ol>
+  <li><strong>تخصيص الـ IOPort (PS/2):</strong>
+    <ul>
+      <li>يُستخدم <code>seL4_X86IOPortControlIssue</code> لتفويض صلاحيات القراءة والكتابة للمنافذ من <code>0x60</code> إلى <code>0x64</code> (منافذ PS/2).</li>
+      <li>تُوضع هذه الصلاحية في <code>SLOT_IOPORT</code> (رقم 1) في CNode الخاص بـ Input Vault.</li>
+    </ul>
+  </li>
+  <li><strong>إعداد المقاطعات (IRQs) عبر IOAPIC:</strong>
+    <ul>
+      <li><strong>الكيبورد (IRQ 1):</strong> يُستخدم <code>seL4_IRQControl_GetIOAPIC</code> مع Pin 1 و Vector 33 (32 + 1).</li>
+      <li><strong>الماوس (IRQ 12):</strong> يُستخدم نفس الاستدعاء مع Pin 12 و Vector 44 (32 + 12).</li>
+      <li>الصلاحيات توضع في <code>SLOT_KBD_IRQ</code> و <code>SLOT_MOUSE_IRQ</code>.</li>
+    </ul>
+  </li>
+  <li><strong>ربط الـ Notifications:</strong>
+    <ul>
+      <li>يتم إنشاء <code>NotificationObject</code> وصنع نسختين منه (Minting) مع Badges مختلفة: <code>BADGE=1</code> للكيبورد، <code>BADGE=2</code> للماوس.</li>
+      <li>يُستخدم <code>seL4_IRQHandler_SetNotification</code> لربط مقاطعة العتاد بهذه الكائنات، بحيث عندما تحدث المقاطعة، يُرسل الـ Kernel إشعاراً للحاوية يحمل الـ Badge المناسب.</li>
+    </ul>
+  </li>
+</ol>
+<p>بدون هذا الملف، لا تستطيع حاوية <code>input_vault</code> قراءة المنافذ أو استقبال أي مقاطعة، وستتعرض لـ Fault من Kernel النظام.</p>

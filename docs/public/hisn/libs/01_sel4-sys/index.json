@@ -1,0 +1,18 @@
+{
+  "files": [
+    "00_overview.html",
+    "01_invocations_rs.html",
+    "02_invocations_invocations_01_rs.html",
+    "03_invocations_invocations_02_rs.html",
+    "04_invocations_invocations_03_rs.html",
+    "05_invocations_invocations_04_rs.html",
+    "06_lib_rs.html",
+    "07_syscalls_rs.html",
+    "08_syscalls_ioport_rs.html",
+    "09_syscalls_syscalls_01_rs.html",
+    "10_syscalls_syscalls_02_rs.html",
+    "11_types_rs.html",
+    "12_types_types_01_rs.html",
+    "13_types_types_02_rs.html"
+  ]
+}

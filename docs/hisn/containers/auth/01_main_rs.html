@@ -1,0 +1,17 @@
+<p><strong>المسار:</strong> <code>containers/auth/src/main.rs</code></p>
+<p>
+  حلقة IPC بسيطة تستقبل طلبات التوثيق. الأمر الوحيد المدعوم حالياً:
+</p>
+<ul>
+  <li>
+    <code>cmd = 0x100</code> — طلب تذكرة أمان:
+    <ul>
+      <li><code>mr[1] = app_id (u16)</code> — هوية التطبيق الطالب</li>
+      <li>يُنشئ <code>PolicyBadge::new(app_id, Permission::ReadWrite, hash_path("/home/user"))</code></li>
+      <li>يُعيد <code>badge.to_badge_word()</code> في <code>reply.mr[1]</code></li>
+    </ul>
+  </li>
+</ul>
+<p>
+  القرار الحالي: جميع التطبيقات تحصل على صلاحية <code>ReadWrite</code> للمسار <code>/home/user</code> تلقائياً بغض النظر عن <code>app_id</code>. هذا مؤقت — في الإصدار القادم يُرجع التحقق من قاعدة بيانات السياسات قبل إصدار الـ Badge.
+</p>

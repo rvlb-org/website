@@ -1,0 +1,13 @@
+<p>
+  مُخصِّص الذاكرة الخام (Untyped Memory Allocator) — الطبقة الوسيطة بين <code>BootInfo</code> ونواة seL4.
+</p>
+<p>
+  seL4 لا تعطي ذاكرة جاهزة — بل تُعطي كتل <code>Untyped</code> خام. لاستخدام أي منها يجب استدعاء <code>seL4_Untyped_Retype</code> لتحويلها إلى نوع مفيد. الهيكل يُتتبّع الاستهلاك في مصفوفة عالمية <code>UNTYPED_USED[230]</code> (خارج الـ Stack لتجنب Stack Overflow).
+</p>
+<p>الدوال الرئيسية:</p>
+<ul>
+  <li><code>retype_object(obj_type, size_bits, slots)</code>: يبحث عن أول كتلة Untyped RAM (غير Device) تسع الكائن مع المحاذاة <code>(used + mask) &amp; !mask</code>، ثم يستدعي <code>seL4_Untyped_Retype</code>. القاعدة: seL4 تُلزم محاذاة الكائن لحجمه الفعلي.</li>
+  <li><code>retype_object_in_cnode()</code>: نفس المنطق لكن يسمح تحديد CNode وSlot بدلاً من استخدام CNode الجذر (CNode=2).</li>
+  <li><code>retype_device_frame(paddr)</code>: يُفوّض لـ <code>device_frames</code> — يبحث عن Untyped من نوع Device يغطي العنوان الفيزيائي المحدد ويُنشئ منه إطار صفحة (Frame).</li>
+  <li><code>retype_ram_frame_at_paddr(paddr)</code>: تقنية متقدمة — يُنشئ كائنات <code>seL4_UntypedObject</code> وهمية لـ "تخطي" (Skip) بايتات حتى يصل للعنوان الفيزيائي المطلوب، مما يسمح رسم Framebuffer عند عنوان فيزيائي محدد مسبقاً.</li>
+</ul>

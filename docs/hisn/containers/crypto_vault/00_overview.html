@@ -1,0 +1,9 @@
+<p>
+  حاوية <code>Crypto_Vault</code> هي المزود المركزي لخدمات التشفير في بنية <strong>Hisn-seL4</strong>. تُقدم خدمات التشفير المتماثل والمصادق عليه (AEAD) وتقسيم الأسرار، وكل ذلك في بيئة <strong>Zero-Heap (بدون تخصيص ديناميكي)</strong> لضمان أمان كامل من هجمات الذاكرة.
+</p>
+<p>المكونات والوظائف الرئيسية:</p>
+<ol>
+  <li><strong>التشفير المتماثل (ChaCha20-Poly1305):</strong> تستخدم خوارزمية AEAD (وفق RFC 7539) لضمان سرية البيانات وتوثيق مصدرها (Integrity) في آن واحد. الخوارزمية مكتوبة بالكامل من الصفر لتناسب بيئة Bare-Metal.</li>
+  <li><strong>دعم الذاكرة المشتركة (Shared Memory):</strong> لتقليل الـ Overhead الخاص بحدود رسائل الـ IPC، تُقدم الحاوية دوال <code>EncryptShared</code> و <code>DecryptShared</code> التي تعمل على كتلة ذاكرة مشتركة بحجم 4KB على العنوان <code>0x5F0000</code>.</li>
+  <li><strong>تقسيم الأسرار (Shamir's Secret Sharing):</strong> تطبيق كامل لخوارزمية Shamir باستخدام رياضيات <strong>Galois Field GF(2^8)</strong>، مما يسمح بتقسيم سر إلى <code>N</code> حصص، بحيث يتطلب استعادته توفر <code>K</code> حصة (Threshold).</li>
+</ol>

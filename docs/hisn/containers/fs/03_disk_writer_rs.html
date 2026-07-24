@@ -1,0 +1,37 @@
+<p><strong>المسار:</strong> <code>containers/fs/src/disk_writer.rs</code></p>
+<p>
+  يُنفّذ التخزين المستمر (Persistence) عبر تواصل <strong>Zero-Copy</strong> مع <code>Disk_Vault</code>. يستخدم صفحة الذاكرة المشتركة عند العنوان الثابت <code>0x600000</code> (4KB) كـ Buffer مشترك.
+</p>
+<p><strong>نظام التخزين — تنسيق القطاع 0 (Root Directory Index):</strong></p>
+<pre style="background:#0d1117;color:#c9d1d9;padding:1rem;border-radius:8px;font-size:0.85rem;">
+| المحتوى           | الحجم    |
+|-------------------|----------|
+| path (full path)  | 64 bytes |
+| sector (LBA)      | 4 bytes  |
+| file_size         | 4 bytes  |
+| ... (تكرار)       | 72 bytes |
+(يسع القطاع الواحد حتى 7 ملفات: 7 × 72 = 504 بايت)
+</pre>
+<p>الدالتان:</p>
+<ul>
+  <li>
+    <code>flush_to_disk(fs, ipc_buf)</code>:
+    <ul>
+      <li>يكتب فهرس الجذر في LBA 0 عبر الذاكرة المشتركة + <code>MessageTag::WriteSector</code></li>
+      <li>لكل ملف: يضع بياناته (512 بايت) في الذاكرة المشتركة ثم يُرسل <code>WriteSector(lba=e.sector)</code> لـ Disk_Vault</li>
+      <li>يُستدعى تلقائياً بعد كل عملية تعديل (Delete, Rename, Write, Mkdir)</li>
+    </ul>
+  </li>
+  <li>
+    <code>load_from_disk(fs, ipc_buf)</code>:
+    <ul>
+      <li>يقرأ LBA 0 أولاً — إذا كان الـ byte الأول 0 فالقرص فارغ (يُعيد <code>false</code>)</li>
+      <li>يُكرّر على السجلات (كل 72 بايت) ويقرأ بيانات كل ملف من قطاعه</li>
+      <li>يُحدّث <code>fs.next_sector</code> ليكون <code>max(current, last_sector + 1)</code> لمنع الكتابة فوق بيانات موجودة</li>
+      <li>يُعيد <code>true</code> إذا تم تحميل ولو ملف واحد</li>
+    </ul>
+  </li>
+</ul>
+<p>
+  الثوابت: <code>DISK_EP_CAP=1</code> (Endpoint الـ Disk_Vault في CNode الـ FS)، <code>SECTOR_SIZE=512</code>.
+</p>

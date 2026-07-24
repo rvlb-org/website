@@ -1,0 +1,17 @@
+{
+  "id": "fs",
+  "name": "fs",
+  "number": 6,
+  "timestamp": 1783114557,
+  "type": "Service",
+  "icon": "📁",
+  "iconClass": "pr-icon--fs",
+  "created_at": "04 يوليو 2026 (00:35 GMT+0300)",
+  "tags": ["VFS", "RamFS", "Persistence", "Security Policy"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "src/main.rs",          "path": "containers/fs/src/main.rs",          "content_file": "01_main_rs.html" },
+    { "name": "src/ramfs.rs",         "path": "containers/fs/src/ramfs.rs",         "content_file": "02_ramfs_rs.html" },
+    { "name": "src/disk_writer.rs",   "path": "containers/fs/src/disk_writer.rs",   "content_file": "03_disk_writer_rs.html" }
+  ]
+}

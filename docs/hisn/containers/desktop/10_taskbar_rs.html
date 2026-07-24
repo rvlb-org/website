@@ -1,0 +1,13 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/wm/taskbar.rs</code></p>
+<p>
+  يُدير شريط المهام السفلي كطبقة مستقلة ومحمية من النوافذ.
+</p>
+<p><code>TaskbarButton</code>: يحمل <code>window_id</code>، label (أول 8 أحرف)، موضع <code>x</code>، عرض <code>w</code>، وحالة <code>active</code>.</p>
+<p>الدوال:</p>
+<ul>
+  <li><code>reserved_y()</code>: يُعيد <code>screen_h - TASKBAR_H</code> — الحد الأدنى لموضع Y أي نافذة (تُطبّق في <code>on_drag</code>)</li>
+  <li><code>register(window_id, label)</code>: يُضيف زراً جديداً في الشريط عند فتح تطبيق. إذا كان موجوداً يُعيد تفعيله فقط</li>
+  <li><code>deactivate(window_id)</code>: يُخفي الزر عند إغلاق التطبيق (لا يُحذف — يُبقى في القائمة لإعادة الاستخدام)</li>
+  <li><code>recalc_layout()</code>: يُعيد حساب مواضع الأزرار: يبدأ بعد Start Button (64px) + gap (8px)، كل زر عرضه 80px + gap 4px</li>
+  <li><code>on_click(cx, cy)</code>: يُعيد <code>Option&lt;Option&lt;usize&gt;&gt;</code> — <code>None</code>: خارج الشريط، <code>Some(None)</code>: زر Start، <code>Some(Some(id))</code>: زر تطبيق</li>
+</ul>

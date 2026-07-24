@@ -1,0 +1,15 @@
+<p>
+  <code>setup_disk_vault()</code> — يُعيد <code>(disk_ep, vspace_cptr, success)</code>. يحتوي على الخطوة الأكثر تعقيداً في الإعداد: <strong>تفويض صلاحية IOPort</strong>.
+</p>
+<p>
+  Disk_Vault تحتاج للوصول المباشر لمنافذ ATA (0x1F0–0x3F6). في seL4، هذا يتطلب <code>IOPort Capability</code> خاصة. الكيفية:
+</p>
+<ul>
+  <li>يُرسل <code>seL4_Call(cap=7)</code> إلى <code>seL4_CapIOPortControl</code> (Slot 7 في CNode الجذر) مع الرسالة <code>seL4_X86IOPortControlIssue (tag=47)</code></li>
+  <li>الـ MR: أول port=0x1F0، آخر port=0x3F6، وجهة: slot 1 في CNode الـ Disk</li>
+  <li>النتيجة: النواة تُنشئ IOPort Capability في slot 1 من CNode الـ Disk_Vault تمنحها حق الوصول لنطاق المنافذ المحدد فقط</li>
+</ul>
+<p>
+  هذا النمط هو جوهر أمان seL4: حاوية القرص لا تملك صلاحية الوصول لأي منفذ آخر غير الـ ATA المحدد.
+  Scratch address: <code>0xA00000</code>
+</p>

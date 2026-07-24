@@ -1,0 +1,35 @@
+<p><strong>المسار:</strong> <code>containers/bus/src/main.rs</code></p>
+<p>
+  يحتوي على حلقة <code>server.serve()</code> الكاملة. يُصنّف كل رسالة واردة حسب <code>MessageTag</code>:
+</p>
+<p><strong>أ) عمليات الملفات المباشرة</strong> — يُمرّرها مباشرة لـ <code>FS_Vault</code> عبر <code>forward_to_fs()</code>:</p>
+<ul>
+  <li><code>CreateFile / WriteFile</code></li>
+  <li><code>DeleteFile / DeleteDir</code></li>
+  <li><code>ReadFile</code></li>
+  <li><code>CreateDir / ListDir</code></li>
+</ul>
+<p><strong>ب) العمليات المركّبة</strong> — مُنفَّذة داخل Bus_Vault:</p>
+<ul>
+  <li><code>CopyFile</code>: خطوتان — <code>ReadFile(src) → WriteFile(dst)</code>. إذا فشلت القراءة يُعيد <code>Err</code> دون الكتابة.</li>
+  <li><code>MoveFile</code>: ثلاث خطوات — <code>CopyFile → DeleteFile(src)</code>. الحذف يحدث فقط إذا نجح النسخ.</li>
+</ul>
+<p><strong>ج) اختصارات سطح المكتب</strong>:</p>
+<ul>
+  <li><code>CreateShortcut</code>: يُنشئ ملف <code>.vlk</code> في <code>/home/user/Desktop/</code> عبر <code>WriteFile</code></li>
+  <li><code>DeleteShortcut</code>: يحذف ملف <code>.vlk</code> عبر <code>DeleteFile</code></li>
+  <li><code>RegisterApp</code>: يكتب ملف التطبيق في <code>/home/user/apps/</code></li>
+</ul>
+<p><strong>د) الحافظة (Clipboard)</strong> — مُخزَّنة في ذاكرة Bus_Vault كـ <code>static mut CLIPBOARD: [u8; 256]</code>:</p>
+<ul>
+  <li><code>ClipboardCopy</code>: ينسخ <code>req.payload[..len]</code> إلى <code>CLIPBOARD</code></li>
+  <li><code>ClipboardPaste</code>: يُعيد <code>CLIPBOARD[..CLIPBOARD_LEN]</code> في رسالة الرد</li>
+  <li><code>ClipboardClear</code>: يُصفّر المصفوفة ويُعيد <code>CLIPBOARD_LEN=0</code></li>
+</ul>
+<p><strong>هـ) الشبكة (مستقبلاً)</strong>:</p>
+<ul>
+  <li><code>NetConnect / NetRequest</code>: يُقرّ الطلب حالياً دون توجيه — Placeholder لتوصيل <code>Tor_Vault</code> في slot 3 لاحقاً</li>
+</ul>
+<p>
+  الدالة الداخلية <code>forward_to_fs(req, ipc_buf)</code>: تُنشئ <code>Sender</code> مؤقتاً باستخدام <code>FS_EP_CAP=1</code> وتُرسل الطلب وتنتظر الرد عبر <code>send_recv()</code>.
+</p>

@@ -1,0 +1,13 @@
+<p>
+  حاوية <code>init</code> هي <strong>الـ Root Task</strong> — أول كود يعمل في مساحة المستخدم (User-space) بعد إقلاع نواة seL4. النواة تُعطيها <em>كل</em> الصلاحيات الابتدائية (Capabilities) والذاكرة الخام (Untyped Memory) عبر هيكل <code>seL4_BootInfo</code>، ثم تتقاعد عن التدخل المباشر.
+</p>
+<p>
+  مسؤوليات <code>init</code> تنقسم لمرحلتين:
+</p>
+<ul>
+  <li><strong>مرحلة الإقلاع (Bootstrap):</strong> تُنشئ وتُشغّل الحاويات التسع بالترتيب الصحيح، وتُوزّع عليها المفاتيح (Endpoints) التي تحتاجها للتواصل. ترتيب الإقلاع: <code>Crypto_Vault → Tor → Disk_Vault → FS_Vault → Auth_Vault → Bus_Vault → Desktop → Input_Vault → Programs</code>.</li>
+  <li><strong>مرحلة التشغيل (Runtime):</strong> تتحوّل إلى <em>Program Manager</em> — تستمع على <code>launch_ep</code> لطلبات تشغيل التطبيقات من حاوية Desktop، وتُنشئ مساحة عزل جديدة لكل تطبيق.</li>
+</ul>
+<p>
+  كل حاوية تُحمَّل كـ ELF ثنائي مدمج مباشرة في <code>init</code> عبر <code>include_bytes!</code> — صفر تبعيات على نظام ملفات وقت الإقلاع.
+</p>

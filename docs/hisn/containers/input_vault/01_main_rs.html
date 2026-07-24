@@ -1,0 +1,46 @@
+<p><strong>المسار:</strong> <code>containers/input_vault/src/main.rs</code></p>
+<p>
+  يحتوي على التهيئة وحلقة المقاطعات اللانهائية.
+</p>
+<p><strong>خريطة الـ CNode Slots:</strong></p>
+<ul>
+  <li><code>SLOT_IOPORT (1)</code>: صلاحية الوصول لمنافذ PS/2</li>
+  <li><code>SLOT_NTFN (2)</code>: كائن Notification لتلقي المقاطعات</li>
+  <li><code>SLOT_KBD_IRQ (3)</code>: كائن IRQ للوحة المفاتيح (IRQ 1)</li>
+  <li><code>SLOT_MOUSE_IRQ (4)</code>: كائن IRQ للماوس (IRQ 12)</li>
+  <li><code>SLOT_DESKTOP_EP (5)</code>: Endpoint للتواصل مع سطح المكتب (Desktop)</li>
+</ul>
+<p><strong>دورة الحياة:</strong></p>
+<ol>
+  <li><strong>التهيئة:</strong> 
+    <ul>
+      <li>تهيئة <code>Ps2Controller</code> باستخدام <code>SLOT_IOPORT</code>.</li>
+      <li>تفعيل الماوس <code>ps2.init_mouse()</code>.</li>
+      <li>تفريغ أي بيانات عالقة في منافذ PS/2 لضمان استقرار النظام.</li>
+      <li>تأكيد (Ack) أي مقاطعات مبكرة.</li>
+    </ul>
+  </li>
+  <li><strong>حلقة الأحداث (Event Loop):</strong>
+    <ul>
+      <li>تنتظر على <code>SLOT_NTFN</code> باستخدام <code>seL4_Wait</code>.</li>
+      <li>يتم إرجاع <code>badge</code> يحدد مصدر المقاطعة.</li>
+    </ul>
+  </li>
+  <li><strong>معالجة مقاطعة الكيبورد (<code>badge & 1</code>):</strong>
+    <ul>
+      <li>تقرأ الـ Scancode من منفذ 0x60.</li>
+      <li>تُمرره إلى <code>kbd_state.process_scancode()</code>.</li>
+      <li>إذا نتج حرف، ترسله لسطح المكتب بـ <code>MessageTag::KeyboardEvent</code>.</li>
+      <li>تُرسل <code>seL4_IRQHandler_Ack(SLOT_KBD_IRQ)</code>.</li>
+    </ul>
+  </li>
+  <li><strong>معالجة مقاطعة الماوس (<code>badge & 2</code>):</strong>
+    <ul>
+      <li>تقرأ البايت من منفذ 0x60.</li>
+      <li>تُمرره إلى <code>mouse_state.process_byte()</code>.</li>
+      <li>إذا اكتملت حزمة الماوس (Packet)، تحسب الإزاحات (X, Y) والأزرار وترسلها لسطح المكتب بـ <code>MessageTag::MouseEvent</code>.</li>
+      <li>تُرسل <code>seL4_IRQHandler_Ack(SLOT_MOUSE_IRQ)</code>.</li>
+    </ul>
+  </li>
+</ol>
+<p>يتم استخدام الإرسال غير المحجوز <code>desktop_sender.send_nb()</code> مع لوحة المفاتيح لتجنب تعليق حلقة المقاطعات إذا كان سطح المكتب مشغولاً.</p>

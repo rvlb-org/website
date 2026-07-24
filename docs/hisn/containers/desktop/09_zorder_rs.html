@@ -1,0 +1,14 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/wm/zorder.rs</code></p>
+<p>
+  يُدير ترتيب النوافذ عمقياً (Z-Axis). المبدأ: قائمة خطية مُرتَّبة — العنصر في النهاية هو الأعلى (يُرسم فوق الكل).
+</p>
+<p>الهيكل: <code>stack: [usize; ZSTACK_MAX], len: usize</code></p>
+<p>الدوال:</p>
+<ul>
+  <li><code>push(id)</code>: يُزيل النافذة من موضعها أولاً (إن وُجدت) ثم يُضيفها في النهاية — يضمن عدم التكرار</li>
+  <li><code>raise(id)</code>: مُرادف لـ <code>push</code> — يرفع النافذة للأعلى (عند النقر أو الفتح)</li>
+  <li><code>remove(id)</code>: يحذف النافذة ويُزيح العناصر بعدها للأمام (In-place shift)</li>
+  <li><code>get(i)</code>: الوصول للنافذة في المستوى <code>i</code> (0 = الأعمق)</li>
+  <li><code>top()</code>: النافذة الأعلى (المُركَّزة حالياً)</li>
+  <li><code>rebuild_from_open(is_open)</code>: يُعيد بناء المكدس بإزالة النوافذ المغلقة — تُستدعى عند إغلاق نافذة بالقوة</li>
+</ul>

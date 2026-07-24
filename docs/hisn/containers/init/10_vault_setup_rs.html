@@ -1,0 +1,14 @@
+<p>
+  <code>setup_crypto_vault()</code> — نموذج قياسي لكيفية تشغيل أي حاوية من <code>init</code>. الخطوات الست:
+</p>
+<ol>
+  <li><strong>CNode</strong>: <code>seL4_CapTableObject, size_bits=12</code> → جدول صلاحيات بـ 2^12 = 4096 فتحة</li>
+  <li><strong>TCB</strong>: <code>seL4_TCBObject, seL4_TCBBits</code> → Thread Control Block</li>
+  <li><strong>VSpace</strong>: <code>seL4_X64_PML4Object</code> → جذر هرم الـ Paging الجديد</li>
+  <li><strong>IPC Buffer Page</strong>: <code>seL4_X86_4K</code> → صفحة الـ IPC Buffer المُخصَّصة</li>
+  <li><strong>Endpoint في CNode الحاوية</strong>: <code>retype_object_in_cnode(seL4_EndpointObject, slot=0, cnode)</code> — يُنشئ الـ Endpoint مباشرة في slot 0 من CNode الحاوية الجديدة (هكذا تجد الحاوية endpoint بدون تمريره)</li>
+  <li><strong>نسخ الـ Endpoint إلى init</strong>: <code>seL4_CNode_Copy(src=cnode/slot0 → dst=init_cnode/alloc_slot, depth=12, rights=0xF)</code> — حتى تستطيع <code>init</code> إرسال رسائل للحاوية</li>
+</ol>
+<p>
+  قيمة <code>rights=0xF</code> = كل الصلاحيات (Read + Write + Grant + GrantReply). الـ <code>scratch_vaddr=0x800000</code> ثابتة لـ Crypto_Vault.
+</p>

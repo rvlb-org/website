@@ -1,0 +1,54 @@
+{
+  "id": "files",
+  "name": "Files Manager",
+  "number": 2,
+  "timestamp": 1783346267,
+  "type": "System Utility",
+  "icon": "📁",
+  "iconClass": "pr-icon--files",
+  "created_at": "06 يوليو 2026 (16:57 GMT+0300)",
+  "tags": ["IPC Routing", "Persistent State"],
+  "overview": "00_overview.html",
+  "files": [
+    {
+      "name": "src/main.rs",
+      "path": "programs/files/src/main.rs",
+      "content_file": "01_main_rs.html"
+    },
+    {
+      "name": "src/backend.rs",
+      "path": "programs/files/src/backend.rs",
+      "content_file": "02_backend_rs.html"
+    },
+    {
+      "name": "src/icon.rs",
+      "path": "programs/files/src/icon.rs",
+      "content_file": "03_icon_rs.html"
+    },
+    {
+      "name": "src/lib.rs",
+      "path": "programs/files/src/lib.rs",
+      "content_file": "04_lib_rs.html"
+    },
+    {
+      "name": "src/ui/mod.rs",
+      "path": "programs/files/src/ui/mod.rs",
+      "content_file": "05_ui_mod_rs.html"
+    },
+    {
+      "name": "src/ui/file_manager.rs",
+      "path": "programs/files/src/ui/file_manager.rs",
+      "content_file": "06_ui_file_manager_rs.html"
+    },
+    {
+      "name": "build.sh",
+      "path": "programs/files/build.sh",
+      "content_file": "07_build_sh.html"
+    },
+    {
+      "name": "Cargo.toml",
+      "path": "programs/files/Cargo.toml",
+      "content_file": "08_cargo_toml.html"
+    }
+  ]
+}

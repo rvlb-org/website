@@ -1,0 +1,12 @@
+{
+  "display_name": "السكربتات (Scripts)",
+  "icon": "📜",
+  "files": [
+    "01_setup_sh.html",
+    "02_fetch_sh.html",
+    "03_compile_sh.html",
+    "04_build_sh.html",
+    "05_boot_sh.html",
+    "06_build_docs_py.html"
+  ]
+}

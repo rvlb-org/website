@@ -1,0 +1,11 @@
+{
+  "files": [
+    "00_overview.html",
+    "01_chacha20_rs.html",
+    "02_chacha20_impl_rs.html",
+    "03_chacha20poly1305_rs.html",
+    "04_lib_rs.html",
+    "05_poly1305_rs.html",
+    "06_poly1305_impl_rs.html"
+  ]
+}

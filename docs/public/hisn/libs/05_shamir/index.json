@@ -1,0 +1,11 @@
+{
+  "files": [
+    "00_overview.html",
+    "01_gf256_rs.html",
+    "02_lib_rs.html",
+    "03_shamir_rs.html",
+    "04_shamir_shamir_01_rs.html",
+    "05_shamir_shamir_02_rs.html",
+    "06_shamir_shamir_03_rs.html"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "init",
+  "name": "init",
+  "number": 1,
+  "timestamp": 1782224096,
+  "type": "Core",
+  "icon": "🚀",
+  "iconClass": "pr-icon--init",
+  "created_at": "23 يونيو 2026 (17:14 GMT+0300)",
+  "tags": ["Root", "Bootstrap", "Memory", "Loader"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "src/main.rs",                          "path": "containers/init/src/main.rs",                          "content_file": "01_main_rs.html" },
+    { "name": "src/program_manager.rs",               "path": "containers/init/src/program_manager.rs",               "content_file": "02_program_manager_rs.html" },
+    { "name": "src/system.rs",                        "path": "containers/init/src/system.rs",                        "content_file": "03_system_rs.html" },
+    { "name": "src/slot_alloc.rs",                    "path": "containers/init/src/slot_alloc.rs",                    "content_file": "04_slot_alloc_rs.html" },
+    { "name": "src/untyped_alloc/mod.rs",             "path": "containers/init/src/untyped_alloc/mod.rs",             "content_file": "05_untyped_alloc_rs.html" },
+    { "name": "src/loader/mod.rs",                    "path": "containers/init/src/loader/mod.rs",                    "content_file": "06_loader_rs.html" },
+    { "name": "src/loader/paging.rs",                 "path": "containers/init/src/loader/paging.rs",                 "content_file": "07_paging_rs.html" },
+    { "name": "src/loader/elf_load.rs",               "path": "containers/init/src/loader/elf_load.rs",               "content_file": "08_elf_load_rs.html" },
+    { "name": "src/loader/tcb_setup.rs",              "path": "containers/init/src/loader/tcb_setup.rs",              "content_file": "09_tcb_setup_rs.html" },
+    { "name": "src/vault_setup.rs",                   "path": "containers/init/src/vault_setup.rs",                   "content_file": "10_vault_setup_rs.html" },
+    { "name": "src/auth_setup.rs",                    "path": "containers/init/src/auth_setup.rs",                    "content_file": "11_auth_setup_rs.html" },
+    { "name": "src/bus_setup.rs",                     "path": "containers/init/src/bus_setup.rs",                     "content_file": "12_bus_setup_rs.html" },
+    { "name": "src/fs_setup.rs",                      "path": "containers/init/src/fs_setup.rs",                      "content_file": "13_fs_setup_rs.html" },
+    { "name": "src/disk_setup.rs",                    "path": "containers/init/src/disk_setup.rs",                    "content_file": "14_disk_setup_rs.html" },
+    { "name": "src/network_setup.rs",                 "path": "containers/init/src/network_setup.rs",                 "content_file": "15_network_setup_rs.html" },
+    { "name": "src/desktop_setup/mod.rs",             "path": "containers/init/src/desktop_setup/mod.rs",             "content_file": "16_desktop_setup_rs.html" }
+  ]
+}

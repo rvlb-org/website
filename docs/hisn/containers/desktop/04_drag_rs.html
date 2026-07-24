@@ -1,0 +1,24 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/drag.rs</code></p>
+<p>
+  يُعرّف نظام السحب والإفلات الكامل عبر نوعين:
+</p>
+<ul>
+  <li>
+    <code>DragTarget</code> — enum يصف ما يُسحب:
+    <ul>
+      <li><code>None</code> — لا يوجد سحب</li>
+      <li><code>Window(id)</code> — سحب نافذة من شريطها العلوي</li>
+      <li><code>Icon(id)</code> — سحب أيقونة على سطح المكتب (إذا كان لها .vlk)</li>
+      <li><code>DesktopFile(id)</code> — سحب ملف من سطح المكتب (للمجلدات)</li>
+      <li><code>FilesScrollbar(win_id)</code> — سحب شريط التمرير في نافذة Files</li>
+    </ul>
+  </li>
+  <li>
+    <code>DragState</code> — الحالة الحالية:
+    <ul>
+      <li><code>off_x, off_y</code>: إزاحة نقطة الإمساك داخل العنصر (لتثبيت العنصر تحت المؤشر)</li>
+      <li><code>start_cx, start_cy</code>: موضع الضغط الأصلي</li>
+      <li><code>moved: bool</code>: يصبح <code>true</code> إذا تجاوز المؤشر عتبة 20 بكسل — يُميّز النقر من السحب</li>
+    </ul>
+  </li>
+</ul>

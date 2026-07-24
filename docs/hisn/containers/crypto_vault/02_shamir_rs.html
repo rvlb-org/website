@@ -1,0 +1,18 @@
+<p><strong>المسارات:</strong> <code>shamir_handlers.rs</code> | <code>libs/shamir/</code></p>
+<p>
+  هذا الجزء مسؤول عن توزيع المخاطر وحماية الأسرار الحساسة (مثل مفاتيح التشفير الرئيسية) عبر تجزئتها جغرافياً أو منطقياً باستخدام <strong>Shamir's Secret Sharing (SSS)</strong>.
+</p>
+
+<h3>1. رياضيات GF(2^8) واستيفاء لاغرانج</h3>
+<ul>
+  <li><strong>GF(2^8):</strong> نظام رياضي لا نهائي (Finite Field) بحجم 256. الجمع فيه يتم بعملية <code>XOR</code> بسيطة بدون Carry.</li>
+  <li><strong>الضرب (gf_mul):</strong> يُستخدم <em>الضرب الروسي (Russian Peasant Multiplication)</em> بدلاً من جداول البحث (Lookup Tables) لحماية التنفيذ وتحجيم مساحة الكود، مع استخدام متعدد الحدود القياسي لـ AES (<code>x^8 + x^4 + x^3 + x + 1</code>).</li>
+  <li><strong>متعدد حدود (Polynomial):</strong> السر المراد إخفاؤه يوضع كحد ثابت (Constant term)، وتُولد معاملات عشوائية أخرى لإنشاء المنحنى الرياضي.</li>
+  <li><strong>استعادة السر (reconstruct):</strong> تستخدم دالة <code>shamir_03.rs</code> خوارزمية <em>استيفاء لاغرانج (Lagrange Interpolation)</em> لحساب قيمة الحد الثابت عند x=0 من خلال <code>k</code> حصص (Shares).</li>
+</ul>
+
+<h3>2. دوال التعامل (Handlers)</h3>
+<ul>
+  <li><code>handle_split_secret</code>: يتلقى السر وإعدادات <code>N</code> (عدد الحصص الكلي) و <code>K</code> (الحد الأدنى للاستعادة). يُقسم السر إلى <code>N</code> حصص ويضع جميع الحصص بشكل متتالي في الذاكرة المشتركة <code>0x5F0000</code> ليقرأها الطرف الآخر.</li>
+  <li><code>handle_reconstruct_secret</code>: يقرأ <code>K</code> حصة من الذاكرة المشتركة، يستخدم استيفاء لاغرانج لاستعادة السر الأصلي، ثم يُرسله كـ Payload في رسالة IPC، ويُنفّذ عملية <strong>Zeroing (مسح آمن)</strong> لأي أثر للسر من ذاكرة الـ Handler.</li>
+</ul>

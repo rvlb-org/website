@@ -1,0 +1,18 @@
+<p>
+  يُدير عملية تحميل وتشغيل التطبيقات الديناميكية (SVP Packages) من ملف <code>manifest.bin</code> المدمج في <code>PROGRAM_REGISTRY</code>. الدوال الرئيسية:
+</p>
+<ul>
+  <li><code>load_programs()</code>: يُكرّر على <code>RegistryIter</code> ويستخرج كل حزمة SVP ويشغّلها. يُعيد عدد البرامج المُحمَّلة بنجاح.</li>
+  <li><code>setup_program()</code>: الدالة الجوهرية — تُنشئ لكل برنامج مساحة عزل كاملة:
+    <ul>
+      <li><code>seL4_CapTableObject (12-bit)</code> → CNode جديد</li>
+      <li><code>seL4_TCBObject</code> → Thread Control Block</li>
+      <li><code>seL4_X64_PML4Object</code> → Virtual Address Space</li>
+      <li><code>seL4_X86_4K</code> → IPC Buffer Page</li>
+      <li><code>seL4_EndpointObject</code> في slot 0 من CNode الجديد → نقطة تواصل البرنامج</li>
+      <li>نسخ الـ Endpoint إلى CNode الخاص بـ <code>init</code> عبر <code>seL4_CNode_Copy</code> لتتمكن <code>init</code> من الوصول إليه</li>
+      <li>عنوان Scratch فريد لكل برنامج: <code>0x900000 + (prog_id * 0x100000)</code> لمنع التعارض</li>
+    </ul>
+  </li>
+  <li><code>launch_app_by_name()</code>: تبحث عن الاسم المطلوب في الـ Registry وتُشغّله فوراً عند طلب Desktop، مع استخدام offset فريد <code>0x80 + idx</code> للـ Scratch.</li>
+</ul>

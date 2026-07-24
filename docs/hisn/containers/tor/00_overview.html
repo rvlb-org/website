@@ -1,0 +1,14 @@
+<p>
+  حاوية <code>Tor_Vault</code> هي حاوية <strong>التوجيه الشبكي الآمن (Onion Routing)</strong> في النظام.
+  صُممت لعزل مكدس الشبكة بالكامل عن باقي النظام، ودمج اتصالات TCP داخل دوائر Tor مُعمّاة.
+</p>
+<p>مبدأ العمل المعماري (Zero-Heap & Isolation):</p>
+<ol>
+  <li><strong>مكدس شبكي مُستقل:</strong> تعتمد على <code>smoltcp</code> وتستخدم مصفوفات ثابتة (Static Buffers) بحجم 2048 بايت للـ Rx/Tx لتجنب التخصيص الديناميكي للذاكرة.</li>
+  <li><strong>دوائر Tor (Tor Circuits):</strong> يتم توجيه كل تدفق شبكي (Stream) عبر دوائر <code>Circuit</code> متعددة القفزات (Hops).</li>
+  <li><strong>التشفير البصلي (Onion Routing):</strong> يُستخدم تشفير <code>ChaCha20</code> (في <code>tor-circuit</code>) لتغليف كل رسالة بطبقات تشفير متعددة، تُفك كل طبقة عند مرورها بعقدة (Hop) مختلفة في شبكة Tor.</li>
+  <li><strong>إدارة التدفقات (Stream Manager):</strong> يُدير اتصالات TCP المتعددة فوق دائرة Tor واحدة عبر <code>tor-stream</code>، بحيث تُقسّم البيانات إلى خلايا (Cells) بحد أقصى 498 بايت للخلية الواحدة.</li>
+</ol>
+<p>
+  <strong>ملاحظة في النسخة الحالية (v0.1):</strong> نظراً لتعقيد تعريف مشغلات العتاد (VirtIO-Net)، تستخدم الحاوية جهازاً وهمياً <code>DummyDevice</code> لاختبار دورة حياة الشبكة والتشفير دون إرسال فعلي للخارج.
+</p>

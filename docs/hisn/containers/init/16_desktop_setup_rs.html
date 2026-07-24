@@ -1,0 +1,20 @@
+<p>
+  <code>setup_desktop()</code> — أكثر <code>setup_*()</code> تعقيداً. يُعيد ثلاثة قيم: <code>(init_desktop_ep, launch_ep_cap, success)</code>.
+</p>
+<p>خريطة CNode الـ Desktop بعد الإعداد:</p>
+<ul>
+  <li><strong>Slot 0</strong>: Endpoint الـ Desktop الخاص (يُستمع عليه من init لإرسال رسائل)</li>
+  <li><strong>Slot 1</strong>: <code>launch_ep_cap</code> — Endpoint يُرسل عليه Desktop طلبات تشغيل التطبيقات (يستمع عليه init)</li>
+  <li><strong>Slot 2</strong>: نسخة من FS_Vault Endpoint</li>
+  <li><strong>Slot 3</strong>: نسخة من Auth_Vault Endpoint</li>
+</ul>
+<p>تسلسل الإعداد الفريد:</p>
+<ol>
+  <li>إنشاء الكائنات القياسية (CNode, TCB, VSpace, IPC Page)</li>
+  <li>إنشاء <strong>Endpoint ثانٍ</strong> (<code>launch_ep</code>) في Init's CNode — هذا الـ EP يُعطى لـ Desktop لترسل عليه، بينما init يستمع عليه</li>
+  <li>تحميل ELF عبر ContainerLoader (Scratch: <code>0xC00000</code>)</li>
+  <li><code>read_fb_phys_addr()</code>: يقرأ Extra Boot Info (header id=4) من Multiboot2 للحصول على العنوان الفيزيائي للـ Framebuffer الفعلي (VESA/bochs-display) وأبعاده</li>
+  <li><code>fb_mapping::map_framebuffer_into_vspace()</code>: يربط صفحات الـ Framebuffer في VSpace الـ Desktop عند <code>0x1000_0000</code></li>
+  <li><code>ipc_send::send_framebuffer_info()</code>: يُرسل رسالة IPC تحتوي: fb_vaddr, width, height, pitch, launch_slot, fs_slot, bpp</li>
+</ol>
+<p>القرار التصميمي: Desktop لا تعرف العنوان الفيزيائي للـ Framebuffer — تعمل فقط مع العنوان الافتراضي (Virtual) الذي تُخبرها به init عبر IPC.</p>

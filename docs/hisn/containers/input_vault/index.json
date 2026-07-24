@@ -1,0 +1,17 @@
+{
+  "id": "input_vault",
+  "name": "input_vault",
+  "number": 5,
+  "timestamp": 1782857990,
+  "type": "Driver",
+  "icon": "⌨️",
+  "iconClass": "pr-icon--input",
+  "created_at": "01 يوليو 2026 (01:19 GMT+0300)",
+  "tags": ["Hardware", "PS/2", "Driver", "IRQ", "IOAPIC"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "init/src/input_vault_setup.rs", "path": "containers/init/src/input_vault_setup.rs", "content_file": "03_input_vault_setup_rs.html" },
+    { "name": "src/main.rs",                   "path": "containers/input_vault/src/main.rs",       "content_file": "01_main_rs.html" },
+    { "name": "libs/ps2-driver",               "path": "libs/ps2-driver/src/",                     "content_file": "02_ps2_driver_rs.html" }
+  ]
+}

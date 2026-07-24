@@ -1,0 +1,17 @@
+<p>
+  حاوية <code>Input_Vault</code> هي الطبقة المسؤولة عن التعامل المباشر مع أجهزة الإدخال (لوحة المفاتيح والماوس) عبر متحكم <strong>PS/2 (i8042)</strong>. 
+  هي من الحاويات القليلة التي تملك صلاحيات التعامل المباشر مع العتاد الفيزيائي في بنية seL4-Vault.
+</p>
+<p>مبدأ العمل المعماري:</p>
+<ol>
+  <li><strong>الوصول للعتاد (I/O Ports):</strong> تمتلك وصولاً حصرياً إلى منافذ PS/2 (المنفذ <code>0x60</code> للبيانات و <code>0x64</code> للحالة/الأوامر) عبر <code>SLOT_IOPORT</code>.</li>
+  <li><strong>المقاطعات (Hardware IRQs):</strong> مسجلة كمستمع لمقاطعات العتاد:
+    <ul>
+      <li>IRQ 1 = لوحة المفاتيح (يُربط بـ <code>SLOT_KBD_IRQ</code>)</li>
+      <li>IRQ 12 = الماوس (يُربط بـ <code>SLOT_MOUSE_IRQ</code>)</li>
+    </ul>
+  </li>
+  <li><strong>المزامنة (Notification):</strong> تنتظر المقاطعات باستخدام <code>seL4_Wait</code> على كائن إشعار (Notification Object) في <code>SLOT_NTFN</code>. يُحدد الـ Badge أي الأجهزة أرسل المقاطعة.</li>
+  <li><strong>المعالجة والإرسال:</strong> عند حدوث مقاطعة، تُقرأ البيانات مباشرة من المنافذ باستخدام تعليمات <code>inb/outb</code> (مُغلّفة في <code>seL4_Call</code>)، تُعالج بواسطة <code>ps2_driver</code>، ثم تُرسل كحدث مُنسق إلى حاوية <code>desktop</code> عبر IPC.</li>
+</ol>
+<p>هذا التصميم الدقيق يعزل مشغلات العتاد (Drivers) في مساحة مستخدم (User-space) آمنة، مما يحمي Kernel النظام والواجهة الرسومية من أي أعطال في معالجة العتاد.</p>

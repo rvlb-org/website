@@ -1,0 +1,18 @@
+<p><strong>المسارات:</strong> <code>containers/desktop/src/desktop_ui/wm/focus.rs</code> | <code>wm/layout.rs</code> | <code>wm/shortcut.rs</code></p>
+<p><strong>focus.rs</strong> — مدير التركيز (Focus Manager):</p>
+<ul>
+  <li>يحتفظ بـ <code>focused_id: Option&lt;usize&gt;</code> — معرّف النافذة المُركَّزة حالياً</li>
+  <li><code>focus(id)</code>: يضبط التركيز، <code>blur()</code>: يُلغيه، <code>is_focused(id)</code>: للتحقق</li>
+  <li>التركيز يُوجّه أحداث الكيبورد للتطبيق الصحيح في <code>on_key()</code></li>
+</ul>
+<p><strong>layout.rs</strong> — قيود التخطيط (Layout Constraints):</p>
+<ul>
+  <li>يُعرّف <code>LayoutConstraints</code> التي تُقيّد حركة النوافذ بين الـ Topbar والـ Taskbar</li>
+  <li>يمنع النوافذ من الدخول في المنطقة المحمية للـ Taskbar</li>
+</ul>
+<p><strong>shortcut.rs</strong> — نظام اختصارات سطح المكتب (ShortcutStore):</p>
+<ul>
+  <li>يُدير قائمة ملفات <code>.vlk</code> الموجودة في <code>/home/user/Desktop</code></li>
+  <li>ملف <code>.vlk</code> يعني أن البرنامج مُثبَّت على سطح المكتب — أيقونته تظهر قابلة للسحب</li>
+  <li><code>has_shortcut(icon_idx)</code>: يتحقق من وجود <code>[app_name].vlk</code> في <code>desktop_fs</code></li>
+</ul>

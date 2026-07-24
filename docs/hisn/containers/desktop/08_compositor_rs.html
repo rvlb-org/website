@@ -1,0 +1,26 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/wm/compositor.rs</code></p>
+<p>
+  يُنسّق رسم كامل الشاشة بترتيب الطبقات الصحيح (Back-to-Front Rendering):
+</p>
+<pre style="background:#0d1117;color:#c9d1d9;padding:1rem;border-radius:8px;font-size:0.85rem;overflow-x:auto;">
+┌─────────────────────────────┐
+│ 7. Start Menu (if open)     │  ← أعلى الكل
+├─────────────────────────────┤
+│ 6. Taskbar (Always On Top)  │  ← دائماً يُرسم آخراً
+├─────────────────────────────┤
+│ 5. Topbar                   │
+├─────────────────────────────┤
+│ 4. Windows (Z-Ordered)      │  ← من الأدنى للأعلى
+├─────────────────────────────┤
+│ 3. Shortcut Icons (.vlk)    │
+├─────────────────────────────┤
+│ 2. Desktop Files            │
+├─────────────────────────────┤
+│ 1. Wallpaper (BG_COLOR)     │  ← fill_rect كامل
+└─────────────────────────────┘
+</pre>
+<p>الدالتان:</p>
+<ul>
+  <li><code>render(fb, state, zstack)</code>: رسم كامل الشاشة — تُستدعى عند أي تغيير يؤثر على الشاشة كلها</li>
+  <li><code>render_window(fb, state, window_id)</code>: رسم نافذة واحدة فقط — تُستدعى عند Scrollbar drag أو Hover داخل نافذة لتجنب إعادة رسم الكل وتقليل وميض الشاشة</li>
+</ul>

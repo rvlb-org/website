@@ -1,0 +1,16 @@
+<p>
+  النقطة الرئيسية للبرنامج. يُعرّف كل حاوية كـ <code>static</code> ثابت من نوع <code>AlignedElf</code> ويُدمج ملفها التنفيذي مباشرة في الذاكرة عبر <code>include_bytes!</code> (محاذاة 4096 بايت). ترتيب الإقلاع في <code>rust_main</code>:
+</p>
+<ol>
+  <li><code>BumpAllocator::reset()</code> — تهيئة الـ Heap</li>
+  <li><code>system::init_allocator()</code> — فحص BumpAllocator بكتابة وقراءة</li>
+  <li><code>system::init_slot_allocator()</code> — تهيئة CNode Slot Manager من <code>boot_info.empty</code></li>
+  <li><code>system::init_untyped_allocator()</code> — تهيئة مدير الذاكرة الخام</li>
+  <li><code>utils::pci_enumerate()</code> / <code>utils::net_setup()</code> — مسح PCI Bus وتهيئة VirtIO-Net</li>
+  <li>تشغيل الحاويات بالتسلسل عبر دوال <code>setup_*()</code></li>
+  <li>إنشاء <strong>Shared Memory</strong> مشترك بين <code>FS_Vault</code> و <code>Disk_Vault</code> عند العنوان الثابت <code>0x600000</code> بحجم 4KB باستخدام <code>seL4_CNode_Copy</code> + <code>seL4_X86_Page_Map</code></li>
+  <li>حلقة انتظار لا نهائية على <code>launch_ep</code>: تقرأ اسم التطبيق من MR[1..4] (4 كلمات × 8 بايت = 32 حرف)، ثم تُطلق <code>program_manager::launch_app_by_name()</code></li>
+</ol>
+<p>
+  قرار معماري: استخدام <code>seL4_Yield()</code> بدلاً من حلقة فارغة عند غياب الـ <code>launch_ep_cap</code> يمنع الـ CPU من الانشغال بلا فائدة (Busy-wait).
+</p>

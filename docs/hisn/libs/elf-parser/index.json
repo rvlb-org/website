@@ -1,0 +1,27 @@
+{
+  "id": "elf-parser",
+  "name": "elf-parser",
+  "type": "System Core",
+  "icon": "📦",
+  "iconClass": "pr-icon--elf-parser",
+  "created_at": "24 يونيو 2026 (04:37 GMT+3)",
+  "tags": [
+    "Bare-Metal",
+    "no_std"
+  ],
+  "overview": "00_overview.html",
+  "files": [
+    {
+      "name": "Cargo.toml",
+      "path": "libs/elf-parser/Cargo.toml",
+      "content_file": "01_Cargo_toml.html"
+    },
+    {
+      "name": "src/lib.rs",
+      "path": "libs/elf-parser/src/lib.rs",
+      "content_file": "02_src_lib_rs.html"
+    }
+  ],
+  "number": 3,
+  "timestamp": 1782265061
+}

@@ -1,0 +1,13 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/cursor.rs</code></p>
+<p>
+  يدير رسم مؤشر الماوس بتقنية <strong>Background Save/Restore</strong> لتجنب الوميض (Flickering):
+</p>
+<ul>
+  <li>الثوابت: <code>CUR_W=14, CUR_H=22</code> — أبعاد المؤشر بالبكسل</li>
+  <li><code>save_bg(fb, x, y, buf)</code>: يحفظ <code>CUR_W × CUR_H = 308</code> بكسلاً تحت موقع المؤشر في مصفوفة <code>CURSOR_BG</code> الثابتة</li>
+  <li><code>restore_bg(fb, x, y, buf)</code>: يُعيد رسم البكسلات المحفوظة قبل تحريك المؤشر</li>
+  <li><code>draw_cursor(fb, x, y)</code>: يرسم المؤشر كمثلث أبيض مع حدود سوداء باستخدام حلقات بكسل مباشرة على الـ Framebuffer</li>
+</ul>
+<p>
+  التسلسل في كل دورة: <code>restore_bg → تحديث cx,cy → save_bg → draw_cursor</code>. يُنفَّذ هذا دائماً في نهاية الدورة حتى لو لم تتغير الشاشة.
+</p>

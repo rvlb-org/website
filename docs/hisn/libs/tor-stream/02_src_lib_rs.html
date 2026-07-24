@@ -1,0 +1,1 @@
+<p>يُعرّف <code>Stream</code> (تدفق TCP واحد بـ Circular Buffer 4KB + حالة Connecting/Open/Closing) و<code>StreamManager</code> لإدارة 8 تدفقات متزامنة. دالة <code>write</code> تُقسّم البيانات تلقائياً إلى خلايا (كل خلية بحد 498B) وتُمررها عبر <code>Circuit</code>. دالة <code>connect</code> تُنشئ تدفقاً جديداً وتُرسل <code>Relay Begin</code> بمسار المضيف.</p>

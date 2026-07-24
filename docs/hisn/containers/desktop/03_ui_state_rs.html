@@ -1,0 +1,20 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/mod.rs</code></p>
+<p>
+  يُعرّف <code>UIState</code> — الهيكل المركزي الذي يحمل كامل حالة سطح المكتب في مكان واحد. الحقول الرئيسية:
+</p>
+<ul>
+  <li><code>windows: [Window; MAX_ICONS]</code> — النوافذ المفتوحة</li>
+  <li><code>icons: [DesktopIcon; MAX_ICONS]</code> — أيقونات الـ Dock السفلي</li>
+  <li><code>calc_state, files_state, editor_state, viewer_state</code> — حالة كل تطبيق مدمج</li>
+  <li><code>desktop_fs: FilesBackend</code> — نسخة مخصصة لجلب ملفات <code>/home/user/Desktop</code></li>
+  <li><code>zorder: ZOrderStack, focus: FocusManager, taskbar_mgr: TaskbarManager</code> — وحدات WM</li>
+  <li><code>drag: DragState</code> — حالة السحب والإفلات الحالية</li>
+</ul>
+<p>الدوال الرئيسية:</p>
+<ul>
+  <li><code>init(ptr)</code>: يُهيئ الهيكل مباشرة في static storage. يقرأ <code>PROGRAM_REGISTRY</code> ويستخرج أسماء التطبيقات وبكسلاتها لبناء الأيقونات. عنوان كل حزمة SVP = offset سابق + <code>1088 + elf_size</code>.</li>
+  <li><code>on_press(cx, cy)</code>: يتحقق بالترتيب: Taskbar → Dock → نوافذ (Z-Order) → ملفات Desktop → Titlebar drag → أيقونات. يُوجّه النقر للـ handler الصحيح.</li>
+  <li><code>on_drag(cx, cy)</code>: يُطبّق <code>DragTarget</code> — يُحرّك النافذة أو الأيقونة أو Scrollbar حسب النوع.</li>
+  <li><code>on_key(ch)</code>: يُوجّه للتطبيق المُركَّز (focused) فقط.</li>
+  <li><code>handle_pending_open()</code>: يفتح ملفاً بالبرنامج المناسب (editor للنصوص، viewer للصور) عبر <code>open_file()</code> / <code>open_image()</code> ويُحدّث عنوان النافذة في Taskbar.</li>
+</ul>

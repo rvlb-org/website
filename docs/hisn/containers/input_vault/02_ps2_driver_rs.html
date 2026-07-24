@@ -1,0 +1,38 @@
+<p><strong>المسارات:</strong> <code>libs/ps2-driver/src/lib.rs</code> | <code>keyboard.rs</code> | <code>mouse.rs</code></p>
+<p>
+  المكتبة المسؤولة عن التواصل منخفض المستوى مع متحكم PS/2 ومعالجة البيانات الخام.
+</p>
+
+<h3>1. الاتصال بالمنافذ (lib.rs)</h3>
+<p>
+  تُنفذ <code>noop_read</code> و <code>noop_write</code> باستخدام استدعاءات <code>seL4_Call</code> مع رسائل محددة:
+  <code>X86_IOPORT_IN8 (48)</code> و <code>X86_IOPORT_OUT8 (51)</code>. يُتيح ذلك قراءة وكتابة بايت واحد بأمان.
+</p>
+<p><strong>تهيئة الماوس (init_mouse):</strong> عملية معقدة تتطلب خطوات دقيقة مع المتحكم:</p>
+<ul>
+  <li>إرسال <code>0xA8</code> لمنفذ الأوامر (0x64) لتفعيل منفذ الماوس (Auxiliary Device).</li>
+  <li>إرسال <code>0x20</code> (Read Config Byte)، ثم قراءة الإعدادات الحالية.</li>
+  <li>تعديل البايت: تفعيل مقاطعات IRQ1 (bit 0) و IRQ12 (bit 1)، وإلغاء تعطيل الساعات (bits 4,5).</li>
+  <li>إرسال <code>0x60</code> (Write Config Byte) ثم كتابة الإعدادات المعدلة.</li>
+  <li>إرسال <code>0xD4</code> لتوجيه الأوامر التالية مباشرة للماوس، ثم إرسال <code>0xF6</code> (استعادة الافتراضيات) و <code>0xF4</code> (تفعيل إرسال البيانات).</li>
+</ul>
+
+<h3>2. معالجة الكيبورد (keyboard.rs)</h3>
+<p>
+  تستخدم مصفوفات ثابتة (Look-up tables) بحجم 120 حرف لفك تشفير <strong>Scan Code Set 1</strong>:
+  <code>KEYMAP</code> و <code>SHIFT_KEYMAP</code>.
+</p>
+<ul>
+  <li>تحتفظ بحالة الأزرار المُعدِّلة: <code>shift_pressed</code>، <code>caps_lock</code>، <code>ctrl_pressed</code>.</li>
+  <li>عند الضغط على مفتاح (bit 7 غير مفعل)، تُحوّل الـ scancode إلى حرف ASCII. تدعم اختصارات Ctrl (مثلاً Ctrl+A يُنتج البايت <code>0x01</code>).</li>
+</ul>
+
+<h3>3. معالجة الماوس (mouse.rs)</h3>
+<p>
+  تستقبل بيانات الماوس على شكل حزم (Packets) مكونة من 3 بايتات.
+</p>
+<ul>
+  <li><code>process_byte</code>: يجمع البايتات. إذا كان هذا أول بايت، يتحقق أن (bit 3) مفعل (قيمة 1) لضمان التزامن (Sync).</li>
+  <li><strong>البايت 0:</strong> يحتوي على حالة الأزرار (يسار، يمين، وسط) في أول 3 بتات، وإشارات الاتجاه (Sign bits) للـ X و Y في البتات 4 و 5.</li>
+  <li><strong>البايت 1 و 2:</strong> مقدار الإزاحة (Movement) لـ X و Y. يتم تحويل Y إلى قيمة سالبة لتتطابق مع إحداثيات الشاشة (حيث 0,0 في أعلى اليسار).</li>
+</ul>

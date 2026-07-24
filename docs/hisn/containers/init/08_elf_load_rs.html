@@ -1,0 +1,20 @@
+<p>
+  تنفيذ تحميل مقاطع ELF عبر تقنية <strong>Scratch Mapping</strong>:
+</p>
+<ul>
+  <li>
+    <code>map_stack()</code>: يُخصّص 32 صفحة (4KB × 32 = 128KB) ويربطها في VSpace الحاوية الجديدة بدءاً من <code>0x401000</code>. الـ RSP يُضبط لاحقاً على <code>0x421000</code> (أعلى المكدس).
+  </li>
+  <li>
+    <code>load_elf_segments()</code>: تقنية نقل البيانات عبر وسيط:
+    <ol>
+      <li>يقرأ كل مقطع قابل للتحميل (<code>PT_LOAD</code>) من ملف ELF</li>
+      <li>لكل صفحة: يُنشئ Frame جديدة، يربطها في VSpace الـ <code>init</code> عند <code>scratch_vaddr</code></li>
+      <li>يُصفّر الصفحة بالكامل ثم ينسخ البيانات من ELF إليها عبر <code>write_volatile</code> (مهم لتجنب تحسينات المترجم التي قد تتجاهل الكتابة)</li>
+      <li>يُلغي ربط الصفحة من VSpace الـ init (<code>seL4_X86_Page_Unmap</code>)</li>
+      <li>يعيد ربطها في VSpace الحاوية الجديدة عند عنوانها النهائي</li>
+      <li><code>seL4_Yield()</code> لكل صفحة: يمنع الـ init من احتكار الـ CPU أثناء عملية النسخ الطويلة</li>
+    </ol>
+    يُعالج حالة عدم محاذاة <code>p_vaddr</code> للصفحة (<code>voff_aligned = voff_raw &amp; !0xFFF</code>) والفرق بين <code>p_filesz</code> و <code>p_memsz</code> (المنطقة الزائدة تُصفَّر — هي قسم BSS).
+  </li>
+</ul>

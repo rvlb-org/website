@@ -1,0 +1,6 @@
+<p>الملف الوحيد في المكتبة ويحتوي على كامل المنطق. يُعرّف ثلاثة هياكل رئيسية:</p>
+<ul>
+  <li><strong><code>Elf64_Ehdr</code></strong> — الترويسة الرئيسية للملف التنفيذي: تتضمن الرقم السحري للتحقق <code>0x7F 'E' 'L' 'F'</code>، نقطة دخول البرنامج <code>e_entry</code>، وعدد المقاطع <code>e_phnum</code>.</li>
+  <li><strong><code>Elf64_Phdr</code></strong> — ترويسة مقطع البرنامج (Program Header): تخبر أين يُحمَّل كل جزء في الذاكرة الافتراضية (<code>p_vaddr</code>) وحجمه الحقيقي مقابل حجمه في الذاكرة (الفرق يملأ بـ BSS بصفر).</li>
+  <li><strong><code>ElfParser</code></strong> — المحلل الرئيسي: يتحقق من صحة الملف عند الإنشاء، ويعرض <code>loadable_segments()</code> كـ Iterator يُصفّي تلقائياً المقاطع ذات النوع <code>PT_LOAD</code> فقط.</li>
+</ul>

@@ -1,0 +1,429 @@
+
+<style>
+  /* ═══ RVLB THEME OVERRIDE ═══ */
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg:         #030303;
+    --surface:    #0d0d0d;
+    --surface2:   #141414;
+    --border:     rgba(255,255,255,0.07);
+    --accent:     #00d4ff;
+    --accent2:    #ff6b35;
+    --text-main:  #e8e8e8;
+    --text-muted: #888;
+    --radius:     14px;
+    --glow:       0 0 30px rgba(0,212,255,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-main);
+    font-family: 'Cairo', sans-serif;
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── شريط التنقل العلوي ── */
+  .rvlb-topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: rgba(3,3,3,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 9999;
+    gap: 16px;
+  }
+  .rvlb-topbar-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+  .rvlb-topbar-title {
+    font-size: 14px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rvlb-topbar-back {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 5px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    transition: all 0.25s;
+  }
+  .rvlb-topbar-back:hover {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* ── تعديل الـ body padding ── */
+  body > *:not(.rvlb-topbar) { padding-top: 56px !important; }
+
+  /* ── بطاقات وعناصر ── */
+  pre, code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #a8ff78;
+    padding: 2px 8px;
+  }
+  pre { padding: 16px; overflow-x: auto; line-height: 1.7; }
+  pre code { background: none; border: none; padding: 0; }
+
+  h1, h2, h3, h4 {
+    font-family: 'Cairo', sans-serif;
+    color: var(--text-main);
+    line-height: 1.4;
+  }
+  h1 { font-size: 2rem; font-weight: 900; margin-bottom: 16px; }
+  h2 { font-size: 1.4rem; font-weight: 800; margin: 24px 0 12px; color: var(--accent); }
+  h3 { font-size: 1.1rem; font-weight: 700; margin: 16px 0 8px; }
+
+  p { line-height: 1.8; color: var(--text-muted); margin-bottom: 12px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  strong { color: var(--text-main); font-weight: 700; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    text-align: right;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  td {
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    color: var(--text-muted);
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+</style>
+<style>
+  /* Tabs CSS */
+  .inner-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    overflow-x: auto;
+  }
+  .inner-tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .inner-tab-btn:hover {
+    background: var(--surface2);
+    color: var(--text-main);
+  }
+  .inner-tab-btn.active {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .inner-tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .inner-tab-content.active {
+    display: block;
+  }
+
+  /* Grid CSS */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+    animation: fadeIn 0.4s ease;
+  }
+  .grid-square {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .grid-square:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    background: rgba(0, 212, 255, 0.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+  .square-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+  }
+  .square-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-main);
+    word-wrap: break-word;
+  }
+  .back-btn {
+    margin-bottom: 20px; 
+    border: 1px solid var(--accent); 
+    color: var(--accent);
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s;
+  }
+  .back-btn:hover {
+    background: var(--accent);
+    color: #000;
+  }
+  
+  /* Accordion CSS */
+  .accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  .accordion-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .accordion-item:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 15px rgba(0,212,255,0.08);
+  }
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    gap: 12px;
+  }
+  .accordion-header:hover { color: var(--accent); }
+  .accordion-arrow {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .accordion-item.open .accordion-arrow { transform: rotate(90deg); }
+  .accordion-body {
+    display: none;
+    padding: 0 20px 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.8;
+    animation: fadeIn 0.3s ease;
+  }
+  .accordion-item.open .accordion-body { display: block; }
+
+  /* Milestone Card CSS */
+  .milestone-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 0;
+  }
+  .milestone-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .milestone-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.08);
+  }
+  .milestone-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    gap: 15px;
+  }
+  .milestone-icon {
+    font-size: 24px;
+    background: rgba(0, 212, 255, 0.1);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+  }
+  .milestone-meta {
+    flex: 1;
+  }
+  .milestone-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+  .milestone-date {
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-muted);
+  }
+  .milestone-arrow {
+    color: var(--text-muted);
+    transition: transform 0.3s;
+    font-size: 12px;
+  }
+  .milestone-card.open .milestone-arrow {
+    transform: rotate(90deg);
+  }
+  .milestone-body {
+    display: none;
+    padding: 0 20px 20px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .milestone-card.open .milestone-body {
+    display: block;
+    animation: fadeIn 0.4s ease;
+  }
+  .milestone-tag {
+    display: inline-block;
+    background: rgba(255, 107, 53, 0.1);
+    color: var(--accent2);
+    border: 1px solid rgba(255, 107, 53, 0.3);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+</style>
+<script>
+  function openInnerTab(evt, tabId, groupId) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("inner-group-" + groupId);
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+      tabcontent[i].classList.remove("active");
+    }
+    var btnContainer = evt.currentTarget.parentElement;
+    tablinks = btnContainer.getElementsByClassName("inner-tab-btn");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].classList.remove("active");
+    }
+    document.getElementById(tabId).style.display = "block";
+    setTimeout(() => { document.getElementById(tabId).classList.add("active"); }, 10);
+    evt.currentTarget.classList.add("active");
+  }
+
+  function openGridItem(groupId, contentId) {
+    document.getElementById('grid-' + groupId).style.display = 'none';
+    var contents = document.getElementsByClassName('grid-content-group-' + groupId);
+    for (var i=0; i < contents.length; i++) {
+        contents[i].style.display = 'none';
+    }
+    var contentDiv = document.getElementById(contentId);
+    contentDiv.style.display = 'block';
+    contentDiv.style.animation = 'fadeIn 0.4s ease';
+  }
+  
+  function backToGrid(groupId) {
+    var contents = document.getElementsByClassName('grid-content-group-' + groupId);
+    for (var i=0; i < contents.length; i++) {
+        contents[i].style.display = 'none';
+    }
+    var gridDiv = document.getElementById('grid-' + groupId);
+    gridDiv.style.display = 'grid';
+    gridDiv.style.animation = 'fadeIn 0.4s ease';
+  }
+
+  function toggleAccordion(el) {
+    el.closest('.accordion-item').classList.toggle('open');
+  }
+
+  function toggleMilestone(el) {
+    el.closest('.milestone-card').classList.toggle('open');
+  }
+
+  function openNestedGridItem(gridId, contentId) {
+    document.getElementById(gridId).style.display = 'none';
+    var contents = document.getElementsByClassName('nested-content-group-' + gridId);
+    for (var i=0; i < contents.length; i++) {
+        contents[i].style.display = 'none';
+    }
+    var contentDiv = document.getElementById(contentId);
+    contentDiv.style.display = 'block';
+    contentDiv.style.animation = 'fadeIn 0.4s ease';
+  }
+  
+  function backToNestedGrid(gridId) {
+    var contents = document.getElementsByClassName('nested-content-group-' + gridId);
+    for (var i=0; i < contents.length; i++) {
+        contents[i].style.display = 'none';
+    }
+    var gridDiv = document.getElementById(gridId);
+    gridDiv.style.display = 'grid';
+    gridDiv.style.animation = 'fadeIn 0.4s ease';
+  }
+</script>

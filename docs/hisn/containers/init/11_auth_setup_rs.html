@@ -1,0 +1,12 @@
+<p>
+  <code>setup_auth_vault()</code> — يبني حاوية Auth بنفس الخطوات القياسية، مع خطوتين إضافيتين تُميّزانها:
+</p>
+<ul>
+  <li>
+    <strong>نسخ Endpoint الـ Auth إلى init</strong>: <code>seL4_CNode_Copy(2, auth_ep_in_init, 64, cnode, 0, 12, 0xF)</code> — يضع نسخة من Endpoint الـ Auth في CNode الـ init. الـ <code>depth=12</code> مقابل <code>depth=64</code> هنا مهم: 12 = عمق CNode الجديد (يعني "ابحث داخل هذا الـ CNode بعمق 12 بت")، 64 = CNode الجذر (init) بعمق كامل.
+  </li>
+  <li>
+    <strong>تمرير FS_EP لـ Auth</strong>: <code>seL4_CNode_Copy(cnode, fs_ep_in_auth=1, 12, 2, fs_ep, 64, 0xF)</code> — يضع نسخة من Endpoint الـ FS_Vault في slot 1 من CNode الخاص بـ Auth_Vault. هكذا تستطيع Auth الوصول لـ FS عند الحاجة لحفظ سجلات الأمان.
+  </li>
+</ul>
+<p>Scratch address: <code>0xD00000</code></p>

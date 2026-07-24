@@ -1,0 +1,25 @@
+<p><strong>المسار:</strong> <code>libs/security-policy/src/lib.rs</code></p>
+<p>
+  مكتبة مشتركة تُعرّف نظام الـ Badges. تُستخدم من قِبل Auth_Vault (لإصدار الـ Badges) وFS_Vault (للتحقق منها).
+</p>
+<p><strong>هيكل <code>PolicyBadge</code>:</strong></p>
+<ul>
+  <li><code>app_id: u16</code> — هوية التطبيق</li>
+  <li><code>permission: u8</code> — (0=None, 1=ReadOnly, 2=ReadWrite)</li>
+  <li><code>path_hash: u32</code> — FNV-1a hash للمسار المسموح به</li>
+</ul>
+<p><strong>ترميز الـ Badge كـ 64-bit Word (to_badge_word):</strong></p>
+<pre style="background:#0d1117;color:#c9d1d9;padding:1rem;border-radius:8px;font-size:0.85rem;">
+bit[63:48] = app_id   (16 bits)
+bit[47:40] = permission (8 bits)
+bit[39:32] = (غير مستخدم)
+bit[31:00] = path_hash  (32 bits)
+</pre>
+<p><strong>دالة <code>hash_path(path)</code>:</strong> خوارزمية FNV-1a 32-bit:</p>
+<ul>
+  <li>تبدأ بـ <code>hash = 0x811c9dc5</code> (FNV offset basis)</li>
+  <li>لكل بايت: <code>hash = (hash XOR byte) × 0x01000193</code> (FNV prime)</li>
+</ul>
+<p>
+  <code>hash_path("/home/user")</code> يُعطي نفس القيمة دائماً — يجب أن يتطابق بين ما تُصدره Auth_Vault وما تتحقق منه FS_Vault لقبول الطلب.
+</p>

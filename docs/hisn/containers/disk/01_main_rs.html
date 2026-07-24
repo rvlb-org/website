@@ -1,0 +1,30 @@
+<p><strong>المسار:</strong> <code>containers/disk/src/main.rs</code></p>
+<p>
+  يحتوي على تطبيق مشغل <strong>ATA PIO Mode</strong>.
+</p>
+<h3>1. استدعاءات المنافذ (Port I/O)</h3>
+<ul>
+  <li><code>outb</code> / <code>outw</code>: تستخدم استدعاء <code>seL4_Call</code> مع أوامر <code>X86_IOPORT_OUT8/16</code> لإرسال البيانات للقرص.</li>
+  <li><code>inb</code> / <code>inw</code>: تستخدم <strong>Inline Assembly</strong> للـ Syscall لضمان استرجاع القيمة المقروءة من السجل (Register) بشكل مباشر وسريع لتفادي بعض قيود مكتبة seL4-sys الحالية.</li>
+</ul>
+
+<h3>2. منطق مشغل ATA PIO</h3>
+<ul>
+  <li><code>ata_wait_ready</code>: يقرأ منفذ الحالة (0x1F7) وينتظر حتى يصبح البت BSY (bit 7) صفراً و RDY (bit 6) واحداً.</li>
+  <li><code>ata_wait_drq</code>: ينتظر حتى يُشير القرص لاستعداده لنقل البيانات (DRQ bit 3).</li>
+  <li><code>read_sector</code> و <code>write_sector</code>:
+    <ol>
+      <li>يتم إرسال عنوان القطاع عبر نظام <strong>LBA28</strong> (تقسيم 28 بت على المنافذ 0x1F3, 0x1F4, 0x1F5, وآخر 4 بتات في 0x1F6).</li>
+      <li>يتم إرسال أمر القراءة (<code>0x20</code>) أو الكتابة (<code>0x30</code>) لمنفذ الأوامر (0x1F7).</li>
+      <li>تتم قراءة/كتابة 256 كلمة (Words - 16-bit) عبر منفذ البيانات (0x1F0)، ما يُعادل قطاعاً كاملاً (512 بايت).</li>
+      <li>في حالة الكتابة، يتم إرسال أمر تفريغ الذاكرة المخبأة (Cache Flush <code>0xE7</code>) لضمان حفظ البيانات.</li>
+    </ol>
+  </li>
+</ul>
+
+<h3>3. حلقة الـ IPC (Event Loop)</h3>
+<p>تستمع لطلبين رئيسيين:</p>
+<ul>
+  <li><code>ReadSector (mr[1] = LBA)</code>: يقرأ القطاع ويضعه مباشرة في الذاكرة المشتركة <code>0x600000</code>.</li>
+  <li><code>WriteSector (mr[1] = LBA)</code>: يقرأ 512 بايت من الذاكرة المشتركة <code>0x600000</code> ويكتبها في القطاع.</li>
+</ul>

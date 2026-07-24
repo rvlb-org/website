@@ -1,0 +1,12 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/draw.rs</code></p>
+<p>
+  يحتوي على دوال رسم جميع عناصر الواجهة على الـ Framebuffer مباشرة. الدوال الرئيسية:
+</p>
+<ul>
+  <li><code>draw_topbar_pub(fb)</code>: يرسم الشريط العلوي بلون <code>0x1A1A2E</code> مع تأثير تدرج لوني ناعم</li>
+  <li><code>draw_taskbar_pub(fb, state)</code>: يرسم الشريط السفلي المحمي (Always On Top) بارتفاع <code>TASKBAR_H=48px</code> مع أزرار التطبيقات المفتوحة</li>
+  <li><code>draw_dock_only(fb, state)</code>: يرسم Dock مركزي في الأسفل — يحسب العرض الكلي ديناميكياً: <code>total_w = start_btn(60) + 8 + n_apps×44 + gaps×10 + 16</code></li>
+  <li><code>draw_desktop_files_pub(fb, state)</code>: يرسم ملفات <code>/home/user/Desktop</code> كأيقونات 48×56px على اليمين، يتجاهل ملفات <code>.vlk</code> (تُظهر كأيقونات برامج)</li>
+  <li><code>draw_start_menu_pub(fb, state)</code>: يرسم قائمة Start كـ Panel شفاف فوق الـ Dock</li>
+  <li><code>PROGRAM_REGISTRY</code>: البيانات الثنائية لكل تطبيقات SVP مدمجة مباشرة في الكود</li>
+</ul>

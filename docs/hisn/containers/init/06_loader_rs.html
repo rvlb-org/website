@@ -1,0 +1,17 @@
+<p>
+  المُنسِّق الرئيسي لتحميل ملفات ELF وتشغيل الحاويات. الهيكل <code>ContainerLoader</code> يحمل:
+</p>
+<ul>
+  <li><code>elf_data: &amp;[u8]</code> — مؤشر للـ ELF المدمج</li>
+  <li><code>scratch_vaddr: usize</code> — عنوان مؤقت في VSpace الـ init لنسخ بيانات ELF قبل تخصيصها للحاوية الجديدة (فريد لكل حاوية)</li>
+</ul>
+<p>تسلسل <code>load_and_start()</code> (7 خطوات):</p>
+<ol>
+  <li><strong>ELF Parse</strong>: التحقق من Magic Number وقراءة <code>e_entry</code></li>
+  <li><strong>ASID</strong>: <code>seL4_X86_ASIDPool_Assign(6, vspace)</code> — ربط VSpace بـ ASID Pool (slot 6 هو ASID Pool الافتراضي)</li>
+  <li><strong>VSpace Paging</strong>: بناء هرم الـ Paging (PDPT→PD→6×PT) في VSpace الحاوية الجديدة</li>
+  <li><strong>Scratch Paging</strong>: بناء PT في VSpace الـ init للعنوان <code>scratch_vaddr</code></li>
+  <li><strong>IPC Buffer Map</strong>: ربط صفحة الـ IPC Buffer عند <code>0x400000</code></li>
+  <li><strong>Stack</strong>: تخصيص 32 صفحة (128KB) عند <code>0x401000</code>، الـ RSP يبدأ من <code>0x421000</code></li>
+  <li><strong>ELF Load + TCB Start</strong>: نسخ مقاطع ELF عبر Scratch، تهيئة الـ TCB، والـ Resume</li>
+</ol>

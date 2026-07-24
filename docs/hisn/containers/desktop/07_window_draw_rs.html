@@ -1,0 +1,15 @@
+<p><strong>المسار:</strong> <code>containers/desktop/src/desktop_ui/window_draw.rs</code></p>
+<p>
+  يرسم محتوى النافذة بالكامل على الـ Framebuffer:
+</p>
+<ul>
+  <li><code>draw_window(fb, win, state)</code>: يرسم الإطار + شريط العنوان + المحتوى. يُوجّه رسم المحتوى حسب <code>win.app_name</code>:
+    <ul>
+      <li><code>"calc"</code> → <code>calc_ui::ui::calculator::render()</code></li>
+      <li><code>"files"</code> → <code>files_ui::ui::file_manager::render()</code></li>
+      <li><code>"editor"</code> → <code>editor_ui::ui::text_editor::render()</code></li>
+      <li><code>"viewer"</code> → <code>viewer_ui::ui::image_viewer::render()</code></li>
+    </ul>
+  </li>
+  <li><code>draw_window_titlebar(fb, win)</code>: يرسم شريط العنوان مع: لون خلفية متدرج، النص، وأزرار الـ (×  □  —) بألوانها المعيارية</li>
+</ul>

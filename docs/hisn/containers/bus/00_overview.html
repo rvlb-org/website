@@ -1,0 +1,14 @@
+<p>
+  حاوية <code>Bus_Vault</code> هي <strong>الناقل المركزي (Message Broker)</strong> للنظام. بدلاً من أن تتحدث التطبيقات مع <code>FS_Vault</code> و <code>Auth_Vault</code> مباشرة، تُرسل جميع طلباتها لـ <code>Bus_Vault</code> التي تُوجّهها وتُنفّذها. هذا يُحقق:
+</p>
+<ul>
+  <li><strong>تمركز سياسة الأمان</strong>: نقطة واحدة لتطبيق التحقق من الصلاحيات قبل أي عملية</li>
+  <li><strong>العمليات المركّبة</strong>: <code>MoveFile = CopyFile + DeleteFile</code> مُنفَّذة محلياً دون تعقيد العملاء</li>
+  <li><strong>خدمة مشتركة</strong>: الحافظة (Clipboard) مُخزَّنة في ذاكرة Bus_Vault — متاحة لجميع التطبيقات</li>
+</ul>
+<p>خريطة الـ Capability Slots:</p>
+<ul>
+  <li><strong>Slot 0</strong>: Endpoint الخاص بـ Bus_Vault (يستمع عليه)</li>
+  <li><strong>Slot 1</strong>: Endpoint الـ FS_Vault (يُرسل إليه عمليات الملفات)</li>
+  <li><strong>Slot 2</strong>: Endpoint الـ Auth_Vault (للتحقق من الصلاحيات مستقبلاً)</li>
+</ul>

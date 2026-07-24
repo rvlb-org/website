@@ -1,0 +1,19 @@
+<p><strong>المسار:</strong> <code>containers/fs/src/main.rs</code></p>
+<p>
+  يُعرّف جدول أوامر IPC الكاملة. كل أمر يتحقق من <code>PolicyBadge</code> أولاً قبل التنفيذ. جدول الأوامر:
+</p>
+<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+  <tr style="background:#161b22;color:#c9d1d9;"><th style="padding:6px 10px;text-align:left;">cmd (mr[0])</th><th style="padding:6px 10px;text-align:left;">الوظيفة</th><th style="padding:6px 10px;text-align:left;">ملاحظة</th></tr>
+  <tr style="border-bottom:1px solid #30363d;"><td style="padding:5px 10px;">1</td><td style="padding:5px 10px;">ListDir</td><td style="padding:5px 10px;">يُعيد 10 entries بحجم 12 بايت لكل منها: 11 حرف اسم + byte flag (dir=0x01)</td></tr>
+  <tr style="border-bottom:1px solid #30363d;background:#0d1117;"><td style="padding:5px 10px;">2</td><td style="padding:5px 10px;">GetShortcut</td><td style="padding:5px 10px;">يُعيد ملفات .vlk من Desktop واحداً بالترتيب (mr[2]=index). يُحلّل Name/Target/IconID</td></tr>
+  <tr style="border-bottom:1px solid #30363d;"><td style="padding:5px 10px;">3</td><td style="padding:5px 10px;">Delete</td><td style="padding:5px 10px;">path في payload، يتبعه flush_to_disk تلقائياً</td></tr>
+  <tr style="border-bottom:1px solid #30363d;background:#0d1117;"><td style="padding:5px 10px;">4</td><td style="padding:5px 10px;">Rename</td><td style="padding:5px 10px;">old_path + NULL + new_path في payload</td></tr>
+  <tr style="border-bottom:1px solid #30363d;"><td style="padding:5px 10px;">5</td><td style="padding:5px 10px;">Mkdir</td><td style="padding:5px 10px;">path في payload</td></tr>
+  <tr style="border-bottom:1px solid #30363d;background:#0d1117;"><td style="padding:5px 10px;">6</td><td style="padding:5px 10px;">CreateFile</td><td style="padding:5px 10px;">يُنشئ ملف فارغ (write_file(path, b""))</td></tr>
+  <tr style="border-bottom:1px solid #30363d;"><td style="padding:5px 10px;">7</td><td style="padding:5px 10px;">CopyFile</td><td style="padding:5px 10px;">src_path + NULL + dst_path في payload</td></tr>
+  <tr style="border-bottom:1px solid #30363d;background:#0d1117;"><td style="padding:5px 10px;">8</td><td style="padding:5px 10px;">ReadFile</td><td style="padding:5px 10px;">يُعيد البيانات في reply.payload (حتى MAX_PAYLOAD بايت)</td></tr>
+  <tr><td style="padding:5px 10px;">9</td><td style="padding:5px 10px;">WriteFile</td><td style="padding:5px 10px;">path + NULL + content في payload. يحذف الملف القديم أولاً إن وُجد</td></tr>
+</table>
+<p>
+  الدالة المساعدة <code>is_direct_child(entry_path, parent)</code>: تتحقق أن المسار فرع مباشر من المجلد الأب (لا مجلدات فرعية أعمق) — تُستخدم في ListDir لإعادة محتوى مجلد معين فقط دون التداخل مع المجلدات المتفرعة.
+</p>

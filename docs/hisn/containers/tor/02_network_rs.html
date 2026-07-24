@@ -1,0 +1,13 @@
+<p><strong>المسار:</strong> <code>containers/tor/src/network.rs</code></p>
+<p>
+  يُوفر بيئة وهمية (Mock Environment) لمكتبة <code>smoltcp</code>، لأن الوصول الفعلي لبطاقة الشبكة (VirtIO-Net/DMA) يحتاج إلى تعريفات أجهزة معقدة جداً غير متوفرة في الإصدار الحالي.
+</p>
+<p><strong>الهياكل:</strong></p>
+<ul>
+  <li><code>DummyDevice</code>: يُطبّق واجهة <code>smoltcp::phy::Device</code> (MTU: 1500)</li>
+  <li><code>DummyRxToken</code>: يُرجع 0 بايت كحزم واردة لعدم وجود إنترنت حقيقي</li>
+  <li><code>DummyTxToken</code>: يستقبل الحزم المرسلة من <code>smoltcp</code> ويضعها في Buffer ليتم تجاهلها بأمان</li>
+</ul>
+<p>
+  هذا الملف أساسي لاختبار طبقة <strong>Tor / HTTP</strong> وبناء دوال الـ Routing، حتى لو لم يتم إرسال البيانات للإنترنت الحقيقي.
+</p>

@@ -1,0 +1,24 @@
+<p><strong>المسارات:</strong> <code>crypto_handlers.rs</code> | <code>crypto_handlers_shared.rs</code> | <code>libs/vault-crypto/</code></p>
+<p>
+  يتعامل هذا الجزء مع التشفير الموثق (Authenticated Encryption) باستخدام <code>ChaCha20-Poly1305</code>.
+</p>
+
+<h3>1. رياضيات التشفير (vault-crypto)</h3>
+<ul>
+  <li><strong>ChaCha20:</strong> خوارزمية تشفير تيار (Stream Cipher). تُولد المفاتيح عبر دالة <code>block_fn</code>.</li>
+  <li><strong>Poly1305:</strong> خوارزمية مصادقة رسائل (MAC). تُولد مفتاحها الخاص من أول Block لدالة ChaCha20 (عداد 0)، ثم تُستخدم لتوثيق النص المُشفر (Ciphertext) والبيانات المرتبطة (AAD).</li>
+  <li><strong>AEAD Flow:</strong> يتم حساب الـ Tag بدمج (AAD + Padding) ثم (Ciphertext + Padding) ثم (أطوال الـ AAD والـ Ciphertext). هذا يمنع هجمات التعديل (Padding Oracle Attacks).</li>
+</ul>
+
+<h3>2. التشفير عبر رسائل IPC (Payload)</h3>
+<ul>
+  <li><code>handle_encrypt</code>: يقرأ 8 بايتات من الـ Payload الخاص برسالة הـ IPC. يقوم بتشفيرها، ثم يُولد 16 بايت للـ Tag (MAC). المُخرجات الكلية = 24 بايت تُرسل في رسالة الرد.</li>
+  <li><code>handle_decrypt</code>: يقوم بالتحقق من الـ Tag المرفق. <strong>إذا فشل التحقق، يُرفض فك التشفير تماماً</strong> ويُرسل خطأ.</li>
+</ul>
+
+<h3>3. التشفير عبر الذاكرة المشتركة (Shared Memory)</h3>
+<p>الرسائل الطويلة (حتى 4000 بايت) تُعالج عبر العنوان المشترك <code>0x5F0000</code>:</p>
+<ul>
+  <li><code>handle_encrypt_shared</code>: يشفر البيانات <em>في مكانها (In-Place)</em> داخل الذاكرة المشتركة، ثم يُلحق 16 بايت للـ Tag في نهاية البيانات.</li>
+  <li><code>handle_decrypt_shared</code>: يقرأ البيانات والـ Tag من نفس الذاكرة المفتوحة، يتحقق، ثم يفك التشفير في مكانها.</li>
+</ul>

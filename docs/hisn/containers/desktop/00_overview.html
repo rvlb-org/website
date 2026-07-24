@@ -1,0 +1,11 @@
+<p>
+  حاوية <code>Desktop</code> هي الطبقة الأكثر تعقيداً في النظام — تجمع بين <strong>نظام نوافذ متكامل</strong>، وإدارة مدخلات الماوس والكيبورد، والتواصل مع FS/Auth/Init عبر IPC، والرسم المباشر على الـ Framebuffer بدون Heap ديناميكي. تتألف من ثلاثة أقسام رئيسية:
+</p>
+<ul>
+  <li><strong>src/</strong>: نقطة الدخول وإدارة المؤشر</li>
+  <li><strong>desktop_ui/</strong>: حالة الـ UI الكاملة + منطق الأحداث + الرسم</li>
+  <li><strong>desktop_ui/wm/</strong>: Window Manager (Compositor, Z-Order, Taskbar, Focus, Layout, Shortcuts)</li>
+</ul>
+<p>
+  قاعدة التصميم: لا <code>alloc</code> ديناميكي في حلقة الأحداث — كل الحالة في <code>UIState</code> المُخزَّنة في <code>static mut</code> ثابت بحجم ثابت. الـ <code>BumpAllocator</code> يُصفَّر في كل دورة لمنع تراكم الذاكرة.
+</p>

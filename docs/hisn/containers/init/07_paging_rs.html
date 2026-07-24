@@ -1,0 +1,18 @@
+<p>
+  بناء هياكل الـ Paging لـ x86_64 (4 مستويات: PML4→PDPT→PD→PT).
+</p>
+<p>الدالتان:</p>
+<ul>
+  <li>
+    <code>build_vspace_paging()</code>: تبني هرم الـ Paging الكامل لـ VSpace الحاوية الجديدة:
+    <ul>
+      <li>PDPT واحد يغطي الـ 512GB الأولى</li>
+      <li>PD واحد يغطي الـ 1GB الأولى</li>
+      <li>6 PTs تغطي <code>0x000000–0xC00000</code> (12MB) — تكفي لـ ELF + Stack + IPC Buffer</li>
+    </ul>
+    يستخدم <code>attr=0</code> (WriteBack Cache — الأسرع للذاكرة العادية).
+  </li>
+  <li>
+    <code>build_scratch_paging()</code>: يبني PT لمنطقة Scratch في VSpace الـ <em>init نفسها</em> (cap=3 هو <code>seL4_CapInitThreadVSpace</code>). يُطبّق استراتيجية تدريجية: يجرب PT أولاً، إذا أعادت النواة خطأ 9 (Missing Parent) يُنشئ PD، وإذا استمر الخطأ يُنشئ PDPT أيضاً — هذا يتعامل مع حالة أن بعض حاويات لاحقة تحتاج نطاقاً مختلفاً من الـ Scratch.
+  </li>
+</ul>

@@ -1,0 +1,31 @@
+<p>
+  المرحلة الأخيرة من تهيئة الحاوية: ربط الذاكرة المشتركة وتشغيل الـ Thread.
+</p>
+<ul>
+  <li>
+    <code>map_shared_memory()</code>: يُنشئ صفحة 4KB مشتركة (Dataport/Shared Memory):
+    <ul>
+      <li>يربطها في VSpace الـ <code>init</code> عند <code>0x801000</code></li>
+      <li>ينسخ الـ Frame Capability بـ <code>seL4_CNode_Copy</code></li>
+      <li>يربط النسخة في VSpace الحاوية الجديدة عند <code>0x5F0000</code></li>
+      <li>النتيجة: كلا الطرفين يكتبان ويقرآن من نفس الصفحة الفيزيائية بدون IPC</li>
+    </ul>
+  </li>
+  <li>
+    <code>configure_and_start_tcb()</code>: يُجهّز الـ Thread ويُشغّله:
+    <ul>
+      <li><code>seL4_TCB_Configure</code>: يربط الـ TCB بـ (CNode + VSpace + IPC Buffer Frame + Fault EP)</li>
+      <li><code>cspace_root_data = 52</code>: عمق CNode الجديد (2^12 = 4096 slot) مُرمَّز كـ Guard</li>
+      <li><code>seL4_TCB_WriteRegisters</code> (count=20): يكتب كل السجلات:
+        <ul>
+          <li><code>rip</code> = entry point</li>
+          <li><code>rsp</code> = stack top (<code>0x421000</code>)</li>
+          <li><code>rdi</code> = IPC Buffer vaddr (arg0 للـ <code>_start</code>)</li>
+          <li><code>rsi</code> = 0 (Endpoint في slot 0 من CNode الجديد دائماً)</li>
+          <li><code>rflags = 0x202</code>: IF=1 (المقاطعات مُفعَّلة) + Reserved bit</li>
+        </ul>
+      </li>
+      <li>الـ <code>resume=true</code> في <code>WriteRegisters</code> يُشغّل الـ Thread فوراً بعد الكتابة</li>
+    </ul>
+  </li>
+</ul>

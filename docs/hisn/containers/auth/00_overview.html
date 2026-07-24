@@ -1,0 +1,13 @@
+<p>
+  حاوية <code>Auth_Vault</code> هي <strong>مصدر الثقة الأمني الوحيد</strong> في النظام. وظيفتها محددة وحرجة: تُولّد <em>تذاكر أمان (Security Tokens)</em> للتطبيقات التي تحتاج الوصول لنظام الملفات. تعمل كـ Trusted Authority يُصدر عملات أمان مُشفَّرة لا يمكن تزويرها.
+</p>
+<p>مبدأ العمل:</p>
+<ol>
+  <li>يطلب التطبيق (مثل Desktop) تذكرة من Auth_Vault مُرسِلاً <code>cmd=0x100</code> و <code>app_id</code></li>
+  <li>تُولّد Auth_Vault <code>PolicyBadge</code> يحمل: الصلاحية + hash المسار المسموح</li>
+  <li>يُرسَل الـ Badge كرقم 64-bit في <code>reply.mr[1]</code></li>
+  <li>يستخدم التطبيق هذا الرقم في كل طلب لـ FS_Vault التي تتحقق منه</li>
+</ol>
+<p>
+  <strong>خريطة Capability Slots:</strong> Slot 0 = Own Endpoint، Slot 1 = FS_Vault Endpoint (لحفظ سجلات الأمان مستقبلاً).
+</p>

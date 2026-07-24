@@ -1,0 +1,54 @@
+{
+  "id": "calc",
+  "name": "Calculator",
+  "number": 1,
+  "timestamp": 1783114557,
+  "type": "Desktop App",
+  "icon": "🧮",
+  "iconClass": "pr-icon--calc",
+  "created_at": "04 يوليو 2026 (00:35 GMT+0300)",
+  "tags": ["UI Focus", "Event Driven"],
+  "overview": "00_overview.html",
+  "files": [
+    {
+      "name": "src/main.rs",
+      "path": "programs/calc/src/main.rs",
+      "content_file": "01_main_rs.html"
+    },
+    {
+      "name": "src/backend.rs",
+      "path": "programs/calc/src/backend.rs",
+      "content_file": "02_backend_rs.html"
+    },
+    {
+      "name": "src/icon.rs",
+      "path": "programs/calc/src/icon.rs",
+      "content_file": "03_icon_rs.html"
+    },
+    {
+      "name": "src/ui/calculator.rs",
+      "path": "programs/calc/src/ui/calculator.rs",
+      "content_file": "04_calculator_rs.html"
+    },
+    {
+      "name": "build.sh",
+      "path": "programs/calc/build.sh",
+      "content_file": "05_build_sh.html"
+    },
+    {
+      "name": "Cargo.toml",
+      "path": "programs/calc/Cargo.toml",
+      "content_file": "06_cargo_toml.html"
+    },
+    {
+      "name": "src/lib.rs",
+      "path": "programs/calc/src/lib.rs",
+      "content_file": "07_lib_rs.html"
+    },
+    {
+      "name": "src/ui/mod.rs",
+      "path": "programs/calc/src/ui/mod.rs",
+      "content_file": "08_ui_mod_rs.html"
+    }
+  ]
+}

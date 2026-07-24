@@ -1,0 +1,8 @@
+<p>
+  يُهيئ الأنظمة الثلاثة الأساسية ويختبرها مباشرة بعد الإقلاع:
+</p>
+<ul>
+  <li><code>init_allocator()</code>: يختبر <code>BumpAllocator</code> بتخصيصين فعليين (64 بايت محاذاة 8، و128 بايت محاذاة 16) ثم يكتب <code>0xDEAD_BEEF_CAFE_F00D</code> ويقرأ للتحقق — إذا فشل هذا الاختبار يتوقف النظام فوراً.</li>
+  <li><code>init_slot_allocator()</code>: يبني <code>SlotAllocator</code> من <code>boot_info.empty.start/end</code> — هذه الفتحات هي المساحة الفارغة في CNode الخاص بـ <code>init</code> والتي تملأ بالـ Capabilities الجديدة لاحقاً.</li>
+  <li><code>init_untyped_allocator()</code>: يبني <code>UntypedAllocator</code> ويختبره بعمل retype لكائن <code>seL4_UntypedObject</code> بحجم 12-bit (4KB) — إذا نجح يعني النظام يستطيع تخصيص الذاكرة الخام من النواة.</li>
+</ul>

@@ -1,0 +1,23 @@
+<p><strong>المسارات:</strong> <code>containers/tor/src/tor_helpers.rs</code> | <code>main.rs</code></p>
+<p>
+  يحتوي على نقطة الدخول <code>rust_main</code> التي تُدير حلقة الـ IPC مع مكدس الشبكة <code>smoltcp</code>، وهو مكتوب بطريقة تتجنب الـ Heap بالكامل.
+</p>
+<ul>
+  <li>
+    <strong>التهيئة المتأخرة (Lazy Initialization):</strong> 
+    لا تُهيئ مكدس الشبكة فوراً. تستخدم متغير <code>net_initialised</code> لتهيئة <code>smoltcp::iface::Interface</code> و <code>TcpSocket</code> عند أول رسالة IPC. هذا لتجنب مشكلة الـ Timeout في <code>init</code> الذي ينتظر <code>seL4_Wait</code> من جميع الحاويات.
+  </li>
+  <li>
+    <strong>الاستدعاء المتكرر (Polling):</strong> 
+    تُنادي <code>iface.poll()</code> مع كل رسالة IPC لتحديث حالة الحزم المرسلة والمستقبلة.
+  </li>
+  <li>
+    <strong>معالجة الاتصال:</strong> 
+    عند استلام <code>MessageTag::Unknown</code> (أمر تجريبي)، تقوم الحاوية بـ:
+    <ol>
+      <li>فتح اتصال وهمي لعقدة دخول (Entry Node) بـ <code>198.51.100.1:443</code>.</li>
+      <li>طلب <code>stream_mgr.connect()</code> لفتح تدفق فوق الـ Circuit الوهمية.</li>
+      <li>إرسال طلب <code>GET / HTTP/1.1</code> عبر <code>stream_mgr.write()</code>، حيث يتم تقسيم الطلب وتشفيره كخلايا Onion وتجهيزه للإرسال.</li>
+    </ol>
+  </li>
+</ul>

@@ -1,0 +1,24 @@
+{
+  "id": "ipc-sync",
+  "name": "ipc-sync",
+  "number": 6,
+  "timestamp": 1782267106,
+  "type": "System Core",
+  "icon": "⚙️",
+  "iconClass": "pr-icon--ipc-sync",
+  "created_at": "24 يونيو 2026 (05:11 GMT+3)",
+  "tags": ["Bare-Metal", "no_std", "IPC", "seL4"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "Cargo.toml",                            "path": "libs/ipc-sync/Cargo.toml",                            "content_file": "01_Cargo_toml.html" },
+    { "name": "src/lib.rs",                            "path": "libs/ipc-sync/src/lib.rs",                            "content_file": "02_src_lib_rs.html" },
+    { "name": "src/channel.rs",                        "path": "libs/ipc-sync/src/channel.rs",                        "content_file": "03_src_channel_rs.html" },
+    { "name": "src/channel/channel_01.rs",             "path": "libs/ipc-sync/src/channel/channel_01.rs",             "content_file": "04_src_channel_channel_01_rs.html" },
+    { "name": "src/channel/channel_02.rs",             "path": "libs/ipc-sync/src/channel/channel_02.rs",             "content_file": "05_src_channel_channel_02_rs.html" },
+    { "name": "src/channel/channel_03.rs",             "path": "libs/ipc-sync/src/channel/channel_03.rs",             "content_file": "06_src_channel_channel_03_rs.html" },
+    { "name": "src/channel/channel_recv.rs",           "path": "libs/ipc-sync/src/channel/channel_recv.rs",           "content_file": "07_src_channel_channel_recv_rs.html" },
+    { "name": "src/message.rs",                        "path": "libs/ipc-sync/src/message.rs",                        "content_file": "08_src_message_rs.html" },
+    { "name": "src/message/message_01.rs",             "path": "libs/ipc-sync/src/message/message_01.rs",             "content_file": "09_src_message_message_01_rs.html" },
+    { "name": "src/message/message_02.rs",             "path": "libs/ipc-sync/src/message/message_02.rs",             "content_file": "10_src_message_message_02_rs.html" }
+  ]
+}
