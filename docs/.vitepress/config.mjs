@@ -41,6 +41,8 @@ export default defineConfig({
       { text: 'SHENN', link: '/shenn/' },
       { text: 'Raqeem', link: '/raqeem/' },
       { text: 'Kanz DB', link: '/kanz/' },
+      { text: 'Watad', link: '/watad/' },
+      { text: 'المفاهيم', link: '/concepts/' },
       { text: 'rvlb.org ↗', link: 'https://rvlb.org', target: '_blank' }
     ],
 
@@ -78,7 +80,9 @@ export default defineConfig({
             { text: 'نظرة عامة', link: '/kanz/' },
           ]
         }
-      ]
+      ],
+
+
     },
 
     socialLinks: [

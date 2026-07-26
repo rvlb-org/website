@@ -16,7 +16,8 @@ const projects = [
   { href: '/shenn/',   icon: '🧬', name: 'SHENN-ai',   label: 'الشبكة العصبية التطورية', desc: 'شبكة عصبية ذاتية الشفاء — تنمو وتنقسم وتحمي نفسها تلقائياً بدون تدخل بشري',    color: '#a855f7', tag: 'AI · NEURAL',       num: '02', cat: 'ai'     },
   { href: '/raqeem/',  icon: '⚡',  name: 'Raqeem',     label: 'لغة البرمجة',             desc: 'لغة برمجة حديثة بمترجمها الخاص — آمنة، سريعة، مع Pipeline كمواطن درجة أولى',      color: '#0ea5e9', tag: 'LANG · COMPILER',   num: '03', cat: 'core'   },
   { href: '/kanz/',    icon: '🗄️', name: 'Kanz DB',    label: 'محرك قاعدة البيانات',     desc: 'قاعدة بيانات من الصفر — مصممة للسرعة القصوى والأمان التام في البيئات الحساسة',  color: '#22c55e', tag: 'DATABASE · ENGINE', num: '04', cat: 'core'   },
-  { href: '#',         icon: '📱', name: 'RVLB Android',label: 'تطبيقات الموبايل',         desc: 'تطبيقات أندرويد مبنية فوق نفس مبادئ RVLB — أمان، خفيفة، بلا متطلبات غير ضرورية',              color: '#ec4899', tag: 'ANDROID · MOBILE',  num: '05', cat: 'android' },
+  { href: '/watad/',   icon: '🕸️', name: 'Watad',      label: 'محرك الويب',               desc: 'محرك ويب مبني بـ Rust — تركيبي وقابل للاستبدال كلياً، مصمم للبيئات الآمنة مثل Hisn-seL4',   color: '#38bdf8', tag: 'WEB ENGINE · RUST',  num: '05', cat: 'core'   },
+  { href: '#',         icon: '📱', name: 'RVLB Android',label: 'تطبيقات الموبايل',         desc: 'تطبيقات أندرويد مبنية فوق نفس مبادئ RVLB — أمان، خفيفة، بلا متطلبات غير ضرورية',              color: '#ec4899', tag: 'ANDROID · MOBILE',  num: '06', cat: 'android' },
 ]
 
 const visible = computed(() =>
@@ -42,10 +43,10 @@ const visible = computed(() =>
 
       <!-- ── HERO ── -->
       <div class="rh-hero">
-        <div class="rh-eyebrow">
-          <span class="rh-live-dot"></span>
-          <span>RVLB OFFICIAL DOCS</span>
-        </div>
+        <a href="/concepts/" class="rh-eyebrow rh-concepts-eyebrow">
+          <span class="rh-live-dot" style="background: #facc15; box-shadow: 0 0 8px #facc15;"></span>
+          <span>المفاهيم المتنوعة</span>
+        </a>
 
         <div class="rh-brand">
           <span class="rh-brand-line">
@@ -115,14 +116,13 @@ const visible = computed(() =>
         </a>
       </div>
 
+
+
     </div>
   </div>
 </template>
 
-<style>
-.VPPage { padding: 0 !important; }
-.VPContent { padding: 0 !important; }
-</style>
+
 
 <style scoped>
 /* ── Root ── */
@@ -196,18 +196,27 @@ const visible = computed(() =>
   gap: 0.5rem;
   font-size: 0.65rem;
   font-weight: 800;
-  letter-spacing: 0.22em;
-  color: rgba(255,255,255,0.35);
-  border: 1px solid rgba(255,255,255,0.08);
+  letter-spacing: 0.15em;
+  color: rgba(250,204,21,0.85); /* Much brighter yellow */
+  background: rgba(250,204,21,0.08); /* Slight background tint */
+  border: 1px solid rgba(250,204,21,0.25); /* More visible border */
   border-radius: 100px;
-  padding: 0.4rem 1.1rem;
+  padding: 0.5rem 1.3rem; /* Slightly larger padding */
   margin-bottom: 2.5rem;
+  text-decoration: none !important;
+  box-shadow: 0 0 15px rgba(250,204,21,0.05); /* Soft outer glow */
+  transition: all 0.3s;
+}
+.rh-concepts-eyebrow:hover {
+  background: rgba(250, 204, 21, 0.05);
+  border-color: rgba(250, 204, 21, 0.3);
+  color: #facc15 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(250, 204, 21, 0.1);
 }
 .rh-live-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
   animation: blink 2.5s ease-in-out infinite;
 }
 @keyframes blink {
@@ -512,4 +521,6 @@ const visible = computed(() =>
   .rh-card-right { display: none; }
   .rh-content { padding: 4rem 1.25rem 6rem; }
 }
+
+
 </style>

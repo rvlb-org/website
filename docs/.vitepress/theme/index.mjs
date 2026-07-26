@@ -6,6 +6,8 @@ import ProgramsList from './ProgramsList.vue'
 import LibsList from './LibsList.vue'
 import ContainersList from './ContainersList.vue'
 import ConceptsList from './ConceptsList.vue'
+import ConceptsHub from './ConceptsHub.vue'
+import RustConcept from './RustConcept.vue'
 import PhilosophyHub from './PhilosophyHub.vue'
 import ComparisonsHub from './ComparisonsHub.vue'
 import ComparisonView from './ComparisonView.vue'
@@ -25,6 +27,7 @@ import AuthContainerPage from './AuthContainerPage.vue'
 import AuthFunctionsPage from './AuthFunctionsPage.vue'
 import AuthLibrariesPage from './AuthLibrariesPage.vue'
 import AuthFilesPage from './AuthFilesPage.vue'
+import WatadHub from './WatadHub.vue'
 
 export default {
   extends: DefaultTheme,
@@ -35,6 +38,8 @@ export default {
     app.component('LibsList', LibsList)
     app.component('ContainersList', ContainersList)
     app.component('ConceptsList', ConceptsList)
+    app.component('ConceptsHub', ConceptsHub)
+    app.component('RustConcept', RustConcept)
     app.component('PhilosophyHub', PhilosophyHub)
     app.component('ComparisonsHub', ComparisonsHub)
     app.component('ComparisonView', ComparisonView)
@@ -54,5 +59,6 @@ export default {
     app.component('AuthFunctionsPage', AuthFunctionsPage)
     app.component('AuthLibrariesPage', AuthLibrariesPage)
     app.component('AuthFilesPage', AuthFilesPage)
+    app.component('WatadHub', WatadHub)
   }
 }
