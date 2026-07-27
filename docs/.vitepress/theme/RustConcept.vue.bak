@@ -1,0 +1,929 @@
+<script setup>
+// Rust Concept Page
+// Explains Rust's role and no_std in RVLB
+</script>
+
+<template>
+  <div class="rc-root">
+    
+    <!-- Ambient Background -->
+    <div class="rc-bg">
+      <div class="rc-orb orb-1"></div>
+      <div class="rc-orb orb-2"></div>
+      <div class="rc-grid"></div>
+    </div>
+
+    <div class="rc-content">
+      
+      <!-- HERO -->
+      <header class="rc-hero">
+        <div class="rc-badge">
+          <span class="badge-dot"></span>
+          <span>LANGUAGES & CONCEPTS</span>
+        </div>
+        
+        <div class="rc-icon-wrap">
+          <span class="rc-icon-ring ring-1"></span>
+          <span class="rc-icon-ring ring-2"></span>
+          <span class="rc-main-icon">🦀</span>
+        </div>
+
+        <h1 class="rc-title">
+          <span class="title-en">Rust</span>
+          <span class="title-dash">—</span>
+          <span class="title-ar">لغة الصدأ الصلبة</span>
+        </h1>
+
+        <p class="rc-tagline">
+          لغة برمجة الأنظمة التي نعتمد عليها بالكامل لبناء حاويات ومكونات آمنة رياضياً وخالية من أخطاء الذاكرة.
+        </p>
+      </header>
+
+      <!-- NO_STD EXPLANATION -->
+      <section class="rc-section">
+        <div class="rc-section-head">
+          <span class="rc-sep-line"></span>
+          <span class="rc-sep-label">CORE CONCEPT</span>
+          <span class="rc-sep-line"></span>
+        </div>
+
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">🚫</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title">سمة <code>#![no_std]</code></h2>
+              <span class="fc-subtitle">البرمجة على الحديد العاري (Bare Metal)</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              بشكل افتراضي، تعتمد برامج Rust على مكتبة قياسية ضخمة تسمى <code>std</code> (Standard Library) تتواصل مع نظام التشغيل لفتح الملفات، حجز الذاكرة، والتواصل عبر الشبكة.
+            </p>
+            <p>
+              لكن في <strong>Hisn-seL4</strong>، نحن لا نبني تطبيقات عادية تعمل فوق ويندوز أو لينكس؛ نحن نبني <span class="highlight">الأساس نفسه</span>. مكوناتنا وحاوياتنا تعمل في بيئة معزولة ولا يوجد "نظام تشغيل تقليدي" ليقدم لها الخدمات!
+            </p>
+
+            <div class="fc-analogy">
+              <div class="analogy-icon">💡</div>
+              <div class="analogy-text">
+                <h4>أمثلة إضافية من الحياة اليومية لتبسيط الفكرة</h4>
+                
+                <div class="analogy-item">
+                  <h5>🏗️ مثال البناء:</h5>
+                  <p>
+                    استخدام <strong>std</strong> يشبه بناء منزل في <em>مدينة متطورة</em>؛ حيث توفر لك البلدية (نظام التشغيل) شبكات الكهرباء والماء الجاهزة. أما <strong>no_std</strong> فيشبه بناء محطة في <em>الفضاء الخارجي</em>! لا توجد بنية تحتية؛ عليك ابتكار نظامك الخاص لإدارة الموارد من الصفر، معتمداً على أدواتك البدائية فقط (مكتبة <code>core</code>).
+                  </p>
+                </div>
+
+                <div class="analogy-item">
+                  <h5>👨‍🍳 مثال الطبخ:</h5>
+                  <p>
+                    استخدام <strong>std</strong> يشبه الطبخ في مطبخ حديث؛ إذا احتجت للماء تفتح الصنبور، وإذا احتجت للنار تشغل الموقد الكهربائي (خدمات النظام). لكن <strong>no_std</strong> يشبه الطبخ في وسط الصحراء! إذا أردت ناراً عليك جمع الحطب بنفسك، وإذا أردت ماءً عليك حفر بئر. ليس لديك سوى سكينك ووعائك الأساسي.
+                  </p>
+                </div>
+
+                <div class="analogy-item">
+                  <h5>📱 مثال الأجهزة:</h5>
+                  <p>
+                    استخدام <strong>std</strong> يشبه كتابة تطبيق لهاتف ذكي؛ لطباعة نص تطلب ذلك من نظام التشغيل وهو يتكفل بالباقي. لكن <strong>no_std</strong> يشبه برمجة الشريحة الدقيقة داخل "غسالة الملابس" أو "جهاز تنظيم ضربات القلب"! لا يوجد نظام تشغيل ليساعدك؛ لكي تضيء لمبة صغيرة يجب أن ترسل النبضات الكهربائية بنفسك حرفياً.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="fc-grid">
+              <div class="fc-item">
+                <span class="fc-item-icon">⚡</span>
+                <div class="fc-item-text">
+                  <h3>الاعتماد على <code>core</code> فقط</h3>
+                  <p>باستخدام <code>no_std</code>، نتخلى عن المكتبة القياسية ونكتفي بمكتبة <code>core</code> الأصغر والأكثر استقلالية، والتي لا تحتاج لأي نظام تشغيل للعمل.</p>
+                </div>
+              </div>
+              <div class="fc-item">
+                <span class="fc-item-icon">🛡️</span>
+                <div class="fc-item-text">
+                  <h3>أمان النواة الدقيقة</h3>
+                  <p>تضمن لنا هذه السمة أن الكود الخاص بنا لا يستدعي أي ميزات غير متوقعة من العتاد، مما يبقيه نظيفاً، صغيراً، ومناسباً للعمليات الحرجة المتصلة بنواة seL4 مباشرة.</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+
+      <!-- UNSAFE EXPLANATION -->
+      <section class="rc-section">
+        <div class="rc-section-head">
+          <span class="rc-sep-line"></span>
+          <span class="rc-sep-label">CORE CONCEPT</span>
+          <span class="rc-sep-line"></span>
+        </div>
+
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">⚠️</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #ef4444;">كتلة <code>unsafe</code></h2>
+              <span class="fc-subtitle">الخروج عن حماية المترجم (Compiler)</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              لغة Rust مشهورة بقواعدها الصارمة التي تمنع أخطاء الذاكرة بشكل قاطع. المترجم (Compiler) يرفض بناء أي كود قد يؤدي إلى ثغرات أمنية أو أعطال في الذاكرة.
+            </p>
+            <p>
+              لكن في الأنظمة المنخفضة المستوى (مثل أنظمة التشغيل و RVLB)، <strong>نحتاج أحياناً للتعامل مع العتاد مباشرة</strong> (مثل قراءة عنوان محدد في الذاكرة للتواصل مع مستشعر). المترجم لا يمتلك عقلاً بشرياً ليثبت أمان هذه العملية الخارجية، وهنا نستخدم <code>unsafe</code>.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05);">
+              <div class="analogy-icon">☢️</div>
+              <div class="analogy-text">
+                <h4 style="color: #ef4444;">تبسيط الفكرة بمثال</h4>
+                <div class="analogy-item">
+                  <h5>القطار مقابل سيارة الدفع الرباعي:</h5>
+                  <p>
+                    البرمجة العادية في Rust تشبه ركوب <strong>قطار على سكة حديدية</strong>؛ من المستحيل أن تنحرف عن مسارك أو تصطدم لأن السكة (المترجم) تضمن ذلك بنسبة 100%. أما استخدام <code>unsafe</code> فهو يشبه النزول من القطار وقيادة <strong>سيارة يدوية في طريق وعر</strong> للوصول لمنطقة لا تصلها سكة القطار! أنت تمتلك القوة والحرية الكاملة للوصول لأي مكان، ولكن إذا ارتكبت خطأ، ستصطدم.
+                  </p>
+                  <p style="margin-top: 0.5rem;">
+                    بكلمة <code>unsafe</code>، أنت تقول للمترجم: <em>"توقف عن القلق، أنا أعرف ما أفعله وأتحمل مسؤولية الأمان في هذه الأسطر القليلة".</em>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="fc-grid">
+              <div class="fc-item">
+                <span class="fc-item-icon">🔓</span>
+                <div class="fc-item-text">
+                  <h3>صلاحيات استثنائية</h3>
+                  <p>كلمة <code>unsafe</code> لا تلغي قواعد Rust الأساسية، بل تفتح لك صلاحيات محددة فقط، أهمها قراءة وتعديل الذاكرة العارية (Raw Pointers) للتعامل المباشر مع عتاد الكمبيوتر.</p>
+                </div>
+              </div>
+              <div class="fc-item">
+                <span class="fc-item-icon">📦</span>
+                <div class="fc-item-text">
+                  <h3>عزل الخطر (Encapsulation)</h3>
+                  <p>نحن لا نكتب النظام كله بـ unsafe! بل نكتب العمليات الخطيرة داخل كبسولة <code>unsafe</code> صغيرة جداً، ثم نغلفها بواجهة آمنة 100% ليستخدمها باقي النظام بدون خوف.</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+      <!-- DEAD CODE EXPLANATION -->
+      <section class="rc-section">
+        <div class="rc-section-head">
+          <span class="rc-sep-line"></span>
+          <span class="rc-sep-label">CORE CONCEPT</span>
+          <span class="rc-sep-line"></span>
+        </div>
+
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">👻</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #a855f7;">الكود الميت <code>dead_code</code></h2>
+              <span class="fc-subtitle">صرامة المترجم وتحسين حجم النظام</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              مترجم Rust مصاب بهوس النظافة! إذا قمت بكتابة دالة (Function) أو تعريف متغير ولم تستخدمه في برنامجك، فلن يمرر ذلك بصمت؛ بل سيصدر تحذيراً مزعجاً يخبرك بوجود <strong>"كود ميت" (Dead Code)</strong>.
+            </p>
+            <p>
+              في عالم تطوير أنظمة التشغيل (مثل RVLB)، نحن نكتب مئات الدوال للتعامل مع العتاد، وقد لا نستخدمها كلها دفعة واحدة أثناء مرحلة التطوير. أحياناً نستخدم سمة <code>#![allow(dead_code)]</code> لنجعل المترجم يتجاهل هذا التحذير مؤقتاً، لكن في النسخة النهائية، يقوم المترجم بعملية مذهلة تسمى <strong>إزالة الكود الميت (Dead Code Elimination)</strong>.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.05);">
+              <div class="analogy-icon">🎒</div>
+              <div class="analogy-text">
+                <h4 style="color: #a855f7;">مثال تنظيف حقيبة السفر:</h4>
+                <div class="analogy-item">
+                  <p>
+                    تخيل أنك ذاهب في رحلة وتضع في حقيبتك ملابس، مظلة، وكتاباً. قبل أن تغادر، يقوم المترجم (حارس الأمن) بتفتيش حقيبتك ويقول لك: <em>"الجو مشمس جداً في وجهتك، لن تستخدم هذه المظلة أبداً، إنها (وزن ميت) يثقل حركتك!"</em>. 
+                  </p>
+                  <p style="margin-top: 0.5rem;">
+                    في نهاية المطاف، يقوم المترجم بإخراج أي أداة لن تستخدمها من حقيبتك قبل صعود الطائرة. النتيجة؟ طائرة (برنامج تنفيذي) خفيفة جداً، سريعة، ولا تحمل أي كود إضافي لا حاجة له!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="fc-grid">
+              <div class="fc-item">
+                <span class="fc-item-icon">🪶</span>
+                <div class="fc-item-text">
+                  <h3>نظام بحجم الريشة</h3>
+                  <p>حتى لو قمنا بتضمين مكتبة ضخمة جداً، فإن المترجم سيأخذ فقط الأسطر التي استدعيناها فعلياً ويرمي الباقي. هذا يحافظ على صغر حجم النواة وسرعتها القصوى.</p>
+                </div>
+              </div>
+              <div class="fc-item">
+                <span class="fc-item-icon">🧐</span>
+                <div class="fc-item-text">
+                  <h3>تنبيهات استباقية</h3>
+                  <p>وجود تنبيهات الكود الميت أثناء البرمجة يساعدنا على اكتشاف الأخطاء؛ فإذا كتبت دالة مهمة للتعامل مع العتاد وظهر لك أنها "ميتة"، فهذا ينبهك أنك نسيت استدعاءها!</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+
+      <!-- GROUP 1: BASICS -->
+      <div class="rc-group-title">
+        <h3 style="margin-top: 3rem; color: #fff; text-align: center;">المجموعة الأولى: الأساسيات الصلبة</h3>
+      </div>
+
+      <!-- OWNERSHIP -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">👑</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #3b82f6;">الملكية والاستعارة <code>Ownership & Borrowing</code></h2>
+              <span class="fc-subtitle">إدارة الذاكرة بدون Garbage Collector</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              أعظم ابتكارات لغة Rust هو نظام الملكية. لا يوجد نظام تنظيف ذاكرة عشوائي يوقف برنامجك فجأة، ولا توجد إدارة يدوية تسبب أخطاء وتسريب للذاكرة. هناك قواعد صارمة: لكل بيانات "مالك" واحد فقط.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.05);">
+              <div class="analogy-icon">🏠</div>
+              <div class="analogy-text">
+                <h4 style="color: #3b82f6;">مثال مفتاح المنزل:</h4>
+                <div class="analogy-item">
+                  <p>
+                    تخيل أن البيانات هي <strong>منزل</strong>، وأنت صاحبه (المالك). لديك مفتاح واحد فقط.
+                  </p>
+                  <p style="margin-top: 0.6rem;">
+                    ✅ <strong>الاستعارة للقراءة (Immutable Borrow):</strong> يمكنك أن تعطي نسخة من المفتاح لأي عدد من أصدقائك لـ<em>يزوروا</em> البيت ويتفرجوا. عشرة أشخاص يمكنهم الدخول في آن واحد طالما لن يعدّلوا شيئاً.
+                  </p>
+                  <p style="margin-top: 0.6rem;">
+                    ⚠️ <strong>الاستعارة للتعديل (Mutable Borrow):</strong> إذا أعطيت أحدهم المفتاح ليُعيد ترتيب الأثاث، يجب أن <em>يعود جميع من دخل بنسخ القراءة أولاً</em> ويغلق الباب. لا يسمح للمترجم بوجود من يقرأ ومن يعدّل في نفس الوقت.
+                  </p>
+                  <p style="margin-top: 0.6rem;">
+                    🔑 <strong>نقل الملكية (Move):</strong> إذا سلّمت المفتاح الأصلي لشخص آخر كلياً، <em>أنت لم تعد مالكاً</em>. لو حاولت بعدها الدخول بمفتاحك القديم، سيرفض المترجم الكود فوراً لأن الملكية انتقلت!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIFETIMES -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">⏳</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #10b981;">فترات الحياة <code>Lifetimes 'a</code></h2>
+              <span class="fc-subtitle">ضمان عدم وجود مؤشرات معلقة (Dangling Pointers)</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              يستخدم المترجم فترات الحياة ليتأكد أن أي مرجع (Reference) لبيانات معينة لن يعيش أطول من البيانات الأصلية نفسها، مما يمنع البرنامج من محاولة قراءة ذاكرة تم مسحها مسبقاً.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">
+              <div class="analogy-icon">🎟️</div>
+              <div class="analogy-text">
+                <h4 style="color: #10b981;">مثال تصريح الدخول:</h4>
+                <div class="analogy-item">
+                  <p>تخيل أن البيانات هي "موظف دائم"، والمرجع (Reference) هو "زائر" دخل ببطاقة الموظف. المترجم يضمن قاعدة صارمة: <strong>مستحيل أن تنتهي صلاحية بطاقة الموظف أو يغادر المبنى، بينما الزائر لا يزال بالداخل يتجول!</strong> فترة حياة الزائر يجب أن تكون دائماً أقصر من أو تساوي فترة حياة الموظف الأصلي.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT & OPTION -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(20, 184, 166, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">🎁</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #14b8a6;">التعامل مع النتائج <code>Result & Option</code></h2>
+              <span class="fc-subtitle">بديل الاستثناءات (Exceptions) والأخطاء المفاجئة</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              لا يوجد في Rust مفهوم (Null) الشائع الذي يسبب انهيار البرامج، ولا توجد استثناءات (Exceptions) مخفية تفاجئك. كل شيء مكشوف في التوقيع البرمجي للدالة باستخدام صناديق مغلفة مثل <code>Option</code> و <code>Result</code>.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(20, 184, 166, 0.3); background: rgba(20, 184, 166, 0.05);">
+              <div class="analogy-icon">📦</div>
+              <div class="analogy-text">
+                <h4 style="color: #14b8a6;">مثال صندوق الهدايا:</h4>
+                <div class="analogy-item">
+                  <p>بدلاً من أن أسلمك الهاتف الذي طلبته بيدك (وقد أعطيك الهواء فتتفاجأ وينهدم النظام لأن الهاتف غير موجود Null)، أقوم بتسليمك <strong>صندوق مغلق</strong> (Option). المترجم يجبرك بقوة القانون أن تفتح الصندوق أولاً بوعي؛ وتتحقق: هل الهاتف موجود (Some) لتستخدمه؟ أم أن الصندوق فارغ (None) فتتصرف بناءً على ذلك؟ المترجم يجبرك على التفكير في السيناريوهين!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GROUP 2: OS CORE -->
+      <div class="rc-group-title">
+        <h3 style="margin-top: 3rem; color: #fff; text-align: center;">المجموعة الثانية: عصب أنظمة التشغيل</h3>
+      </div>
+
+      <!-- TRAITS -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(244, 63, 94, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">🎭</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #f43f5e;">السمات <code>Traits</code></h2>
+              <span class="fc-subtitle">الواجهات المشتركة بين المكونات</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              لا يوجد وراثة (Inheritance) كلاسيكية في Rust. بدلاً من ذلك، نستخدم السمات (Traits) لتعريف السلوك المشترك. في بناء أنظمة مثل RVLB، نستخدمها لتوحيد طريقة التعامل مع قطع العتاد المختلفة (مثلاً: كل الأقراص الصلبة تمتلك سمة "قابلة للقراءة").
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.05);">
+              <div class="analogy-icon">🪪</div>
+              <div class="analogy-text">
+                <h4 style="color: #f43f5e;">مثال رخصة القيادة:</h4>
+                <div class="analogy-item">
+                  <p>لا يهم إذا كنت رجلاً، امرأة، روبوتاً، أو كائناً فضائياً! طالما أنك تمتلك سمة (رخصة قيادة سارية)، يمكنك قيادة السيارة. السمة <code>Trait</code> لا تهتم بـ "من أنت"، بل تهتم بـ "ماذا تستطيع أن تفعل". المترجم يضمن أن أي كائن نمرره للدالة يمتلك هذه السمة فعلياً قبل تشغيل الكود.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FFI -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(249, 115, 22, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">🤝</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #f97316;">التخاطب الأجنبي <code>FFI</code></h2>
+              <span class="fc-subtitle">التواصل مع لغة C ونواة seL4</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              بما أن نواة <code>seL4</code> مكتوبة بلغة C والتحقق الرياضي، يجب أن نتخاطب معها من داخل Rust. تقنية <strong>FFI (Foreign Function Interface)</strong> تسمح للغة Rust باستدعاء دوال مكتوبة بلغة C أو العكس، بدون أي تكلفة إضافية في الأداء (Zero-cost).
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.05);">
+              <div class="analogy-icon">👔</div>
+              <div class="analogy-text">
+                <h4 style="color: #f97316;">مثال المترجم الدبلوماسي:</h4>
+                <div class="analogy-item">
+                  <p>تخيل أن Rust يتحدث العربية، ونواة C تتحدث اليابانية. لا يفهمان بعضهما مباشرة لاختلاف طرق تمثيل البيانات. تقنية FFI تعمل كمترجم دبلوماسي محترف يجلس بينهما؛ يأخذ الكلمة من Rust ويترجمها فوراً للصيغة التي تفهمها C (والعكس)، ليتم التخاطب بسلاسة، ولكن هذا التخاطب يُعتبر دائماً <code>unsafe</code> لأن المترجم لا يضمن ماذا سيقول الطرف الآخر!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VOLATILE -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(234, 179, 8, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">⏱️</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #eab308;">القراءة المتقلبة <code>Volatile</code></h2>
+              <span class="fc-subtitle">التواصل مع العتاد ومسجلات الذاكرة</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              المترجم ذكي جداً، وقد يقوم بمسح الأكواد التي يراها مكررة لتسريع البرنامج. لكن عند التعامل مع العتاد (Hardware Registers)، نستخدم القراءة والكتابة الـ <code>Volatile</code> لنجبر المترجم على تنفيذ الأوامر حرفياً دون تجاهلها، لأن القيمة في الذاكرة قد تتغير بواسطة العتاد نفسه وليس الكود.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(234, 179, 8, 0.3); background: rgba(234, 179, 8, 0.05);">
+              <div class="analogy-icon">🏎️</div>
+              <div class="analogy-text">
+                <h4 style="color: #eab308;">مثال عداد السرعة:</h4>
+                <div class="analogy-item">
+                  <p>
+                    أنت تقود سيارة وسرعتها الحالية <strong>120 كم/س</strong>. نظرت للعداد وقرأت القيمة. المترجم العادي يرى هذا ويقرر بنفسه: <em>"هو نظر للعداد قبل ثانية وكانت 120، سأوفر الجهد وأعطيه 120 مرة أخرى بدون قراءة العداد الحقيقي!"</em>
+                  </p>
+                  <p style="margin-top: 0.6rem;">
+                    لكن <strong>العتاد (المحرك والعجلات)</strong> يعمل بشكل مستقل تماماً خارج إرادة المترجم! في تلك الثانية الواحدة قد تكون:
+                    <br>⬆️ ضغطت على الغاز → السرعة أصبحت <strong>135 كم/س</strong>
+                    <br>⬇️ كبست الفرامل → السرعة أصبحت <strong>90 كم/س</strong>
+                    <br>⚠️ انفجر إطار → السرعة أصبحت <strong>0 كم/س</strong>
+                  </p>
+                  <p style="margin-top: 0.6rem;">
+                    باستخدام <code>Volatile</code> أنت تقول للمترجم: <em>"لا تتدخل ولا تخزّن! في كل مرة أطلب القراءة، اذهب للعداد الحقيقي في الذاكرة الآن، لأن العتاد غيّره خارج إرادتك تماماً."</em>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANIC -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">💥</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #dc2626;">الانهيار في <code>no_std</code> (Panic)</h2>
+              <span class="fc-subtitle">معالجة الأخطاء الكارثية بدون نظام تشغيل</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              عندما يحدث خطأ كارثي لا يمكن التعافي منه في البرنامج (مثلاً محاولة الوصول لقيمة خارج مصفوفة)، تقوم لغة Rust بعملية (Panic). في البرامج العادية، يتدخل نظام التشغيل ويغلق البرنامج بسلام. لكن في بيئة <code>no_std</code> (حيث أنت تصنع نظام التشغيل)، عليك برمجة معالج الانهيار <code>#[panic_handler]</code> الخاص بك لتقرر ماذا تفعل (مثل إعادة تشغيل الجهاز أو طباعة رسالة خطأ عبر المنفذ التسلسلي).
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(220, 38, 38, 0.3); background: rgba(220, 38, 38, 0.05);">
+              <div class="analogy-icon">🛑</div>
+              <div class="analogy-text">
+                <h4 style="color: #dc2626;">مثال مكابح الطوارئ:</h4>
+                <div class="analogy-item">
+                  <p>في الطائرة المدنية (برنامج عادي)، إذا حدث خلل كبير، سيقوم الطيار الآلي (نظام التشغيل) بالتدخل والهبوط الاضطراري. أما في صاروخ فضاء (no_std) لا يوجد طيار آلي خارجي لينقذك! يجب أن تكون قد برمجت مسبقاً نظام <strong>"التدمير الذاتي الآمن"</strong> أو <strong>"تفعيل مظلات الطوارئ"</strong> (معالج الـ Panic) ليتم تنفيذه تلقائياً فور استشعار الكارثة.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GROUP 3: ADVANCED -->
+      <div class="rc-group-title">
+        <h3 style="margin-top: 3rem; color: #fff; text-align: center;">المجموعة الثالثة: المفاهيم المتقدمة</h3>
+      </div>
+
+      <!-- MACROS -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(192, 132, 252, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">⚙️</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #c084fc;">الماكرو <code>Macros !</code></h2>
+              <span class="fc-subtitle">كود يكتب كوداً آخر</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              أي شيء في Rust ينتهي بعلامة تعجب (مثل <code>!println</code>) هو ليس دالة عادية، بل "ماكرو" (Macro). الماكرو هو كود يتم تنفيذه <em>أثناء الترجمة (Compile time)</em> ليقوم بتوليد أكواد Rust جديدة وإدراجها بالنيابة عنك لتقليل التكرار.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(192, 132, 252, 0.3); background: rgba(192, 132, 252, 0.05);">
+              <div class="analogy-icon">🏭</div>
+              <div class="analogy-text">
+                <h4 style="color: #c084fc;">مثال المصنع الآلي:</h4>
+                <div class="analogy-item">
+                  <p>الدالة العادية تشبه عاملاً يصنع لك كرسياً عند الطلب (أثناء تشغيل البرنامج). أما الماكرو فهو يشبه <strong>آلة تصنع آلات أخرى</strong>! قبل أن يبدأ المصنع بالعمل (أثناء الترجمة)، تقوم أنت بكتابة أمر صغير للماكرو، فيقوم هو ببناء 100 آلة مخصصة مختلفة لتكون جاهزة للعمل فور تشغيل المصنع.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ATOMICS -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(167, 139, 250, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">⚛️</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #a78bfa;">العمليات الذرية <code>Atomics</code></h2>
+              <span class="fc-subtitle">مشاركة البيانات بين الأنوية بأمان تام</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              في أنظمة التشغيل متعددة الأنوية (Multicore)، قد يحاول معالجان قراءة وتعديل نفس المتغير في نفس اللحظة (Data Race)، مما يؤدي لتلف البيانات. المتغيرات الذرية (Atomics) تضمن أن أي عملية قراءة أو كتابة لا يمكن مقاطعتها أبداً.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.05);">
+              <div class="analogy-icon">🚪</div>
+              <div class="analogy-text">
+                <h4 style="color: #a78bfa;">مثال الباب الدوار:</h4>
+                <div class="analogy-item">
+                  <p>تخيل غرفة فيها كنز. في الوضع العادي، يمكن لعشرة أشخاص الدخول من باب كبير في نفس اللحظة والتصادم بالداخل. المتغير الذري يشبه <strong>باباً دواراً ضيقاً</strong> لا يسمح بمرور إلا لشخص واحد فقط. إذا جاء الثاني، يجب أن ينتظر حتى يخرج الأول. هذه العملية (الذرية) تحدث بسرعة فائقة جداً على مستوى العتاد بدون الحاجة لأقفال معقدة!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GENERICS -->
+      <section class="rc-section">
+        <div class="rc-card feature-card">
+          <div class="rc-card-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(244, 114, 182, 0.1) 0%, transparent 70%);"></div>
+          
+          <div class="fc-header">
+            <div class="fc-icon">🧬</div>
+            <div class="fc-title-group">
+              <h2 class="fc-title" style="color: #f472b6;">البرمجة العامة <code>Generics &lt;T&gt;</code></h2>
+              <span class="fc-subtitle">كتابة الكود مرة واحدة للعمل مع أي نوع بيانات</span>
+            </div>
+          </div>
+
+          <div class="fc-body">
+            <p>
+              بدلاً من كتابة دالة لحساب مساحة مربع (أرقام صحيحة) ودالة أخرى لحساب مساحة مربع (أرقام عشرية)، يمكنك كتابة دالة واحدة باستخدام (Generics) تستقبل أي نوع من الأرقام، وسيقوم المترجم تلقائياً بتوليد النسخ المطلوبة لك في الخفاء.
+            </p>
+
+            <div class="fc-analogy" style="border-color: rgba(244, 114, 182, 0.3); background: rgba(244, 114, 182, 0.05);">
+              <div class="analogy-icon">🧁</div>
+              <div class="analogy-text">
+                <h4 style="color: #f472b6;">مثال قالب الكعك:</h4>
+                <div class="analogy-item">
+                  <p>الكود العادي يشبه كعكة جاهزة بنكهة الفراولة. أما <code>Generics</code> فهو يشبه <strong>القالب المعدني</strong> الذي تصنع فيه الكعك. القالب لا يهتم بالنوع الأساسي (T)؛ يمكنك أن تصب فيه خليط الفراولة، الشوكولاتة، أو الفانيليا، وفي النهاية سيعطيك كعكة بنفس الشكل المثالي! أنت تكتب "القالب" مرة واحدة وتستخدمه ملايين المرات.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* ── Root ── */
+.rc-root {
+  position: relative;
+  min-height: calc(100vh - var(--vp-nav-height));
+  overflow-x: hidden;
+  font-family: 'Cairo', 'Inter', sans-serif;
+}
+
+/* ── Background ── */
+.rc-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.rc-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+.orb-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #f97316, transparent 65%);
+  top: -200px; left: -100px;
+  animation: float 20s ease-in-out infinite alternate;
+}
+.orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #ea580c, transparent 65%);
+  bottom: -150px; right: -150px;
+  animation: float 15s ease-in-out infinite alternate-reverse;
+}
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(50px, 40px); }
+}
+.rc-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Content ── */
+.rc-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Hero ── */
+.rc-hero {
+  text-align: center;
+  margin-bottom: 5rem;
+  width: 100%;
+}
+.rc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 100px;
+  padding: 0.35rem 1rem;
+  margin-bottom: 2.5rem;
+  background: rgba(249,115,22,0.05);
+}
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #f97316;
+  box-shadow: 0 0 8px #f97316;
+}
+.rc-icon-wrap {
+  position: relative;
+  width: 130px; height: 130px;
+  margin: 0 auto 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rc-icon-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+  animation: spin 20s linear infinite;
+}
+.ring-2 {
+  inset: -15px;
+  border-color: rgba(249,115,22,0.2);
+  border-style: dashed;
+  animation-direction: reverse;
+  animation-duration: 30s;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.rc-main-icon {
+  font-size: 4.5rem;
+  filter: drop-shadow(0 0 20px rgba(249,115,22,0.4));
+  animation: pulseIcon 4s ease-in-out infinite;
+}
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.rc-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  margin: 0 0 1.5rem;
+  line-height: 1.2;
+}
+.title-en {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 900;
+  line-height: 1.1;
+  padding: 0.1em 0;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #f97316 0%, #fdba74 60%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px rgba(249,115,22,0.3));
+}
+.title-dash {
+  display: none;
+}
+.title-ar {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.rc-tagline {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.5);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ── Section ── */
+.rc-section {
+  width: 100%;
+}
+.rc-section-head {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.rc-sep-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(249,115,22,0.3), transparent);
+}
+.rc-sep-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: rgba(249,115,22,0.6);
+  border: 1px solid rgba(249,115,22,0.2);
+  padding: 0.25rem 0.85rem;
+  border-radius: 100px;
+  background: rgba(249,115,22,0.05);
+}
+
+/* ── Cards ── */
+.rc-card {
+  position: relative;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 2.5rem;
+  overflow: hidden;
+  transition: transform 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+.rc-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(249,115,22,0.3);
+  box-shadow: 0 20px 40px -20px rgba(249,115,22,0.2);
+}
+.rc-card-glow {
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+.rc-card:hover .rc-card-glow { opacity: 1; }
+
+.fc-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.fc-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 12px rgba(249,115,22,0.3));
+}
+.fc-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 0.3rem;
+  direction: ltr;
+  display: inline-block;
+}
+code {
+  background: rgba(249,115,22,0.15);
+  color: #fdba74;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  font-family: 'Space Mono', monospace;
+}
+.fc-subtitle {
+  display: block;
+  font-size: 0.9rem;
+  color: rgba(249,115,22,0.8);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.fc-body p {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+.highlight {
+  color: #fff;
+  font-weight: 700;
+  border-bottom: 1px dashed rgba(249,115,22,0.5);
+}
+
+.fc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Analogy Box */
+.fc-analogy {
+  display: flex;
+  gap: 1.5rem;
+  background: rgba(250, 204, 21, 0.05);
+  border: 1px dashed rgba(250, 204, 21, 0.3);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin: 1.5rem 0;
+  align-items: flex-start;
+}
+.analogy-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+.analogy-text h4 {
+  color: #facc15;
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.analogy-item {
+  margin-bottom: 1.25rem;
+}
+.analogy-item:last-child {
+  margin-bottom: 0;
+}
+.analogy-item h5 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.analogy-item p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+}
+
+.fc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(255,255,255,0.03);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.fc-item-icon {
+  font-size: 2rem;
+}
+.fc-item-text h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.5rem;
+}
+.fc-item-text p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .fc-grid { grid-template-columns: 1fr; }
+  .rc-card { padding: 1.5rem; }
+  .fc-title { font-size: 1.5rem; }
+}
+</style>

@@ -10,7 +10,13 @@ const concepts = [
     desc: 'لغة البرمجة الآمنة للذاكرة', 
     color: '#f97316' 
   },
-  // User wants just Rust for now, and leave it empty
+  { 
+    href: '/concepts/network', 
+    icon: '🌐', 
+    title: 'الشبكات', 
+    desc: 'مفاهيم الشبكات المتقدمة وبروتوكولاتها', 
+    color: '#3b82f6' 
+  }
 ]
 </script>
 
@@ -169,7 +175,8 @@ const concepts = [
 
 .ch-card-icon {
   font-size: 4rem;
-  margin-bottom: 1rem;
+  line-height: 1;
+  margin-bottom: 1.5rem;
   filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--c) 40%, transparent));
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
