@@ -11,5 +11,9 @@
     "vitepress": "^1.6.4",
     "wrangler": "^4.112.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "three": "^0.185.1"
+  }
 }

@@ -8,6 +8,8 @@ import ContainersList from './ContainersList.vue'
 import ConceptsList from './ConceptsList.vue'
 import ConceptsHub from './ConceptsHub.vue'
 import RustConcept from './RustConcept.vue'
+import NetworkCinematic from './NetworkCinematic.vue'
+import NetworkConcept from './NetworkConcept.vue'
 import PhilosophyHub from './PhilosophyHub.vue'
 import ComparisonsHub from './ComparisonsHub.vue'
 import ComparisonView from './ComparisonView.vue'
@@ -40,6 +42,8 @@ export default {
     app.component('ConceptsList', ConceptsList)
     app.component('ConceptsHub', ConceptsHub)
     app.component('RustConcept', RustConcept)
+    app.component('NetworkCinematic', NetworkCinematic)
+    app.component('NetworkConcept', NetworkConcept)
     app.component('PhilosophyHub', PhilosophyHub)
     app.component('ComparisonsHub', ComparisonsHub)
     app.component('ComparisonView', ComparisonView)

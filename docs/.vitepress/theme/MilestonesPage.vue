@@ -4,7 +4,7 @@ import { shallowRef } from 'vue'
 const modules = import.meta.glob('../../hisn/milestones/[0-9]*.md', { eager: true })
 
 const milestones = Object.entries(modules)
-  .sort(([a], [b]) => b.localeCompare(a)) // newest first
+  .sort(([a], [b]) => a.localeCompare(b)) // oldest first
   .map(([path, mod]) => {
     const fileName = path.split('/').pop()
     const num = fileName.match(/^(\d+)/)?.[1] || ''

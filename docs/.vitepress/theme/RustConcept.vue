@@ -273,6 +273,17 @@ function selectConcept(conceptId, groupId) {
   s.add(groupId)
   expandedGroups.value = s
 }
+
+// Mobile navigation
+const activeIdx = computed(() => concepts.findIndex(c => c.id === selectedId.value))
+function goNext() {
+  const i = activeIdx.value
+  if (i < concepts.length - 1) selectedId.value = concepts[i + 1].id
+}
+function goPrev() {
+  const i = activeIdx.value
+  if (i > 0) selectedId.value = concepts[i - 1].id
+}
 </script>
 
 <template>
@@ -382,6 +393,25 @@ function selectConcept(conceptId, groupId) {
       </main>
 
     </div>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="rc-mobile-nav">
+      <button class="mob-nav-btn" :disabled="activeIdx === 0" @click="goPrev">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="mob-nav-info">
+        <span class="mob-concept-icon">{{ active.icon }}</span>
+        <div class="mob-nav-text">
+          <span class="mob-group-name">{{ groups.find(g => g.concepts.some(c => c.id === selectedId))?.label }}</span>
+          <span class="mob-concept-name">{{ active.shortTitle }}</span>
+        </div>
+        <span class="mob-counter">{{ activeIdx + 1 }}/{{ concepts.length }}</span>
+      </div>
+      <button class="mob-nav-btn" :disabled="activeIdx === concepts.length - 1" @click="goNext">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </nav>
+
   </div>
 </template>
 
@@ -459,9 +489,10 @@ function selectConcept(conceptId, groupId) {
 
 /* ── Sidebar ── */
 .rc-sidebar {
-  border-left: 1px solid rgba(255,255,255,0.06);
-  padding: 1.5rem 1rem;
+  border-left: 1px solid rgba(255,255,255,0.05);
+  padding: 1.5rem 1rem 1.5rem 0;
   overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
   background: rgba(255,255,255,0.01);
   box-sizing: border-box;
@@ -519,8 +550,25 @@ function selectConcept(conceptId, groupId) {
 .rc-main {
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
   box-sizing: border-box;
+}
+
+/* ── Custom Scrollbar ── */
+.rc-main::-webkit-scrollbar, .rc-sidebar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.rc-main::-webkit-scrollbar-track, .rc-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rc-main::-webkit-scrollbar-thumb, .rc-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+.rc-main::-webkit-scrollbar-thumb:hover, .rc-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* ── Card ── */
@@ -619,20 +667,79 @@ function selectConcept(conceptId, groupId) {
 .slide-fade-leave-to { opacity: 0; transform: translateY(-8px); }
 
 /* ── Responsive ── */
+.rc-mobile-nav { display: none; }
+
 @media (max-width: 768px) {
-  .rc-layout { grid-template-columns: 1fr; }
-  .rc-sidebar {
-    position: relative; height: auto;
-    display: flex; flex-wrap: wrap; gap: 0.4rem;
-    padding: 1rem;
-    border-left: none; border-bottom: 1px solid rgba(255,255,255,0.06);
+  /* Hide sidebar — too many items for mobile */
+  .rc-sidebar { display: none !important; }
+
+  /* Hide desktop layout to prevent flash before card renders */
+  .rc-layout { visibility: hidden; }
+
+  .rc-layout {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 48px - 64px); /* hero + bottom nav */
   }
-  .rc-nav-group { margin-bottom: 0; }
-  .rc-nav-group-label { display: none; }
-  .rc-nav-item { width: auto; padding: 0.4rem 0.8rem; font-size: 0.78rem; }
+
   .items-grid { grid-template-columns: 1fr; }
-  .rc-main { padding: 1rem; }
-  .card-header { padding: 1.3rem 1.2rem 1rem; }
+  .rc-main { padding: 1rem; height: 100%; padding-bottom: 0; }
+  .card-header { padding: 1.2rem 1.2rem 0.8rem; gap: 0.9rem; }
+  .card-icon { font-size: 2rem; }
   .card-body { padding: 1rem 1.2rem 1.5rem; }
+
+  /* Show mobile bottom nav */
+  .rc-mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 500;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    background: rgba(2, 2, 6, 0.92);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    height: 64px;
+    box-sizing: border-box;
+  }
+
+  .mob-nav-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  .mob-nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
+  .mob-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  .mob-nav-info {
+    flex: 1; display: flex; align-items: center; gap: 0.6rem; min-width: 0;
+  }
+
+  .mob-concept-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+  .mob-nav-text {
+    display: flex; flex-direction: column; min-width: 0; flex: 1;
+  }
+
+  .mob-group-name {
+    font-size: 0.65rem; color: rgba(255,255,255,0.35); font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .mob-concept-name {
+    font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.9);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .mob-counter {
+    font-size: 0.75rem; color: rgba(255,255,255,0.3);
+    font-weight: 700; flex-shrink: 0;
+    font-family: 'Inter', monospace;
+  }
 }
 </style>
