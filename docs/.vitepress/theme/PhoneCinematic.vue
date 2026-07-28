@@ -4,151 +4,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const emit = defineEmits(['close'])
 
-const concepts = [
-  // Processing
-  {
-    id: 'soc', icon: '🧠', color: '#ff2a5f',
-    shortTitle: 'SoC', title: 'النظام على شريحة (SoC)', subtitle: 'مبنى البلدية المجمع',
-    group: 'processing',
-    description: ['المبنى الحكومي المجمع الذي يضم المعالج المركزي (CPU)، المعالج الرسومي (GPU)، ووحدة المعالجة العصبية (NPU) في شريحة واحدة.']
-  },
-  {
-    id: 'ram', icon: '⚡', color: '#00c3ff',
-    shortTitle: 'الذواكر', title: 'RAM & Storage', subtitle: 'مكاتب الموظفين والمخازن',
-    group: 'processing',
-    description: ['الذاكرة العشوائية (RAM) هي المكاتب النشطة ذات الوصول الفوري، بينما التخزين (UFS/NVMe) هو الأرشيف الوطني الضخم الذي تُحفظ فيه الملفات للسنوات القادمة.']
-  },
-
-  // Modem & Connectivity
-  {
-    id: 'baseband', icon: '📡', color: '#6600ff',
-    shortTitle: 'Baseband', title: 'معالج النطاق الأساسي', subtitle: 'العقل المدبر للمودم',
-    group: 'modem',
-    description: [
-      'يأخذ البيانات الرقمية من معالج الهاتف (الصفر والواحد) ويقوم بتشفيرها وضغطها وتحويلها إلى بيانات جاهزة للبث عبر موجات الراديو، والعكس عند استقبال البيانات.'
-    ]
-  },
-  {
-    id: 'transceiver', icon: '📻', color: '#ff7700',
-    shortTitle: 'RF Transceiver', title: 'جهاز الإرسال والاستقبال الراديوي', subtitle: 'جسر العالم الرقمي والتناظري',
-    group: 'modem',
-    description: [
-      'يأخذ البيانات المجهزة من الـ Baseband، ويحولها إلى موجات كهرومغناطيسية تناظرية (Analog) للتردد المطلوب (مثلاً 5G أو 4G)، ثم يرسلها إلى المرحلة التالية.'
-    ]
-  },
-  {
-    id: 'rffe', icon: '🎛️', color: '#00e5ff',
-    shortTitle: 'RFFE', title: 'الواجهة الأمامية للترددات الراديوية', subtitle: 'مضخمات ومحولات الإشارة',
-    group: 'modem',
-    description: [
-      '<strong>مضخمات الطاقة (PA):</strong> تضخم الإشارة بقوة هائلة للسفر من هاتفك إلى برج الاتصالات.',
-      '<strong>مضخمات منخفضة الضوضاء (LNA):</strong> تستقبل الإشارة الضعيفة جداً من البرج وتضخمها دون تضخيم التشويش.',
-      '<strong>المرشحات (SAW & BAW):</strong> تحجب كل الترددات بالجو وتسمح فقط بتردد شبكتك بالمرور.',
-      '<strong>المحولات (Switches):</strong> تسمح للهاتف بالإرسال والاستقبال في نفس الوقت دون تصادم.'
-    ]
-  },
-  {
-    id: 'tuner', icon: '🎚️', color: '#f5a623',
-    shortTitle: 'Antenna Tuner', title: 'موالفات الهوائي', subtitle: 'التكيف الفوري مع الترددات',
-    group: 'modem',
-    description: [
-      'شريحة تغير الخصائص الكهربائية للهوائي في أجزاء من الثانية ليتناسب مع التردد المطلوب في تلك اللحظة بالضبط، حيث لا يمكن تركيب هوائي بحجم مختلف لكل تردد.'
-    ]
-  },
-  {
-    id: 'envelope', icon: '🔋', color: '#7ed321',
-    shortTitle: 'Envelope Tracking', title: 'شريحة تتبع غلاف الطاقة', subtitle: 'سر توفير طاقة الـ 5G',
-    group: 'modem',
-    description: [
-      'تراقب قوة الإشارة المطلوبة، وتزود مضخمات الطاقة (PA) بالكهرباء "على قدر الحاجة بالمللي ثانية". إذا كان برج الاتصال قريباً، تقلل الكهرباء، وإذا كان بعيداً تزيدها.'
-    ]
-  },
-  {
-    id: 'antennas', icon: '📶', color: '#9013fe',
-    shortTitle: 'الهوائيات و UWB', title: 'الهوائيات وشريحة UWB', subtitle: 'أبراج التقاط الإشارة والتتبع الدقيق',
-    group: 'modem',
-    description: [
-      '<strong>الهوائيات (Antennas):</strong> أبراج الراديو الموزعة على الإطار المعدني (للـ 5G، WiFi، Bluetooth، و GPS).',
-      '<strong>النطاق فائق العرض (UWB):</strong> شريحة تواصل دقيقة تُستخدم للتتبع المكاني الدقيق (كـ AirTags) والمشاركة القريبة.'
-    ]
-  },
-
-  // Power & Infra
-  {
-    id: 'pmic', icon: '🔌', color: '#d0021b',
-    shortTitle: 'PMIC و البطارية', title: 'إدارة الطاقة والبطارية', subtitle: 'محطة الكهرباء والتوزيع',
-    group: 'power',
-    description: [
-      'البطارية هي خزان الطاقة، وشريحة إدارة الطاقة (PMIC) هي شركة توزيع الكهرباء التي تقرر كم فولت يحتاج كل مكون وتمنع الانفجارات.'
-    ]
-  },
-  {
-    id: 'motherboard', icon: '🛣️', color: '#4a90e2',
-    shortTitle: 'اللوحة الأم', title: 'اللوحة الأم والكابلات', subtitle: 'شبكة الطرق السريعة والجسور',
-    group: 'power',
-    description: [
-      'اللوحة الرئيسية والفرعية تمثل الشوارع، والكابلات المرنة (Flex Cables) هي الجسور المعلقة التي تربط المناطق المتباعدة ببعضها لنقل الطاقة والبيانات.'
-    ]
-  },
-  {
-    id: 'enclave', icon: '🛡️', color: '#f8e71c',
-    shortTitle: 'Secure Enclave', title: 'وحدة الأمان المادية', subtitle: 'الخزنة الفولاذية',
-    group: 'power',
-    description: [
-      'شريحة معزولة تماماً عن المعالج وظيفتها تخزين بصمتك، وجهك، وكلمات مرورك وتشفيرها بحيث لا يمكن حتى لنظام التشغيل الوصول إليها مباشرة.'
-    ]
-  },
-
-  // Display, Audio & Haptics
-  {
-    id: 'display', icon: '📺', color: '#bd10e0',
-    shortTitle: 'الشاشة', title: 'الشاشة وشريحة DDIC', subtitle: 'اللوحة الإعلانية العملاقة',
-    group: 'display_audio',
-    description: [
-      'لوحة العرض (Panel)، وزجاج الحماية، وحساسات اللمس (Digitizer). شريحة تشغيل الشاشة (DDIC) هي العقل الذي يخبر كل بكسل متى يضيء وبأي لون.'
-    ]
-  },
-  {
-    id: 'camera', icon: '📸', color: '#417505',
-    shortTitle: 'الكاميرا', title: 'عالم الكاميرا والتصوير', subtitle: 'المراصد الفلكية ومعمل التحميض',
-    group: 'display_audio',
-    description: [
-      '<strong>المثبت البصري (OIS):</strong> محركات دقيقة جداً تحرك العدسة عكس حركة يدك لمنع اهتزاز الفيديو.',
-      '<strong>مستشعر الألوان:</strong> لضبط توازن اللون الأبيض بدقة.',
-      '<strong>معالج الصور (ISP):</strong> معمل تحميض وتعديل الصور.'
-    ]
-  },
-  {
-    id: 'audio_haptics', icon: '🔊', color: '#50e3c2',
-    shortTitle: 'الصوت والاهتزاز', title: 'الصوت ومحرك الاهتزاز', subtitle: 'نظام الإذاعة والتنبيه الملموس',
-    group: 'display_audio',
-    description: [
-      '<strong>محرك الاهتزاز (Haptic Engine):</strong> المسؤول عن الاهتزازات الدقيقة عند الكتابة أو تلقي إشعارات.',
-      '<strong>شريحة الصوت (Audio Codec):</strong> تتواصل مع الـ DAC وتدير ضغط وفك ضغط الملفات الصوتية.'
-    ]
-  },
-
-  // Sensors
-  {
-    id: 'motion_sensors', icon: '🧭', color: '#b8e986',
-    shortTitle: 'الحركة والاتجاه', title: 'حساسات الحركة والاتجاه', subtitle: 'إحساس الهاتف بالمكان',
-    group: 'sensors',
-    description: [
-      '<strong>البوصلة (Magnetometer):</strong> لتحديد الاتجاهات القطيبة وتعمل مع الـ GPS.',
-      '<strong>البارومتر (Barometer):</strong> لقياس الضغط الجوي والارتفاع، مفيد في تتبع صعود الدرج.',
-      'الجيروسكوب ومقياس التسارع لرصد الحركة الدقيقة.'
-    ]
-  },
-  {
-    id: 'depth_sensors', icon: '📏', color: '#9b9b9b',
-    shortTitle: 'حساسات إضافية', title: 'حساس العمق (LiDAR) والقاعة', subtitle: 'رادار الليزر والبوابات المغناطيسية',
-    group: 'sensors',
-    description: [
-      '<strong>حساس القاعة (Hall Effect):</strong> يكتشف إغلاق الغلاف الذكي ليطفئ الشاشة.',
-      '<strong>حساسات العمق (LiDAR / ToF):</strong> تستخدم ضوء الليزر لقياس المسافات بدقة بالغة وتفيد في الواقع المعزز وعزل الصور.'
-    ]
-  }
-]
+import { phoneGroups as groups, phoneConcepts as concepts } from './phoneData.js'
 
 const currentIndex = ref(0)
 const currentConcept = computed(() => concepts[currentIndex.value])
@@ -213,6 +69,16 @@ onUnmounted(() => {
           
           <div class="descriptions">
             <p v-for="(desc, idx) in currentConcept.description" :key="idx" v-html="desc"></p>
+          </div>
+
+          <!-- Vulnerabilities -->
+          <div v-if="currentConcept.vulnerabilities && currentConcept.vulnerabilities.length > 0" class="vuln-container">
+            <h4 class="vuln-title">
+              <span class="vuln-icon">⚠️</span> الثغرات الأمنية والهندسية:
+            </h4>
+            <ul class="vuln-list">
+              <li v-for="(v, i) in currentConcept.vulnerabilities" :key="i" class="vuln-item" v-html="v"></li>
+            </ul>
           </div>
         </div>
       </transition>
@@ -311,6 +177,13 @@ onUnmounted(() => {
   margin: 0;
 }
 .descriptions :deep(strong) { color: #fff; font-weight: 700; border-bottom: 1px dashed rgba(255,255,255,0.4); }
+
+.vuln-container { margin-top: 2rem; background: rgba(255, 60, 60, 0.05); border: 1px solid rgba(255, 60, 60, 0.15); border-radius: 12px; padding: 1.5rem; text-align: right; }
+.vuln-title { margin: 0 0 1rem 0; color: #ff4d4d; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+.vuln-icon { font-size: 1.2rem; }
+.vuln-list { margin: 0; padding-right: 1.5rem; list-style-type: square; color: rgba(255, 60, 60, 0.9); display: flex; flex-direction: column; gap: 0.8rem; }
+.vuln-item { font-size: 0.95rem; line-height: 1.6; }
+.vuln-item :deep(strong) { color: #ff6b6b; font-weight: 800; border-bottom: 1px dashed rgba(255, 107, 107, 0.4); margin-left: 0.3rem; }
 
 .controls {
   padding: 2rem; display: flex; align-items: center; justify-content: center; gap: 2rem;
