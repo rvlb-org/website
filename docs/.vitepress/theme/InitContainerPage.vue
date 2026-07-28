@@ -52,9 +52,9 @@ const files = [
 ]
 
 const libraries = [
-  { id: '01', name: 'xmas-elf', path: 'crates.io', tag: 'External', desc: 'مكتبة خارجية موثقة ومختبرة عالمياً تُستخدم بدلاً من `elf-parser` القديمة لتحليل مقاطع ملفات ELF بأمان وفاعلية.' },
-  { id: '02', name: 'talc', path: 'crates.io', tag: 'External', desc: 'مكتبة خارجية عالية الأداء لإدارة تخصيص الذاكرة (O(1) allocation) استُخدمت كبديل لـ bump-alloc القديمة لتوفير دعم للـ Heap بشكل آمن في init.' },
-  { id: '03', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 API', desc: 'تستخدم بشكل مكثف جداً في Init لإنشاء الـ CNode، الـ VSpace، توزيع الـ Untyped Memory، ونداءات الـ Page Mapping.' }
+  { id: '01', name: 'xmas-elf', path: 'crates.io', tag: 'External', is_external: true, desc: 'مكتبة خارجية موثقة ومختبرة عالمياً تُستخدم بدلاً من `elf-parser` القديمة لتحليل مقاطع ملفات ELF بأمان وفاعلية.' },
+  { id: '02', name: 'talc', path: 'crates.io', tag: 'External', is_external: true, desc: 'مكتبة خارجية عالية الأداء لإدارة تخصيص الذاكرة (O(1) allocation) استُخدمت كبديل لـ bump-alloc القديمة لتوفير دعم للـ Heap بشكل آمن في init.' },
+  { id: '03', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 API', is_external: false, desc: 'تستخدم بشكل مكثف جداً في Init لإنشاء الـ CNode، الـ VSpace، توزيع الـ Untyped Memory، ونداءات الـ Page Mapping.' }
 ]
 
 const terminalLines = ref([
@@ -271,6 +271,45 @@ const terminalLines = ref([
         </div>
       </section>
 
+      <!-- Flowchart Section -->
+      <section class="init-section mt-10">
+        <div class="section-header">
+          <div class="sh-icon glow-purple">🌊</div>
+          <h2 class="sh-title">دورة حياة الذاكرة (Memory Lifecycle)</h2>
+          <div class="line-decorator-cyan"></div>
+        </div>
+        <div class="flowchart-container glass-panel mt-6" dir="ltr">
+          <div class="fc-node fc-untyped">
+            <span class="fc-icon">🧠</span>
+            <span class="fc-text">Untyped Memory<br><small>(managed by talc)</small></span>
+          </div>
+          <div class="fc-arrow"><div class="fc-pulse"></div></div>
+          
+          <div class="fc-node fc-slot">
+            <span class="fc-icon">🎫</span>
+            <span class="fc-text">Slot Allocator<br><small>(Capabilities)</small></span>
+          </div>
+          <div class="fc-arrow"><div class="fc-pulse" style="animation-delay: 0.5s;"></div></div>
+
+          <div class="fc-node fc-vspace">
+            <span class="fc-icon">🗂️</span>
+            <span class="fc-text">VSpace / CNode<br><small>(Memory Map)</small></span>
+          </div>
+          <div class="fc-arrow"><div class="fc-pulse" style="animation-delay: 1s;"></div></div>
+
+          <div class="fc-node fc-elf">
+            <span class="fc-icon">🧩</span>
+            <span class="fc-text">ELF Loader<br><small>(xmas-elf)</small></span>
+          </div>
+          <div class="fc-arrow"><div class="fc-pulse" style="animation-delay: 1.5s;"></div></div>
+
+          <div class="fc-node fc-container glow-cyan-box">
+            <span class="fc-icon">🚀</span>
+            <span class="fc-text">Ready Container<br><small>(User Space)</small></span>
+          </div>
+        </div>
+      </section>
+
       <!-- Boot Sequence Terminal -->
       <section class="init-section mt-10">
         <div class="section-header">
@@ -388,7 +427,11 @@ const terminalLines = ref([
             <div class="lib-meta">
               <code class="meta-path" dir="ltr">{{ lib.path }}</code>
             </div>
-            <p class="lib-desc">{{ lib.desc }}</p>
+            <div class="lib-tags mt-2">
+              <span v-if="lib.is_external" class="pr-tag origin-tag tag-external">🌐 مكتبة خارجية</span>
+              <span v-else class="pr-tag origin-tag tag-local">🛠️ مكتبتنا</span>
+            </div>
+            <p class="lib-desc mt-2">{{ lib.desc }}</p>
           </div>
         </div>
       </section>
@@ -398,6 +441,10 @@ const terminalLines = ref([
 </template>
 
 <style scoped>
+.origin-tag { font-weight: 800; border-width: 1px; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+.tag-local { background: color-mix(in srgb, #22c55e 15%, transparent) !important; color: #4ade80 !important; border-color: color-mix(in srgb, #22c55e 40%, transparent) !important; }
+.tag-external { background: color-mix(in srgb, #f59e0b 15%, transparent) !important; color: #fbbf24 !important; border-color: color-mix(in srgb, #f59e0b 40%, transparent) !important; }
+
 .init-root {
   position: relative;
   min-height: 100vh;
@@ -625,7 +672,68 @@ const terminalLines = ref([
 }
 @media (max-width: 640px) {
   .file-header { flex-direction: column; align-items: flex-start; }
-  .file-size { align-self: flex-start; }
+  .genesis-badge { align-self: center; }
+}
+
+/* ── Flowchart ── */
+.flowchart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3rem 2rem;
+  overflow-x: auto;
+  border-radius: 16px;
+}
+.fc-node {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 2;
+  position: relative;
+}
+.fc-icon { font-size: 2rem; }
+.fc-text { font-family: monospace; font-size: 0.9rem; font-weight: bold; color: #e2e8f0; }
+.fc-text small { color: #94a3b8; font-size: 0.7rem; display: block; margin-top: 4px; }
+.fc-arrow {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  min-width: 40px;
+  margin: 0 10px;
+}
+.fc-pulse {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background: #22d3ee;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #22d3ee, 0 0 20px #22d3ee;
+  animation: pulse-move 2s infinite linear;
+}
+@keyframes pulse-move {
+  0% { left: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: calc(100% - 10px); opacity: 0; }
+}
+.fc-container { border-color: #22d3ee; }
+.fc-untyped { border-color: #f59e0b; }
+.fc-slot { border-color: #10b981; }
+.fc-vspace { border-color: #8b5cf6; }
+.fc-elf { border-color: #f43f5e; }
+
+@media (max-width: 640px) {
+  .file-header { flex-direction: column; align-items: flex-start; }
   .highlights-grid { grid-template-columns: 1fr; }
   .sh-desc { margin-left: 0; }
   .philosophical-note-init { flex-direction: column; }

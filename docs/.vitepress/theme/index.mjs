@@ -25,6 +25,7 @@ import MilestonesPage from './MilestonesPage.vue'
 import InitContainerPage from './InitContainerPage.vue'
 import InitFunctionsPage from './InitFunctionsPage.vue'
 import InitLibrariesPage from './InitLibrariesPage.vue'
+import DesktopContainerPage from './DesktopContainerPage.vue'
 import BusContainerPage from './BusContainerPage.vue'
 import BusFunctionsPage from './BusFunctionsPage.vue'
 import BusLibrariesPage from './BusLibrariesPage.vue'
@@ -64,6 +65,7 @@ export default {
     app.component('InitContainerPage', InitContainerPage)
     app.component('InitFunctionsPage', InitFunctionsPage)
     app.component('InitLibrariesPage', InitLibrariesPage)
+    app.component('DesktopContainerPage', DesktopContainerPage)
     app.component('BusContainerPage', BusContainerPage)
     app.component('BusFunctionsPage', BusFunctionsPage)
     app.component('BusLibrariesPage', BusLibrariesPage)
