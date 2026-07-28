@@ -10,7 +10,7 @@ const functions = [
   { id: '01', icon: '🌱', title: 'الحاوية الأم (The RootTask)', desc: 'الحاوية الأولى والوحيدة التي تبدأها نواة seL4 مباشرة. هي نقطة انطلاق مساحة المستخدم (User Space) وأساس النظام.' },
   { id: '02', icon: '🧠', title: 'إدارة الذاكرة الأولية (Memory Allocation)', desc: 'تمتلك كل الذاكرة الحرة في النظام عند بدء التشغيل وتديرها عبر UntypedAllocator لمنحها لباقي الحاويات عند إنشائها.' },
   { id: '03', icon: '🎫', title: 'إدارة القدرات (Capability Management)', desc: 'مسؤولة عن توزيع صلاحيات الوصول (Capabilities) من خلال SlotAllocator لربط الحاويات مع بعضها بشكل آمن.' },
-  { id: '04', icon: '🚀', title: 'إقلاع النظام (System Bootstrapping)', desc: 'تقوم بفك ضغط وتحميل وإطلاق جميع الحاويات الأساسية بترتيب دقيق: (Crypto, Tor, Disk, FS, Auth, Bus, Desktop, Input).' },
+  { id: '04', icon: '🚀', title: 'إقلاع النظام (System Bootstrapping)', desc: 'تقوم بفك ضغط وتحميل وإطلاق جميع الحاويات الأساسية بترتيب دقيق: (Crypto, Net, Disk, FS, Auth, Bus, Desktop, Input).' },
   { id: '05', icon: '🔗', title: 'إنشاء قنوات الاتصال (IPC Endpoints)', desc: 'تُنشئ قنوات اتصال IPC وتربطها بين الحاويات. على سبيل المثال، تمرر نقطة اتصال FS_Vault إلى Desktop ليتمكن من التفاعل معه.' },
   { id: '06', icon: '🤝', title: 'إعداد الذاكرة المشتركة (Shared Memory)', desc: 'تنشئ وتربط الذاكرة المشتركة للعمليات التي تتطلب نقل بيانات كبير، مثل ربط Disk_Vault مع FS_Vault عبر عنوان 0x600000.' },
   { id: '07', icon: '📦', title: 'إدارة سجل البرامج (Program Registry)', desc: 'تحمل أرشيف البرامج والتطبيقات المتاحة وتقوم بإعدادها للتشغيل بناءً على طلب المستخدم عبر واجهة سطح المكتب.' },
@@ -28,7 +28,7 @@ const files = [
       { label: 'حلقة الاستماع', value: 'LaunchApp Listener (0x0200)' },
     ],
     sections: [
-      { title: 'تسلسل الإقلاع', desc: 'Crypto -> Tor -> Disk -> FS -> Auth -> Bus -> Desktop -> Input' },
+      { title: 'تسلسل الإقلاع', desc: 'Crypto -> Net -> Disk -> FS -> Auth -> Bus -> Desktop -> Input' },
       { title: 'تشغيل البرامج', desc: 'program_manager::launch_app_by_name()' },
     ]
   },
@@ -52,7 +52,7 @@ const files = [
 ]
 
 const libraries = [
-  { id: '01', name: 'elf-loader', path: 'libs/elf-loader', tag: 'Binary Loader', desc: 'مكتبة مسؤولة عن قراءة ملفات ELF الخاصة بالحاويات وتحميل مقاطعها البرمجية (Sections) في مساحة الذاكرة الافتراضية (VSpace) المخصصة لها.' },
+  { id: '01', name: 'elf-loader', path: 'libs/elf-loader', tag: 'Binary Loader', desc: 'مكتبة مسؤولة عن قراءة ملفات ELF الخاصة بالحاويات وتحميل مقاطعها في الذاكرة. ⚠️ ملاحظة تحديث: تم استبدال مكتبة elf-parser الداخلية بمكتبة xmas-elf الموثقة عالمياً في يوليو ٢٠٢٦.' },
   { id: '02', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 API', desc: 'تستخدم بشكل مكثف جداً في Init لإنشاء الـ CNode، الـ VSpace، توزيع الـ Untyped Memory، ونداءات الـ Page Mapping.' },
   { id: '03', name: 'utils', path: 'libs/utils', tag: 'Core Helpers', desc: 'تضم دوال مساعدة للطباعة (print_str) والتحويلات للعمل في بيئة لا تحتوي على مكتبة قياسية (no_std).' }
 ]
@@ -62,7 +62,7 @@ const terminalLines = ref([
   { text: '[Init] Booting HISN-seL4 User Space...', color: 'text-cyan-400 font-bold' },
   { text: '[Init] Initializing UntypedAllocator & SlotAllocator...', color: 'text-blue-300' },
   { text: '[Init] Crypto_Vault successfully loaded and started!', color: 'text-green-400' },
-  { text: '[Init] Tor Router successfully loaded and started!', color: 'text-green-400' },
+  { text: '[Init] Network Gateway successfully loaded and started!', color: 'text-green-400' },
   { text: '[Init] Disk Vault successfully loaded and started!', color: 'text-green-400' },
   { text: '[Init] FS Vault successfully loaded and started!', color: 'text-green-400' },
   { text: '[Init] Shared memory mapped between FS and Disk successfully at 0x600000!', color: 'text-yellow-300' },
@@ -219,8 +219,8 @@ const terminalLines = ref([
                 </div>
                 <div class="tree-node vault-node border-blue">
                   <div class="vault-text">
-                    <span class="node-title">Tor</span>
-                    <span class="node-ar-title">شبكة تور</span>
+                    <span class="node-title">Net</span>
+                    <span class="node-ar-title">الشبكة</span>
                   </div>
                 </div>
                 <div class="tree-node vault-node border-orange">

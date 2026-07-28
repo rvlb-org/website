@@ -3,6 +3,7 @@ layout: page
 title: المكتبات (Libraries)
 ---
 
+<div class="libs-page-wrapper">
 <div class="pr-hero">
   <div class="pr-hero-bg"></div>
   <div class="pr-hero-content">
@@ -15,8 +16,14 @@ title: المكتبات (Libraries)
 </div>
 
 <LibsList />
+</div>
 
 <style scoped>
+.libs-page-wrapper {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
 /* ── Hero ── */
 .pr-hero {
   position: relative;

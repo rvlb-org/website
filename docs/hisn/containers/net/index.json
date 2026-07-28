@@ -1,0 +1,17 @@
+{
+  "id": "net",
+  "name": "net",
+  "number": 3,
+  "timestamp": 1785248000,
+  "type": "Network",
+  "icon": "🌐",
+  "iconClass": "pr-icon--net",
+  "created_at": "28 يوليو 2026 (17:28 GMT+0300)",
+  "tags": ["Network", "Gateway", "smoltcp", "Tor Optional"],
+  "overview": "00_overview.html",
+  "files": [
+    { "name": "src/main.rs", "path": "containers/net/src/main.rs", "content_file": "01_main_rs.html" },
+    { "name": "src/network.rs", "path": "containers/net/src/network.rs", "content_file": "02_network_rs.html" }
+  ],
+  "is_new": true
+}

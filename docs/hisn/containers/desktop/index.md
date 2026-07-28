@@ -5,13 +5,16 @@ description: "توثيق حاوية desktop في نظام Hisn-seL4 — GUI"
 
 # 🖥️ desktop
 
+<div class="lib-new-badge">
+  ✨ تحديث جوهري — تم استبدال مكتبات <strong>framebuffer</strong> و <strong>font-render</strong> القديمة بمكتبة <strong>eg-fb</strong> (المعتمدة على <strong>embedded-graphics</strong> و <strong>profont</strong>) في يوليو ٢٠٢٦.
+</div>
 
 ## نظرة عامة
 
 <div class="overview-content">
 
 <p>
-  حاوية <code>Desktop</code> هي الطبقة الأكثر تعقيداً في النظام — تجمع بين <strong>نظام نوافذ متكامل</strong>، وإدارة مدخلات الماوس والكيبورد، والتواصل مع FS/Auth/Init عبر IPC، والرسم المباشر على الـ Framebuffer بدون Heap ديناميكي. تتألف من ثلاثة أقسام رئيسية:
+  حاوية <code>Desktop</code> هي الطبقة الأكثر تعقيداً في النظام — تجمع بين <strong>نظام نوافذ متكامل</strong>، وإدارة مدخلات الماوس والكيبورد، والتواصل مع FS/Auth/Init عبر IPC، والرسم المباشر على الشاشة عبر <code>eg-fb</code> بدون Heap ديناميكي. تتألف من ثلاثة أقسام رئيسية:
 </p>
 <ul>
   <li><strong>src/</strong>: نقطة الدخول وإدارة المؤشر</li>
