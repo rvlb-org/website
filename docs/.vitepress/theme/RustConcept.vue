@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import RustCinematic from './RustCinematic.vue'
 
 const concepts = [
   {
@@ -275,6 +276,7 @@ function selectConcept(conceptId, groupId) {
 }
 
 // Mobile navigation
+// Mobile navigation
 const activeIdx = computed(() => concepts.findIndex(c => c.id === selectedId.value))
 function goNext() {
   const i = activeIdx.value
@@ -284,6 +286,15 @@ function goPrev() {
   const i = activeIdx.value
   if (i > 0) selectedId.value = concepts[i - 1].id
 }
+
+const showCinematic = ref(false)
+
+// On mobile: open cinematic immediately
+onMounted(() => {
+  if (window.innerWidth <= 768) {
+    showCinematic.value = true
+  }
+})
 </script>
 
 <template>
@@ -306,6 +317,10 @@ function goPrev() {
         <span class="title-en">Rust</span>
         <span class="title-ar">— لغة الصدأ الصلبة</span>
       </div>
+      <button class="cinematic-hero-btn" @click="showCinematic = true">
+        <span>🎬</span>
+        <span class="btn-text">العرض التقديمي</span>
+      </button>
     </header>
 
     <!-- ── Main Layout ── -->
@@ -412,6 +427,10 @@ function goPrev() {
       </button>
     </nav>
 
+    <!-- ── Cinematic Overlay ── -->
+    <transition name="bg-fade">
+      <RustCinematic v-if="showCinematic" @close="showCinematic = false" />
+    </transition>
   </div>
 </template>
 
@@ -468,14 +487,22 @@ function goPrev() {
 }
 .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #f97316; box-shadow: 0 0 6px #f97316; }
 .rc-title { display: flex; align-items: center; gap: 0.6rem; }
-.title-en {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 900; line-height: 1;
-  background: linear-gradient(135deg, #f97316 0%, #fdba74 60%, #f97316 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
+.rc-title { display: flex; align-items: baseline; gap: 0.5rem; }
+.title-en { font-size: 2.2rem; font-weight: 900; }
 .title-ar { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.3); }
+
+.cinematic-hero-btn {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.4);
+  color: #f97316; padding: 0.4rem 1.2rem; border-radius: 100px;
+  font-family: inherit; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; transition: all 0.25s ease;
+}
+.cinematic-hero-btn:hover {
+  background: rgba(249,115,22,0.3);
+  box-shadow: 0 0 15px rgba(249,115,22,0.4);
+  transform: translateY(-2px);
+}
 
 /* ── Layout ── */
 .rc-layout {
@@ -662,9 +689,13 @@ function goPrev() {
 }
 
 .slide-fade-enter-active { transition: all 0.25s ease; }
-.slide-fade-leave-active { transition: all 0.18s ease; }
-.slide-fade-enter-from { opacity: 0; transform: translateY(12px); }
+.slide-fade-leave-active { transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1); position: absolute; width: 100%; }
+.slide-fade-enter-from { opacity: 0; transform: translateY(8px); }
 .slide-fade-leave-to { opacity: 0; transform: translateY(-8px); }
+
+/* ── Cinematic Transition ── */
+.bg-fade-enter-active, .bg-fade-leave-active { transition: opacity 0.5s ease; }
+.bg-fade-enter-from, .bg-fade-leave-to { opacity: 0; }
 
 /* ── Responsive ── */
 .rc-mobile-nav { display: none; }

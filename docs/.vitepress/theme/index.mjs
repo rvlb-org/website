@@ -9,6 +9,8 @@ import ConceptsList from './ConceptsList.vue'
 import ConceptsHub from './ConceptsHub.vue'
 import RustConcept from './RustConcept.vue'
 import RustCinematic from './RustCinematic.vue'
+import GithubConcept from './GithubConcept.vue'
+import GithubCinematic from './GithubCinematic.vue'
 import NetworkCinematic from './NetworkCinematic.vue'
 import NetworkConcept from './NetworkConcept.vue'
 import PhilosophyHub from './PhilosophyHub.vue'
@@ -44,6 +46,8 @@ export default {
     app.component('ConceptsHub', ConceptsHub)
     app.component('RustConcept', RustConcept)
     app.component('RustCinematic', RustCinematic)
+    app.component('GithubConcept', GithubConcept)
+    app.component('GithubCinematic', GithubCinematic)
     app.component('NetworkCinematic', NetworkCinematic)
     app.component('NetworkConcept', NetworkConcept)
     app.component('PhilosophyHub', PhilosophyHub)

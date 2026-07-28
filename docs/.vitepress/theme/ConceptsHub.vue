@@ -16,6 +16,13 @@ const concepts = [
     title: 'الشبكات', 
     desc: 'مفاهيم الشبكات المتقدمة وبروتوكولاتها', 
     color: '#3b82f6' 
+  },
+  {
+    href: '/concepts/github',
+    icon: '🐙',
+    title: 'GitHub',
+    desc: 'منصة إدارة وتتبع الكود والتعاون',
+    color: '#eab308'
   }
 ]
 </script>
