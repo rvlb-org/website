@@ -42,19 +42,19 @@ const files = [
   },
   {
     id: '03', name: 'Cargo.toml', path: 'containers/init/Cargo.toml', icon: '📦', tag: 'Package Config', size: '~18 سطر',
-    desc: 'يعرف الاعتماديات الكبيرة لحاوية الإقلاع والتي تشمل جميع الحاويات الأخرى في النظام ليتم تضمينها برمجياً وقت البناء كصور ELF مضمنة.',
+    desc: 'يعرف الاعتماديات الجوهرية لحاوية الإقلاع والتي تشمل مكتبات النظام ومكتبات الطرف الثالث الموثقة التي يعتمد عليها النظام لبناء الحاويات الأخرى.',
     highlights: [
       { label: 'الاسم', value: 'init (v0.1.0)' },
-      { label: 'elf-loader', value: 'path = "../../libs/elf-loader"' },
-      { label: 'التبعيات', value: 'يعتمد على جميع الحاويات الأخرى' },
+      { label: 'الذاكرة (Heap)', value: 'talc = "4" & spin = "0.9"' },
+      { label: 'تحليل ELF', value: 'xmas-elf = "0.9"' },
     ]
   }
 ]
 
 const libraries = [
-  { id: '01', name: 'elf-loader', path: 'libs/elf-loader', tag: 'Binary Loader', desc: 'مكتبة مسؤولة عن قراءة ملفات ELF الخاصة بالحاويات وتحميل مقاطعها في الذاكرة. ⚠️ ملاحظة تحديث: تم استبدال مكتبة elf-parser الداخلية بمكتبة xmas-elf الموثقة عالمياً في يوليو ٢٠٢٦.' },
-  { id: '02', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 API', desc: 'تستخدم بشكل مكثف جداً في Init لإنشاء الـ CNode، الـ VSpace، توزيع الـ Untyped Memory، ونداءات الـ Page Mapping.' },
-  { id: '03', name: 'utils', path: 'libs/utils', tag: 'Core Helpers', desc: 'تضم دوال مساعدة للطباعة (print_str) والتحويلات للعمل في بيئة لا تحتوي على مكتبة قياسية (no_std).' }
+  { id: '01', name: 'xmas-elf', path: 'crates.io', tag: 'External', desc: 'مكتبة خارجية موثقة ومختبرة عالمياً تُستخدم بدلاً من `elf-parser` القديمة لتحليل مقاطع ملفات ELF بأمان وفاعلية.' },
+  { id: '02', name: 'talc', path: 'crates.io', tag: 'External', desc: 'مكتبة خارجية عالية الأداء لإدارة تخصيص الذاكرة (O(1) allocation) استُخدمت كبديل لـ bump-alloc القديمة لتوفير دعم للـ Heap بشكل آمن في init.' },
+  { id: '03', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 API', desc: 'تستخدم بشكل مكثف جداً في Init لإنشاء الـ CNode، الـ VSpace، توزيع الـ Untyped Memory، ونداءات الـ Page Mapping.' }
 ]
 
 const terminalLines = ref([

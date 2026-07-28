@@ -48,6 +48,10 @@ libs.value.sort((a, b) => a.timestamp - b.timestamp)
       <div class="pr-card-footer">
         <div class="pr-card-date">🕒 {{ lib.created_at }}</div>
         <div class="pr-card-tags">
+          <span v-if="!lib.is_deleted">
+            <span v-if="lib.is_wrapper" class="pr-tag origin-tag tag-external">🌐 مكتبة خارجية</span>
+            <span v-else class="pr-tag origin-tag tag-local">🛠️ مكتبتنا</span>
+          </span>
           <span v-for="tag in lib.tags" :key="tag" class="pr-tag">{{ tag }}</span>
         </div>
       </div>
@@ -118,6 +122,20 @@ libs.value.sort((a, b) => a.timestamp - b.timestamp)
   border-radius: 6px;
   font-size: 0.85rem;
   font-family: 'Space Mono', monospace;
+}
+.origin-tag {
+  font-weight: 800;
+  border-width: 1px;
+}
+.tag-local {
+  background: color-mix(in srgb, #22c55e 15%, transparent) !important;
+  color: #4ade80 !important;
+  border-color: color-mix(in srgb, #22c55e 40%, transparent) !important;
+}
+.tag-external {
+  background: color-mix(in srgb, #f59e0b 15%, transparent) !important;
+  color: #fbbf24 !important;
+  border-color: color-mix(in srgb, #f59e0b 40%, transparent) !important;
 }
 .pr-card-type {
   font-family: 'Space Mono', monospace;

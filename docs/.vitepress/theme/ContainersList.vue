@@ -27,6 +27,7 @@ containers.value.sort((a, b) => a.timestamp - b.timestamp)
       :key="container.id"
       :href="container.href"
       class="pr-card"
+      :class="{ 'pr-card-new': container.is_new }"
     >
       <div class="pr-card-header">
         <div class="pr-card-icon">{{ container.icon }}</div>
@@ -37,6 +38,9 @@ containers.value.sort((a, b) => a.timestamp - b.timestamp)
           </h3>
           <span class="pr-card-type">{{ container.type }} · {{ container.files.length }} files</span>
         </div>
+      </div>
+      <div v-if="container.is_new" class="pr-card-status pr-status-new">
+        ✨ أعيد هيكلتها حديثاً
       </div>
       <div class="pr-card-footer">
         <div class="pr-card-date">🕒 {{ container.created_at }}</div>
@@ -71,8 +75,27 @@ containers.value.sort((a, b) => a.timestamp - b.timestamp)
 }
 .pr-card:hover {
   transform: translateY(-4px);
-  border-color: color-mix(in srgb, #8b5cf6 40%, transparent);
-  box-shadow: 0 8px 30px color-mix(in srgb, #8b5cf6 12%, transparent);
+  border-color: color-mix(in srgb, #6366f1 40%, transparent);
+  box-shadow: 0 8px 30px color-mix(in srgb, #6366f1 8%, transparent);
+}
+.pr-card-new {
+  background: color-mix(in srgb, #10b981 3%, var(--vp-c-bg-soft));
+  border-color: color-mix(in srgb, #10b981 30%, transparent);
+}
+
+.pr-card-status {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.pr-status-new {
+  background: color-mix(in srgb, #10b981 15%, transparent);
+  color: #6ee7b7;
+  border: 1px solid color-mix(in srgb, #10b981 30%, transparent);
 }
 
 .pr-card-header {

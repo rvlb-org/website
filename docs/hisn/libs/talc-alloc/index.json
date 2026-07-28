@@ -24,5 +24,6 @@
   ],
   "number": 18,
   "timestamp": 1785247501,
-  "is_new": true
+  "is_new": true,
+  "is_wrapper": true
 }
