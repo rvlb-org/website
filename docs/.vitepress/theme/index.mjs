@@ -48,6 +48,8 @@ export default {
     app.component('RustCinematic', RustCinematic)
     app.component('GithubConcept', GithubConcept)
     app.component('GithubCinematic', GithubCinematic)
+    app.component('PhoneConcept', PhoneConcept)
+    app.component('PhoneCinematic', PhoneCinematic)
     app.component('NetworkCinematic', NetworkCinematic)
     app.component('NetworkConcept', NetworkConcept)
     app.component('PhilosophyHub', PhilosophyHub)

@@ -23,6 +23,13 @@ const concepts = [
     title: 'GitHub',
     desc: 'منصة إدارة وتتبع الكود والتعاون',
     color: '#eab308'
+  },
+  {
+    href: '/concepts/phone',
+    icon: '📱',
+    title: 'عتاد الهاتف',
+    desc: 'تشريح دقيق لمكونات الهاتف الذكي والمودم',
+    color: '#bd10e0'
   }
 ]
 </script>
