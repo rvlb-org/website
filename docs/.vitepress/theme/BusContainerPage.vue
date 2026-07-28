@@ -91,6 +91,8 @@ const stats = [
 ]
 
 
+</script>
+
 <template>
   <div class="bus-root">
     <!-- Glowing background effects -->
