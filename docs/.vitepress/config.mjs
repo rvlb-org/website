@@ -86,7 +86,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/enki-core' }
+      { icon: 'github', link: 'https://github.com/rvlb-org' }
     ],
 
     docFooter: {

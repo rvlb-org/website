@@ -2,11 +2,13 @@
 import { ref, onMounted } from 'vue'
 
 const messageTags = [
-  { call: '0x301-0x304 (Direct FS Ops)', action: 'يستقبل طلبات (Create, Read, Write, Delete) ويُمررها مباشرة لـ FS_Vault عبر نقطة الاتصال FS_EP_CAP=1 وينتظر الرد.' },
-  { call: '0x310-0x311 (Composite Ops)', action: 'ينفذ عمليات مركبة مثل النسخ (CopyFile = Read+Write) والنقل (MoveFile). يتعامل مع فشل الخطوات تتابعيًا داخل الحاوية.' },
-  { call: '0x320-0x322 (Clipboard Ops)', action: 'يُدير الحافظة المؤقتة في الذاكرة (static mut CLIPBOARD) لنسخ ولصق ومسح البيانات بين التطبيقات بأمان تام.' },
-  { call: '0x330-0x332 (Desktop Ops)', action: 'يتولى إنشاء أيقونات سطح المكتب (.vlk) أو حذفها، وتسجيل تطبيقات جديدة في /home/user/apps/ ليعرضها الـ Desktop.' },
-  { call: '0x340-0x341 (Network Proxy)', action: 'يحول طلبات الاتصال بالشبكة (NetConnect, NetRequest) إلى حاوية Tor_Vault لتتم العملية عبر طبقات التشفير المخفية.' }
+  { call: 'MessageTag::Ping → Pong', action: 'رسالة اختبار الاتصال (Health Check). ترد Bus_Vault بـ Pong فوراً للتحقق من أن الحاوية تعمل بشكل طبيعي.' },
+  { call: 'CreateFile | WriteFile | ReadFile | DeleteFile | DeleteDir | ListDir | CreateDir', action: 'عمليات الملفات المباشرة: تُمرَّر فوراً إلى FS_Vault عبر FS_EP_CAP=1 باستخدام forward_to_fs() وترجع الرد مباشرة.' },
+  { call: 'MessageTag::CopyFile', action: 'عملية مركبة: (1) ReadFile من المصدر → (2) WriteFile إلى الوجهة. إذا فشلت الخطوة الأولى يُرجع Err مباشرة.' },
+  { call: 'MessageTag::MoveFile', action: 'عملية مركبة من خطوتين: CopyFile أولاً، ثم DeleteFile على المصدر. كلها تُنفَّذ داخل Bus_Vault بدون تدخل التطبيق.' },
+  { call: 'CreateShortcut | DeleteShortcut | RegisterApp', action: 'عمليات سطح المكتب: CreateShortcut يكتب ملف .vlk في Desktop/، RegisterApp يكتب الثنائي في /home/user/apps/ عبر FS_Vault.' },
+  { call: 'ClipboardCopy | ClipboardPaste | ClipboardClear', action: 'إدارة الحافظة في الذاكرة: CLIPBOARD [u8; 256] static mut. Copy يحفظ، Paste يرجع، Clear يصفّر. بدون مشاركة بين العمليات.' },
+  { call: 'NetConnect | NetRequest', action: '(مستقبلاً) يُحوَّل إلى Tor_Vault. حالياً يرد Bus_Vault بـ Ok مؤقتاً حتى يتم توصيل قناة الـ Net.' }
 ]
 
 const functions = [
@@ -18,38 +20,76 @@ const functions = [
 
 const files = [
   {
-    id: '01', name: 'src/main.rs', path: 'containers/bus/src/main.rs', icon: '🦀', tag: 'IPC Server', size: '~180 سطر',
-    desc: 'الحلقة اللانهائية (Event Loop) الخاصة بالناقل. تحتوي على تصنيف صارم لكل رسالة IPC واردة وتوجيهها حسب الـ MessageTag. تحتوي أيضاً على مصفوفة CLIPBOARD الثابتة.',
+    id: '01', name: 'src/main.rs', path: 'containers/bus/src/main.rs', icon: '🦀', tag: 'IPC Server', size: '202 سطر',
+    desc: 'ملف الحاوية الوحيد ونقطة دخولها (_start). يحتوي على الحلقة الرئيسية server.serve() التي تصنّف كل MessageTag وارد وتوجهه. تعرّف ثلاثة slots: 0=نفسها، 1=FS_Vault، 2=Auth_Vault. وتحتوي على static mut CLIPBOARD [u8; 256] للحافظة.',
     highlights: [
-      { label: 'تفويض الـ FS', value: 'forward_to_fs(req, ipc_buf)' },
-      { label: 'العملية المركبة (نسخ)', value: 'CopyFile = ReadFile(src) -> WriteFile(dst)' },
-      { label: 'الذاكرة المؤقتة', value: 'static mut CLIPBOARD: [u8; 256]' },
-      { label: 'تحويل الشبكة', value: 'NetRequest -> Tor_Vault_EP' }
+      { label: 'تفويض الـ FS', value: 'forward_to_fs(req, ipc_buf) → Sender::send_recv()' },
+      { label: 'CopyFile (مركبة)', value: 'ReadFile(src) → WriteFile(dst) أو Err' },
+      { label: 'MoveFile (مركبة)', value: 'CopyFile(src→dst) → DeleteFile(src)' },
+      { label: 'الحافظة', value: 'static mut CLIPBOARD: [u8; 256] + CLIPBOARD_LEN: usize' },
+      { label: 'CreateShortcut', value: 'WriteFile(.vlk) إلى /home/user/Desktop/' },
+      { label: 'RegisterApp', value: 'WriteFile(binary) إلى /home/user/apps/<name>' }
     ]
   },
   {
     id: '02', name: 'Cargo.toml', path: 'containers/bus/Cargo.toml', icon: '📦', tag: 'Package Config', size: '~15 سطر',
-    desc: 'ملف التعريف الخاص بالحاوية، والذي يربطها بمكتبة sel4-sys ومكتبة utils، ويعرّفها كـ executable مستقل.',
+    desc: 'تعريف الحاوية كـ binary مستقل. تعتمد فقط على مكتبتين: sel4-sys للتواصل مع النواة، و ipc-sync لاستقبال وإرسال رسائل IPC عبر Receiver/Sender. أبسط Cargo.toml في النظام.',
     highlights: [
-      { label: 'الاسم', value: 'bus (v0.1.0)' },
-      { label: 'تجميع (Profile)', value: 'opt-level = "z"' },
+      { label: 'الاسم', value: 'bus (v0.1.0, edition 2024)' },
+      { label: 'التبعيات', value: 'sel4-sys + ipc-sync فقط (لا شيء آخر!)' },
+      { label: 'تجميع Release', value: 'opt-level=3, lto=true, panic=abort' }
     ]
   }
 ]
 
 const terminalLines = ref([
-  { text: '[Bus] Initializing IPC Router matrix...', color: 'text-purple-400 font-bold' },
-  { text: '[Bus] Capabilities linked: FS_EP=1, TOR_EP=3.', color: 'text-gray-400' },
-  { text: '[Bus] Listening on Endpoint 0...', color: 'text-purple-300' },
-  { text: '>> INCOMING [App_ID: 15] 0x301 (CreateFile)', color: 'text-pink-400 font-bold mt-2' },
-  { text: '[Bus] Forwarding 0x301 to FS_Vault...', color: 'text-gray-500' },
-  { text: '<< REPLY [FS_Vault] Success (0)', color: 'text-green-400' },
-  { text: '[Bus] Returning reply to App_ID: 15.', color: 'text-gray-400' },
-  { text: '>> INCOMING [App_ID: 22] 0x310 (CopyFile)', color: 'text-pink-400 font-bold mt-2' },
-  { text: '[Bus] Executing composite: ReadFile(src) -> WriteFile(dst)', color: 'text-purple-300' },
-  { text: '<< REPLY [Bus_Vault] Composite Success (0)', color: 'text-green-400' }
+  { text: '[Bus_Vault] =============================================', color: 'text-purple-400 font-bold' },
+  { text: '[Bus_Vault]  seL4-Vault System Bus v0.1  ', color: 'text-purple-300' },
+  { text: '[Bus_Vault] =============================================', color: 'text-purple-400 font-bold' },
+  { text: '[Bus_Vault] Slots: 0=Self | 1=FS_Vault | 2=Auth_Vault', color: 'text-gray-400' },
+  { text: '[Bus_Vault] Ready. Entering IPC event loop...', color: 'text-purple-300' },
+  { text: '>> INCOMING [Desktop] MessageTag::CopyFile', color: 'text-pink-400 font-bold mt-2' },
+  { text: '[Bus_Vault] → CopyFile → FS_Vault (Read src)', color: 'text-gray-500' },
+  { text: '<< REPLY [FS_Vault] Ok (data received)', color: 'text-green-400' },
+  { text: '[Bus_Vault] → WriteFile(dst) → FS_Vault', color: 'text-gray-500' },
+  { text: '<< REPLY [Bus_Vault] Composite CopyFile: Success', color: 'text-green-400' },
+  { text: '>> INCOMING [App] MessageTag::ClipboardCopy', color: 'text-pink-400 font-bold mt-2' },
+  { text: '[Bus_Vault] ClipboardCopy: storing content.', color: 'text-purple-300' },
+  { text: '<< OK (CLIPBOARD[0..len] updated, LEN=42)', color: 'text-green-400' }
 ])
-</script>
+const libraries = [
+  { id: '01', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 Syscalls', is_external: false, desc: 'مكتبتنا. تغليف استدعاءات نواة seL4 الحرجة واستدعاءات الطباعة المبكرة (print_str). تُستخدم في Bus فقط لطباعة رسائل التشخيص والـ panic handler.' },
+  { id: '02', name: 'ipc-sync', path: 'libs/ipc-sync', tag: 'IPC', is_external: false, desc: 'مكتبتنا. توفر Receiver لاستقبال الرسائل في حلقة serve()، و Sender لإرسال طلبات forward_to_fs() إلى FS_Vault. هي العمود الفقري للحاوية كلها.' }
+]
+
+const internalCmds = [
+  { name: 'forward_to_fs(req, ipc_buf) -> IpcMessage', desc: 'الدالة الوحيدة المساعدة في الكود. تنشئ Sender بـ FS_EP_CAP=1، ترسل الطلب، تنتظر الرد. إذا فشلت ترجع IpcMessage::new(MessageTag::Err).' },
+  { name: 'server.serve(|req| { match req.tag {...} })', desc: 'الحلقة الرئيسية اللانهائية (Receiver::serve). تستقبل كل IpcMessage وارد، تمرره للـ closure الذي يعالج match req.tag، ثم ترسل الرد مباشرة.' },
+  { name: 'CopyFile → ReadFile(src) + WriteFile(dst)', desc: 'منطق مركب: (1) ينشئ read_req بتاغ ReadFile ويرسل لـ FS_Vault. (2) إذا جاء Ok ينشئ write_req بالبيانات المستقبلة ويكتب إلى المسار المقصود (mr[2]).' },
+  { name: 'MoveFile → CopyFile + DeleteFile', desc: 'منطق مركب: ينشئ copy_req ويرسله لـ forward_to_fs. إذا نجح ينشئ del_req بتاغ DeleteFile ويحذف المصدر. التطبيق لا يعلم بهاتين الخطوتين.' },
+  { name: 'ClipboardCopy → CLIPBOARD[..len].copy_from_slice()', desc: 'unsafe block: ينسخ req.payload[..min(len,256)] إلى static mut CLIPBOARD ثم يضبط CLIPBOARD_LEN = len. الحد الأقصى 256 بايت.' },
+  { name: 'ClipboardPaste → resp.payload[..len].copy_from_slice()', desc: 'unsafe block: يقرأ CLIPBOARD_LEN ثم ينسخ CLIPBOARD[..len] إلى resp.payload ويرجعها للطالب. البيانات تبقى في CLIPBOARD حتى يأتي ClipboardClear.' },
+  { name: 'CreateShortcut → WriteFile(.vlk)', desc: 'ينشئ file_req بتاغ WriteFile بمحتوى .vlk (req.payload) في المسار (req.mr[1] = Desktop/). يرسل لـ FS_Vault ويرجع الرد مباشرة.' },
+  { name: 'RegisterApp → WriteFile(/home/user/apps/)', desc: 'يكتب الثنائي (req.payload) في /home/user/apps/<appname> (req.mr[1]) عبر WriteFile إلى FS_Vault. بعدها تستطيع Desktop عرض التطبيق في الـ Dock.' },
+  { name: '#[panic_handler] fn panic()', desc: 'عند أي panic غير متوقع: يطبع "[Bus_Vault] PANIC!" ثم يدخل حلقة loop{} لا نهائية لأن الحاوية لا يمكنها الإنهاء (no_std / no_main).' }
+]
+
+const connections = [
+  { dir: 'تستقبل من', name: 'Desktop + أي تطبيق', arrow: '⬅️', detail: 'تلقي طلبات IPC كـ IpcMessage عبر Endpoint 0 الخاص بها (FS_EP_CAP=0)', glow: 'glow-purple-border' },
+  { dir: 'ترسل إلى', name: 'FS_Vault (EP=1)', arrow: '➡️', detail: 'forward_to_fs() — جميع عمليات الملفات والاختصارات والتطبيقات', glow: 'glow-yellow-border' },
+  { dir: 'مخطط له', name: 'Auth_Vault (EP=2)', arrow: '➡️', detail: 'Slot 2 محجوز مستقبلاً للتحقق من الصلاحيات قبل تمرير طلبات الملفات', glow: 'glow-red-border' },
+  { dir: 'مخطط له', name: 'Net_Vault (EP=3)', arrow: '➡️', detail: 'سيتلقى NetConnect/NetRequest مستقبلاً (Tor_Vault غير موصول حالياً)', glow: 'glow-blue-border' }
+]
+
+const stats = [
+  { val: '202', label: 'سطر main.rs (الملف الوحيد)', color: 'stat-purple' },
+  { val: '2', label: 'مكتبة فقط (sel4-sys + ipc-sync)', color: 'stat-green' },
+  { val: '7', label: 'مجموعات MessageTag مختلفة', color: 'stat-purple' },
+  { val: '256', label: 'بايت CLIPBOARD ثابتة في BSS', color: 'stat-blue' },
+  { val: '3', label: 'Capability Slots (0=Self, 1=FS, 2=Auth)', color: 'stat-pink' },
+  { val: '0', label: 'مخصص ديناميكي — بدون heap كلياً', color: 'stat-green' }
+]
+
 
 <template>
   <div class="bus-root">
@@ -312,6 +352,78 @@ const terminalLines = ref([
         </div>
       </section>
 
+      <!-- ── المكتبات المستعملة ── -->
+      <section class="bus-section mt-10">
+        <div class="section-header">
+          <div class="sh-icon glow-green">📚</div>
+          <h2 class="sh-title">المكتبات المستعملة</h2>
+          <div class="line-decorator-purple"></div>
+        </div>
+        <p class="sh-desc">حاوية bus هي الأبسط في النظام — مكتبتان فقط، كلتاهما من بنائنا.</p>
+        <div class="bus-libs-grid">
+          <div v-for="lib in libraries" :key="lib.id" class="bus-lib-card glass-panel hover-glow-purple">
+            <div class="blib-header">
+              <div class="blib-id"># {{ lib.id }}</div>
+              <span class="blib-origin-tag">🛠️ مكتبتنا</span>
+            </div>
+            <h3 class="blib-name" dir="ltr">{{ lib.name }}</h3>
+            <code class="blib-path" dir="ltr">{{ lib.path }}</code>
+            <span class="blib-tag">{{ lib.tag }}</span>
+            <p class="blib-desc">{{ lib.desc }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── الأوامر الداخلية ── -->
+      <section class="bus-section mt-10">
+        <div class="section-header">
+          <div class="sh-icon glow-cyan">⚙️</div>
+          <h2 class="sh-title">الأوامر الداخلية (Internal Commands)</h2>
+          <div class="line-decorator-purple"></div>
+        </div>
+        <p class="sh-desc">كل منطق Bus موجود في ملف واحد — هذه هي كل الدوال والعمليات فيه.</p>
+        <div class="bus-cmds-list glass-panel">
+          <div v-for="cmd in internalCmds" :key="cmd.name" class="bus-cmd-item hover-bg">
+            <div class="bus-cmd-sig" dir="ltr"><code>{{ cmd.name }}</code></div>
+            <div class="bus-cmd-desc">{{ cmd.desc }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── التواصل مع الحاويات ── -->
+      <section class="bus-section mt-10">
+        <div class="section-header">
+          <div class="sh-icon glow-purple">🔌</div>
+          <h2 class="sh-title">التواصل مع الحاويات</h2>
+          <div class="line-decorator-purple"></div>
+        </div>
+        <div class="bus-conn-list">
+          <div v-for="conn in connections" :key="conn.name" class="bus-conn-card glass-panel" :class="conn.glow">
+            <div class="bconn-dir">{{ conn.dir }}</div>
+            <div class="bconn-main">
+              <span class="bconn-arrow">{{ conn.arrow }}</span>
+              <span class="bconn-name">{{ conn.name }}</span>
+            </div>
+            <p class="bconn-detail">{{ conn.detail }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── الإحصائيات ── -->
+      <section class="bus-section mt-10">
+        <div class="section-header">
+          <div class="sh-icon glow-orange">📊</div>
+          <h2 class="sh-title">إحصائيات الحاوية</h2>
+          <div class="line-decorator-purple"></div>
+        </div>
+        <div class="bus-stats-grid">
+          <div v-for="s in stats" :key="s.val" class="bus-stat-card glass-panel" :class="s.color">
+            <div class="bstat-val">{{ s.val }}</div>
+            <div class="bstat-label">{{ s.label }}</div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 </template>
@@ -389,6 +501,7 @@ const terminalLines = ref([
 .glow-cyan { box-shadow: 0 0 20px rgba(34,211,238,0.3); border-color: rgba(34,211,238,0.5); }
 .glow-orange { box-shadow: 0 0 20px rgba(249,115,22,0.3); border-color: rgba(249,115,22,0.5); }
 .glow-yellow { box-shadow: 0 0 20px rgba(234,179,8,0.3); border-color: rgba(234,179,8,0.5); }
+.glow-green { box-shadow: 0 0 20px rgba(34,197,94,0.3); border-color: rgba(34,197,94,0.5); }
 
 .sh-title { font-size: 2rem; font-weight: 900; color: #fff; margin: 0; z-index: 2; letter-spacing: -0.02em; }
 .line-decorator-purple { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(192,132,252,0.3), transparent); z-index: 1; margin-left: 1rem; }
@@ -516,4 +629,49 @@ const terminalLines = ref([
   .sh-desc { margin-left: 0; }
   .philosophical-note-bus { flex-direction: column; }
 }
+
+/* ── Libraries Grid ── */
+.bus-libs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.bus-lib-card { border-radius: 20px; padding: 1.8rem; display: flex; flex-direction: column; gap: 0.6rem; transition: all 0.3s ease; }
+.blib-header { display: flex; justify-content: space-between; align-items: center; }
+.blib-id { font-size: 0.8rem; font-weight: 900; color: #c084fc; background: rgba(192,132,252,0.15); padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid rgba(192,132,252,0.3); }
+.blib-origin-tag { font-size: 0.8rem; font-weight: 800; color: #4ade80; background: rgba(34,197,94,0.15); padding: 0.25rem 0.7rem; border-radius: 6px; border: 1px solid rgba(34,197,94,0.3); }
+.blib-name { margin: 0.3rem 0 0; font-size: 1.5rem; font-weight: 900; color: #fff; font-family: 'Space Mono', monospace; }
+.blib-path { font-size: 0.85rem; color: #c084fc; background: rgba(192,132,252,0.1); padding: 0.3rem 0.7rem; border-radius: 6px; border: 1px solid rgba(192,132,252,0.2); display: inline-block; width: fit-content; }
+.blib-tag { font-size: 0.75rem; font-weight: 800; color: #cbd5e1; background: rgba(255,255,255,0.07); padding: 0.2rem 0.6rem; border-radius: 6px; display: inline-block; width: fit-content; }
+.blib-desc { font-size: 1rem; color: rgba(248,250,252,0.8); line-height: 1.7; margin: 0.3rem 0 0; }
+
+/* ── Internal Commands ── */
+.bus-cmds-list { border-radius: 20px; overflow: hidden; }
+.bus-cmd-item { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s; }
+.bus-cmd-item:last-child { border-bottom: none; }
+.hover-bg:hover { background: rgba(192,132,252,0.05); }
+.bus-cmd-sig code { background: rgba(192,132,252,0.12); color: #e9d5ff; padding: 0.5rem 1rem; border-radius: 8px; font-size: 1rem; font-weight: 700; border: 1px solid rgba(192,132,252,0.25); display: inline-block; }
+.bus-cmd-desc { color: rgba(248,250,252,0.8); font-size: 1rem; line-height: 1.7; margin: 0; }
+
+/* ── Connections ── */
+.bus-conn-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; }
+.bus-conn-card { border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; transition: transform 0.3s; }
+.bus-conn-card:hover { transform: translateY(-3px); }
+.bconn-dir { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); }
+.bconn-main { display: flex; align-items: center; gap: 0.7rem; }
+.bconn-arrow { font-size: 1.4rem; }
+.bconn-name { font-size: 1.05rem; font-weight: 900; color: #fff; font-family: monospace; }
+.bconn-detail { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; margin: 0; }
+.glow-purple-border { border-color: rgba(168,85,247,0.4); box-shadow: 0 0 15px rgba(168,85,247,0.1); }
+.glow-yellow-border { border-color: rgba(234,179,8,0.4); box-shadow: 0 0 15px rgba(234,179,8,0.1); }
+.glow-red-border { border-color: rgba(239,68,68,0.3); opacity: 0.8; }
+.glow-blue-border { border-color: rgba(59,130,246,0.3); opacity: 0.8; }
+
+/* ── Stats Grid ── */
+.bus-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
+.bus-stat-card { border-radius: 16px; padding: 1.8rem 1.2rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.3s; }
+.bus-stat-card:hover { transform: translateY(-4px); }
+.bstat-val { font-size: 2.5rem; font-weight: 900; font-family: monospace; line-height: 1; margin-bottom: 0.7rem; }
+.bstat-label { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
+.stat-purple .bstat-val { background: linear-gradient(135deg,#c084fc,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stat-green .bstat-val { background: linear-gradient(135deg,#4ade80,#22c55e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stat-blue .bstat-val { background: linear-gradient(135deg,#60a5fa,#3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stat-pink .bstat-val { background: linear-gradient(135deg,#f472b6,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
 </style>

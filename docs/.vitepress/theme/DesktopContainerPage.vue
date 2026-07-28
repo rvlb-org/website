@@ -3,57 +3,112 @@ import { ref } from 'vue'
 
 const files = [
   {
-    id: '01', name: 'wm/compositor.rs', path: 'containers/desktop/src/desktop_ui/wm/compositor.rs', icon: '🎨', tag: 'Core Loop', size: '~200 سطر',
-    desc: 'العقل المدبر للرسم. يجمع كل طبقات الشاشة (الخلفية، النوافذ بالترتيب، شريط المهام، ثم المؤشر) ويرسمها على الشاشة بتحديث مستمر عبر `eg-fb`.',
+    id: '01', name: 'main.rs', path: 'containers/desktop/src/main.rs', icon: '🚀', tag: 'Entry Point', size: '283 سطر',
+    desc: 'نقطة الدخول الفعلية للحاوية. يستقبل إحداثيات الـ Framebuffer من Init عبر IPC، يجلب Token من Auth_Vault، يهيئ UIState في static storage، ثم يدخل في حلقة أحداث لا نهائية تعالج الماوس والكيبورد.',
     highlights: [
-      { label: 'الرسم (Draw)', value: 'استدعاء الدوال لكل نافذة حسب Z-Order' },
-      { label: 'تحديث الشاشة', value: 'flush_screen()' }
+      { label: 'حلقة الأحداث', value: 'tag 0x0300 = MouseEvent, 0x0301 = KeyboardEvent' },
+      { label: 'المخصص الثابت', value: 'VAULT_HEAP [u8; 256KB] عبر talc' }
     ]
   },
   {
-    id: '02', name: 'desktop_ui/mod.rs', path: 'containers/desktop/src/desktop_ui/mod.rs', icon: '💾', tag: 'UI State', size: '~150 سطر',
-    desc: 'يحتوي على حالة واجهة المستخدم الكاملة (UIState) والمخزنة في `static mut`. يضمن عدم الحاجة للحجز الديناميكي (No dynamic alloc) أثناء حلقة الأحداث.',
+    id: '02', name: 'wm/compositor.rs', path: 'containers/desktop/src/desktop_ui/wm/compositor.rs', icon: '🎨', tag: 'Compositor', size: '~200 سطر',
+    desc: 'قلب نظام الرسم. يرسم كل الطبقات بالترتيب: الخلفية، ثم النوافذ حسب Z-Order، ثم شريط المهام والـ Dock، ثم المؤشر في الأعلى. يدعم رسم نافذة واحدة (render_window) لتجنب الوميض.',
     highlights: [
-      { label: 'حجم ثابت', value: 'Array of Windows ذات حجم ثابت عبر heapless' },
-      { label: 'حالة الماوس', value: 'تخزين الإحداثيات وحالة النقر' }
+      { label: 'رسم كامل', value: 'Compositor::render(fb, state, zstack)' },
+      { label: 'رسم نافذة واحدة', value: 'Compositor::render_window(fb, state, win_id)' }
     ]
   },
   {
-    id: '03', name: 'wm/zorder.rs', path: 'containers/desktop/src/desktop_ui/wm/zorder.rs', icon: '🥞', tag: 'Layering', size: '~80 سطر',
-    desc: 'يدير ترتيب النوافذ (من في المقدمة ومن في الخلف). عند النقر على نافذة، يتم نقلها فوراً إلى قمة ترتيب الـ Z-Order لترسم أخيراً فتظهر فوق الجميع.',
+    id: '03', name: 'desktop_ui/mod.rs', path: 'containers/desktop/src/desktop_ui/mod.rs', icon: '💾', tag: 'UI State', size: '~150 سطر',
+    desc: 'يعرّف هيكل UIState المركزي المخزن في static mut. يحتوي على حالة كل النوافذ، الـ ZOrderStack، شريط المهام، حالة السحب، مؤشر الماوس، وقنوات IPC. كل شيء بدون تخصيص ديناميكي.',
     highlights: [
-      { label: 'رفع النافذة', value: 'bring_to_front(window_id)' }
+      { label: 'حالة ثابتة', value: 'static mut UI_STORAGE_BYTES في main.rs' },
+      { label: 'إعداد الحجم', value: 'UIState::init(ptr, fs_ep, token, ipc_buf)' }
     ]
   },
   {
-    id: '04', name: 'main.rs', path: 'containers/desktop/src/main.rs', icon: '🚀', tag: 'Entry Point', size: '~120 سطر',
-    desc: 'نقطة البداية. يستقبل قنوات الـ IPC من الـ init، يهيئ الـ Framebuffer، ويبدأ حلقة لا نهائية لاستقبال أحداث الماوس والكيبورد من الـ input vault.',
+    id: '04', name: 'wm/zorder.rs', path: 'containers/desktop/src/desktop_ui/wm/zorder.rs', icon: '🥞', tag: 'Window Layering', size: '~80 سطر',
+    desc: 'يدير ZOrderStack الذي يحدد ترتيب رسم النوافذ. عند النقر على نافذة يتم استدعاء bring_to_front لنقلها لقمة المكدس فترسم آخراً وتظهر فوق الجميع. يدعم rebuild_from_open لإعادة بناء الترتيب.',
     highlights: [
-      { label: 'الحدث الرئيسي', value: 'seL4_Wait لاستقبال الأحداث' }
+      { label: 'رفع النافذة', value: 'bring_to_front(window_id)' },
+      { label: 'إعادة البناء', value: 'rebuild_from_open(is_open)' }
     ]
   },
   {
-    id: '05', name: 'window.rs & window_draw.rs', path: 'containers/desktop/src/desktop_ui/', icon: '🪟', tag: 'UI Elements', size: 'متعدد الملفات',
-    desc: 'تعريف هيكل النافذة (العنوان، الأبعاد، المحتوى) والدوال الخاصة برسم إطارات النافذة وأزرار الإغلاق والتكبير والتصغير باستخدام embedded-graphics.',
+    id: '05', name: 'wm/taskbar.rs', path: 'containers/desktop/src/desktop_ui/wm/taskbar.rs', icon: '📋', tag: 'Taskbar', size: '~120 سطر',
+    desc: 'يدير شريط المهام السفلي: تسجيل التطبيقات المفتوحة، حساب تخطيط الأزرار، ومعالجة النقر لتفعيل أو تصغير النوافذ. يتكيف مع أي دقة شاشة عبر set_screen.',
     highlights: [
-      { label: 'رسم الإطار', value: 'draw_window_frame(fb, window)' }
+      { label: 'تسجيل تطبيق', value: 'taskbar.register(window_id, label)' },
+      { label: 'معالجة النقر', value: 'taskbar.on_click(cx, cy) -> Option<Option<usize>>' }
+    ]
+  },
+  {
+    id: '06', name: 'wm/shortcut.rs', path: 'containers/desktop/src/desktop_ui/wm/shortcut.rs', icon: '🖱️', tag: 'Desktop Shortcuts', size: '~100 سطر',
+    desc: 'يدير أيقونات سطح المكتب (Shortcuts) المرسومة على الخلفية. يخزن اسم التطبيق، مساره، ومعرّف الأيقونة. يدعم hit-testing للتحقق من النقر على أيقونة معينة.',
+    highlights: [
+      { label: 'اكتشاف النقر', value: 'shortcut.hit(cx, cy) -> bool' },
+      { label: 'إيجاد المنقور عليه', value: 'find_hit(cx, cy) -> Option<usize>' }
+    ]
+  },
+  {
+    id: '07', name: 'desktop_ui/draw.rs', path: 'containers/desktop/src/desktop_ui/draw.rs', icon: '✏️', tag: 'Drawing', size: '~250 سطر',
+    desc: 'مكتبة الرسم المركزية للـ UI. تحتوي على دوال رسم الـ Dock بتأثير تكبير ديناميكي عند التحوم (Zoom on Hover)، شريط المهام، قائمة Start، وأيقونات الاختصارات بجميع أنواعها.',
+    highlights: [
+      { label: 'الـ Dock', value: 'draw_dock_only(fb, state) مع dock_icon_size()' },
+      { label: 'أيقونات مخصصة', value: 'icon_terminal / icon_vault / icon_files / icon_tor' }
+    ]
+  },
+  {
+    id: '08', name: 'cursor.rs', path: 'containers/desktop/src/cursor.rs', icon: '🖱️', tag: 'Cursor', size: '~60 سطر',
+    desc: 'يدير مؤشر الماوس بتقنية save/restore: قبل رسم المؤشر يحفظ الـ pixels التي ستُغطى في CURSOR_BG static، وعند الحركة يعيدها ثم يرسم المؤشر في الموضع الجديد لمنع التلف البصري.',
+    highlights: [
+      { label: 'حفظ الخلفية', value: 'save_bg(fb, cx, cy, bg: &mut [Rgb888])' },
+      { label: 'الرسم والاستعادة', value: 'draw_cursor() / restore_bg()' }
+    ]
+  },
+  {
+    id: '09', name: 'desktop_ui/drag.rs', path: 'containers/desktop/src/desktop_ui/drag.rs', icon: '🤚', tag: 'Drag & Drop', size: '~50 سطر',
+    desc: 'يدير حالة السحب (Drag) للنوافذ وشريط التمرير. يتتبع DragTarget (WindowMove أو FilesScrollbar) ويحسب الإزاحة (Δx, Δy) لتحريك النوافذ أو تمرير محتوى نافذة الملفات بسلاسة.',
+    highlights: [
+      { label: 'هدف السحب', value: 'DragTarget::WindowMove(id) | FilesScrollbar(id)' },
+      { label: 'الحالة', value: 'drag.active() -> bool' }
+    ]
+  },
+  {
+    id: '10', name: 'window.rs + window_draw.rs', path: 'containers/desktop/src/desktop_ui/', icon: '🪟', tag: 'Windows', size: 'ملفان مترابطان',
+    desc: 'window.rs يعرّف هيكل Window (العنوان، الأبعاد، نوع المحتوى، حالة التعظيم). window_draw.rs يرسم إطار النافذة مع شريط العنوان وأزرار التحكم الثلاثة (إغلاق، تصغير، تعظيم) باستخدام eg-fb.',
+    highlights: [
+      { label: 'اكتشاف الأزرار', value: 'in_titlebar / in_close_btn / in_maximize_btn' },
+      { label: 'أنواع النوافذ', value: 'Calc, Files, Editor, Viewer, Terminal' }
     ]
   }
 ]
 
 const libraries = [
-  { id: '01', name: 'eg-fb', path: 'libs/eg-fb', tag: 'Graphics', is_external: false, desc: 'مكتبتنا الخاصة، تعمل كغلاف لمكتبة embedded-graphics، تتيح الرسم المباشر والآمن على الـ Framebuffer باستخدام أشكال هندسية ونصوص بدلاً من framebuffer القديمة.' },
-  { id: '02', name: 'ipc-sync', path: 'libs/ipc-sync', tag: 'IPC Comm', is_external: false, desc: 'مكتبتنا الخاصة. تستخدم لاستقبال أحداث الماوس والكيبورد من حاوية Input، وإرسال أوامر تشغيل البرامج.' },
-  { id: '03', name: 'ps2-driver', path: 'libs/ps2-driver', tag: 'Input Parsing', is_external: false, desc: 'مكتبتنا الخاصة. تحليل حزم بيانات PS/2 القادمة عبر الـ IPC وترجمتها لإحداثيات ماوس وأحرف كيبورد.' },
-  { id: '04', name: 'heapless', path: 'crates.io', tag: 'Data Structs', is_external: true, desc: 'مكتبة خارجية آمنة توفر هياكل بيانات (مثل Vec و String) بحجم ثابت ومحدد مسبقاً، مما يمنع الحاجة للـ alloc في الديسكتوب.' },
-  { id: '05', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 API', is_external: false, desc: 'التواصل الأساسي مع النواة لانتظار الرسائل وإدارة القدرات.' }
+  { id: '01', name: 'eg-fb', path: 'libs/eg-fb', tag: 'Graphics Engine', is_external: false, desc: 'مكتبتنا. غلاف فوق embedded-graphics يتيح الرسم المباشر والآمن على الـ MMIO Framebuffer. تستخدم EgDisplay struct الذي يعمل مع أشكال هندسية ونصوص بدون heap.' },
+  { id: '02', name: 'ipc-sync', path: 'libs/ipc-sync', tag: 'IPC', is_external: false, desc: 'مكتبتنا. تستقبل أحداث الماوس (0x0300) والكيبورد (0x0301) من حاوية Input، وترسل أوامر فتح البرامج عبر IpcMessage و Channel.' },
+  { id: '03', name: 'sel4-sys', path: 'libs/sel4-sys', tag: 'seL4 Syscalls', is_external: false, desc: 'مكتبتنا. تغليف استدعاءات نواة seL4 الحرجة (seL4_NBRecv, seL4_Yield) واستدعاءات الطباعة المبكرة (print_str).' },
+  { id: '04', name: 'ps2-driver', path: 'libs/ps2-driver', tag: 'Input Parsing', is_external: false, desc: 'مكتبتنا. تحلل حزم بيانات PS/2 القادمة عبر IPC وتترجمها لإحداثيات ماوس دقيقة وأحرف كيبورد قابلة للاستخدام مباشرة.' },
+  { id: '05', name: 'pkg-format', path: 'libs/pkg-format', tag: 'App Packages', is_external: false, desc: 'مكتبتنا. تعريف صيغة حزم التطبيقات الخاصة بنا (.pkg). يستخدمها الديسكتوب لتحميل بيانات التطبيقات من نظام الملفات وتشغيلها.' },
+  { id: '06', name: 'calc_ui / files_ui / editor_ui / viewer_ui', path: 'programs/{calc,files,editor,viewer}', tag: 'Built-in Apps', is_external: false, desc: 'برامجنا المدمجة المُضمّنة مباشرة في ثنائي الديسكتوب. كل برنامج يُضاف كـ Rust crate داخلي (package alias) يمكن استدعاؤه مباشرة دون IPC إضافي.' },
+  { id: '07', name: 'talc', path: 'crates.io (v4)', tag: 'Memory Allocator', is_external: true, desc: 'مخصص ذاكرة خارجي خفيف الوزن للبيئات no_std. يُستخدم لإدارة الـ VAULT_HEAP (256KB ثابت في BSS) مع ClaimOnOom للعمل بأمان في بيئات بدون نظام تشغيل.' },
+  { id: '08', name: 'heapless', path: 'crates.io (v0.8)', tag: 'Static Collections', is_external: true, desc: 'توفر هياكل بيانات (Vec, String) بحجم ثابت محدد وقت الترجمة. تُمكّن تخزين النوافذ وقوائم التطبيقات بدون أي تخصيص ديناميكي في حلقة الأحداث الحرجة.' },
+  { id: '09', name: 'spin', path: 'crates.io (v0.9)', tag: 'Locking', is_external: true, desc: 'يوفر Mutex دوّار (spinlock) لبيئات no_std. يُستخدم مع talc لحماية ALLOCATOR في حال وجود تزامن مستقبلي، رغم أن الحاوية حالياً أحادية الخيط.' }
 ]
 
 const functions = [
-  { name: 'compositor::render_all', desc: 'تمسح الشاشة، ترسم الخلفية، ثم ترسم جميع النوافذ المفتوحة بالترتيب الصحيح (Z-Order).' },
-  { name: 'ui_state::handle_mouse', desc: 'تستقبل حركة الماوس الجديدة وتحدث إحداثيات المؤشر في الحالة الثابتة.' },
-  { name: 'window::handle_click', desc: 'تتحقق مما إذا كان النقر داخل نافذة، وإذا كان كذلك تحدد ما إذا كان النقر على زر الإغلاق أم شريط السحب.' },
-  { name: 'drag::update_drag', desc: 'إذا كانت النافذة في حالة (Drag)، تقوم بتحديث إحداثيات النافذة (X, Y) بناءً على حركة الماوس.' }
+  { name: 'rust_main(ipc_buffer_vaddr, endpoint_slot)', desc: 'نقطة الدخول الفعلية. تستقبل معلومات الـ Framebuffer من Init، تجلب Token من Auth_Vault، تهيئ UIState وتبدأ حلقة أحداث الماوس/الكيبورد.' },
+  { name: 'UIState::init(ptr, fs_ep, token, ipc_buf)', desc: 'تهيّء الـ UIState كاملاً في مساحة static بدون heap. تضبط مدير النوافذ، قائمة الاختصارات، وقناة FS IPC.' },
+  { name: 'UIState::on_mouse_move(cx, cy) -> MouseMoveRedraw', desc: 'تحدّث إحداثيات المؤشر وتحسب ما إذا كان يجب إعادة رسم كامل (Full) أو نافذة واحدة (Window) أو لا شيء (None). تدير أيضاً حالة السحب (Drag) إذا كانت مفعلة.' },
+  { name: 'UIState::on_press(cx, cy) / on_release()', desc: 'on_press يكتشف النقر على النافذة، الـ Dock، أو الاختصارات ويرفع النافذة المنقورة للمقدمة. on_release يُنهي حالة السحب.' },
+  { name: 'UIState::on_release_with_launch(slot, ibuf)', desc: 'عند رفع زر الماوس بعد نقرة مزدوجة: يرسل IPC لتشغيل التطبيق عبر launch_slot المرسل من Init.' },
+  { name: 'UIState::on_drag(cx, cy) -> bool', desc: 'تحرّك النافذة المحددة أو تمرر محتوى نافذة الملفات (Scrollbar) بحسب DragTarget المحدد.' },
+  { name: 'UIState::on_key(ch: char) -> bool', desc: 'تمرر أحرف الكيبورد إلى النافذة المحددة (Focused Window) التي قد تكون Calculator أو Editor.' },
+  { name: 'UIState::sync_desktop() / tick_pending_fetches()', desc: 'تزامن دوري (كل 80 حدث ماوس) مع نظام الملفات لجلب التطبيقات الجديدة وعرض أيقوناتها على سطح المكتب.' },
+  { name: 'Compositor::render(fb, state, zstack)', desc: 'يرسم الشاشة بالكامل بالترتيب الصحيح: الخلفية، ثم النوافذ حسب Z-Order، ثم الـ Dock وشريط المهام.' },
+  { name: 'Compositor::render_window(fb, state, win_id)', desc: 'يعيد رسم نافذة واحدة فقط (تحسين مهم لمنع الوميض عند تمرير شريط التمرير أو تحديث المحتوى).' },
+  { name: 'cursor::save_bg / draw_cursor / restore_bg', desc: 'مثلث إدارة المؤشر: حفظ الـ pixels خلف المؤشر في CURSOR_BG static، رسم المؤشر، ثم استعادة الخلفية عند الحركة لمنع التلف البصري.' },
+  { name: 'draw::draw_dock_only(fb, state)', desc: 'يرسم الـ Dock السفلي مع تأثير التكبير الديناميكي (Zoom on Hover): الأيقونات القريبة من المؤشر تكبر تدريجياً عبر dock_icon_size().' }
 ]
 
 const activeTab = ref('files')
@@ -100,7 +155,8 @@ const activeTab = ref('files')
 
     <section class="d-section mt-16">
       <div class="section-header text-center">
-        <h2 class="sh-title glow-text-blue">مسار تدفق الأحداث (Event Pipeline)</h2>
+        <h2 class="sh-title glow-text-blue">مسار تدفق الأحداث</h2>
+        <p class="sh-badge-en">Event Pipeline</p>
         <p class="sh-subtitle">كيف تتحول نقرة الماوس إلى رسمة على الشاشة؟</p>
       </div>
       
@@ -157,7 +213,147 @@ const activeTab = ref('files')
       </div>
     </section>
 
+    <!-- ── قسم 1: التواصل مع الحاويات الأخرى ── -->
+    <section class="d-section mt-16">
+      <div class="section-header text-center">
+        <h2 class="sh-title glow-text-blue">التواصل مع الحاويات</h2>
+        <p class="sh-badge-en">Container Connections</p>
+        <p class="sh-subtitle">مع من تتحدث حاوية الديسكتوب وماذا تطلب؟</p>
+      </div>
+      <div class="conn-grid mt-10" dir="ltr">
+        <div class="conn-card glass-panel glow-blue-box">
+          <div class="conn-arrow">⬅️</div>
+          <div class="conn-info">
+            <span class="conn-name">Init</span>
+            <span class="conn-detail">يستقبل: fb_vaddr, fb_w, fb_h, fb_pitch, fb_bpp, launch_slot</span>
+          </div>
+        </div>
+        <div class="conn-card glass-panel glow-green-box">
+          <div class="conn-arrow">⬅️</div>
+          <div class="conn-info">
+            <span class="conn-name">Auth_Vault</span>
+            <span class="conn-detail">يطلب Token (0x100) لاستخدامه مع FS_Vault</span>
+          </div>
+        </div>
+        <div class="conn-card glass-panel glow-purple-box">
+          <div class="conn-arrow">⬅️➡️</div>
+          <div class="conn-info">
+            <span class="conn-name">FS_Vault (ep=2)</span>
+            <span class="conn-detail">يجلب قائمة ملفات Desktop ويحدّثها كل 80 حدث ماوس</span>
+          </div>
+        </div>
+        <div class="conn-card glass-panel glow-pink-box">
+          <div class="conn-arrow">⬅️</div>
+          <div class="conn-info">
+            <span class="conn-name">Input_Vault (ep=0)</span>
+            <span class="conn-detail">يستقبل: 0x0300=MouseEvent, 0x0301=KeyboardEvent</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── قسم 2: البرامج المدمجة ── -->
+    <section class="d-section mt-16">
+      <div class="section-header text-center">
+        <h2 class="sh-title glow-text-blue">البرامج المدمجة</h2>
+        <p class="sh-badge-en">Built-in Applications</p>
+        <p class="sh-subtitle">مدمجة مباشرة في ثنائي الديسكتوب — لا IPC إضافي</p>
+      </div>
+      <div class="apps-grid mt-10">
+        <div class="app-card glass-panel hover-glow-purple">
+          <div class="app-icon">🧮</div>
+          <h3 class="app-name" dir="ltr">calc</h3>
+          <p class="app-path" dir="ltr">programs/calc</p>
+          <p class="app-desc">آلة حاسبة بواجهة نافذة كاملة مكتوبة بـ Rust</p>
+        </div>
+        <div class="app-card glass-panel hover-glow-purple">
+          <div class="app-icon">📁</div>
+          <h3 class="app-name" dir="ltr">files</h3>
+          <p class="app-path" dir="ltr">programs/files</p>
+          <p class="app-desc">متصفح ملفات يتواصل مع FS_Vault لعرض المجلدات والملفات</p>
+        </div>
+        <div class="app-card glass-panel hover-glow-purple">
+          <div class="app-icon">✏️</div>
+          <h3 class="app-name" dir="ltr">editor</h3>
+          <p class="app-path" dir="ltr">programs/editor</p>
+          <p class="app-desc">محرر نصوص بسيط يعمل داخل نافذة مع دعم الكيبورد الكامل</p>
+        </div>
+        <div class="app-card glass-panel hover-glow-purple">
+          <div class="app-icon">🖼️</div>
+          <h3 class="app-name" dir="ltr">viewer</h3>
+          <p class="app-path" dir="ltr">programs/viewer</p>
+          <p class="app-desc">عارض محتوى يقرأ الملفات من نظام الملفات ويعرضها في نافذة</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── قسم 3: إحصائيات الحاوية ── -->
+    <section class="d-section mt-16">
+      <div class="section-header text-center">
+        <h2 class="sh-title glow-text-blue">إحصائيات الحاوية</h2>
+        <p class="sh-badge-en">Container Stats</p>
+      </div>
+      <div class="stats-grid mt-10">
+        <div class="stat-card glass-panel glow-blue-box">
+          <div class="stat-val-big text-purple">256 KB</div>
+          <div class="stat-label">VAULT_HEAP (ثابت في BSS)</div>
+        </div>
+        <div class="stat-card glass-panel glow-green-box">
+          <div class="stat-val-big text-green">283</div>
+          <div class="stat-label">أسطر main.rs (نقطة الدخول)</div>
+        </div>
+        <div class="stat-card glass-panel glow-purple-box">
+          <div class="stat-val-big text-purple">4</div>
+          <div class="stat-label">تطبيقات مدمجة (calc, files, editor, viewer)</div>
+        </div>
+        <div class="stat-card glass-panel glow-pink-box">
+          <div class="stat-val-big text-pink">9</div>
+          <div class="stat-label">مكتبات في Cargo.toml</div>
+        </div>
+        <div class="stat-card glass-panel glow-blue-box">
+          <div class="stat-val-big text-blue">80</div>
+          <div class="stat-label">حدث ماوس بين كل تحديث لسطح المكتب</div>
+        </div>
+        <div class="stat-card glass-panel glow-green-box">
+          <div class="stat-val-big text-green">0</div>
+          <div class="stat-label">Dynamic Allocations في حلقة الأحداث</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── قسم 4: ملاحظات الأداء ── -->
+    <section class="d-section mt-16">
+      <div class="section-header text-center">
+        <h2 class="sh-title glow-text-blue">قرارات الأداء</h2>
+        <p class="sh-badge-en">Performance Decisions</p>
+      </div>
+      <div class="perf-list mt-10">
+        <div class="perf-item glass-panel">
+          <div class="perf-icon">🎯</div>
+          <div class="perf-content">
+            <h4 class="perf-title">Single-Buffer Mode (بدون Double Buffer)</h4>
+            <p class="perf-desc">نرسم مباشرة على MMIO Framebuffer بدلاً من إنشاء back-buffer في الذاكرة (كان سيستهلك ~3MB static في BSS). الثمن هو وميض خفيف أحياناً، والمكسب توفير كامل لذاكرة الـ BSS.</p>
+          </div>
+        </div>
+        <div class="perf-item glass-panel">
+          <div class="perf-icon">⚡</div>
+          <div class="perf-content">
+            <h4 class="perf-title">render_window() بدلاً من render() الكامل</h4>
+            <p class="perf-desc">عند تمرير شريط الملفات أو تحديث محتوى نافذة واحدة، يُعاد رسم تلك النافذة فقط (Compositor::render_window) بدلاً من إعادة رسم الشاشة كاملاً، مما يمنع الوميض المرئي.</p>
+          </div>
+        </div>
+        <div class="perf-item glass-panel">
+          <div class="perf-icon">🖱️</div>
+          <div class="perf-content">
+            <h4 class="perf-title">تحديث الـ Dock كل 4 أحداث فقط</h4>
+            <p class="perf-desc">تأثير تكبير أيقونات الـ Dock (Zoom on Hover) يُحسب في كل حدث ماوس ولكن يُرسم فقط كل 4 أحداث (loop_counter % 4 == 0) لتجنب استنزاف معالج الرسومات بإعادة رسم كاملة متكررة.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Navigation Tabs -->
+
     <div class="d-tabs mt-20">
       <button class="d-tab-btn" :class="{ 'active': activeTab === 'files' }" @click="activeTab = 'files'">📂 ملفات النظام</button>
       <button class="d-tab-btn" :class="{ 'active': activeTab === 'funcs' }" @click="activeTab = 'funcs'">⚙️ الوظائف المركزية</button>
@@ -314,8 +510,9 @@ const activeTab = ref('files')
 
 /* ── Section Header ── */
 .section-header { text-align: center; margin-bottom: 2rem; }
-.sh-title { font-size: 2.2rem; font-weight: 900; margin: 0; }
-.sh-subtitle { font-size: 1.1rem; color: #94a3b8; margin-top: 0.5rem; }
+.sh-title { font-size: 2.2rem; font-weight: 700; margin: 0; letter-spacing: 0.5px; }
+.sh-badge-en { font-size: 0.95rem; font-family: monospace; font-weight: bold; color: #c084fc; letter-spacing: 2px; margin: 0.3rem 0 0; text-transform: uppercase; }
+.sh-subtitle { font-size: 1.1rem; color: #94a3b8; margin-top: 0.4rem; }
 
 /* ── Vertical Pipeline ── */
 .pipeline-container {
@@ -403,6 +600,46 @@ const activeTab = ref('files')
 .tag-local { background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.3); }
 .tag-external { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
 .pr-tag { background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; color: #cbd5e1; font-weight: bold;}
+
+/* ── Container Connections ── */
+.conn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; position: relative; z-index: 2; }
+.conn-card { display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 1.5rem; border-radius: 14px; transition: transform 0.3s, box-shadow 0.3s; }
+.conn-card:hover { transform: translateY(-3px); }
+.conn-arrow { font-size: 1.5rem; flex-shrink: 0; }
+.conn-info { display: flex; flex-direction: column; gap: 4px; }
+.conn-name { font-size: 1.1rem; font-weight: 900; color: #fff; font-family: monospace; }
+.conn-detail { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; word-break: break-all; }
+
+/* ── Built-in Apps ── */
+.apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; position: relative; z-index: 2; }
+.app-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1.5rem; border-radius: 16px; transition: transform 0.3s, box-shadow 0.3s; gap: 0.5rem; }
+.app-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+.app-name { margin: 0; font-size: 1.3rem; font-weight: 900; color: #d8b4fe; font-family: monospace; }
+.app-path { font-size: 0.8rem; color: #64748b; margin: 0; font-family: monospace; }
+.app-desc { font-size: 0.95rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+
+/* ── Stats Grid ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; position: relative; z-index: 2; }
+.stat-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1rem; border-radius: 16px; transition: transform 0.3s; }
+.stat-card:hover { transform: translateY(-4px); }
+.stat-val-big { font-size: 2.5rem; font-weight: 900; font-family: monospace; line-height: 1; margin-bottom: 0.75rem; }
+.stat-label { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
+.text-purple { background: linear-gradient(135deg, #c084fc, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.text-green { background: linear-gradient(135deg, #4ade80, #22c55e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.text-blue { background: linear-gradient(135deg, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.text-pink { background: linear-gradient(135deg, #f472b6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* ── Performance List ── */
+.perf-list { display: flex; flex-direction: column; gap: 1.2rem; position: relative; z-index: 2; }
+.perf-item { display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.8rem 2rem; border-radius: 16px; border-right: 4px solid #a855f7; transition: transform 0.3s; }
+.perf-item:hover { transform: translateX(-4px); }
+.perf-icon { font-size: 2.2rem; flex-shrink: 0; }
+.perf-content { flex: 1; }
+.perf-title { margin: 0 0 0.6rem; font-size: 1.15rem; font-weight: 900; color: #e2e8f0; }
+.perf-desc { margin: 0; font-size: 1rem; color: #94a3b8; line-height: 1.8; }
+
+.d-section { position: relative; z-index: 2; }
+.mt-16 { margin-top: 5rem; }
 
 @media (max-width: 1024px) {
   .d-hero { flex-direction: column; text-align: center; gap: 3rem; }

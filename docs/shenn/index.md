@@ -29,7 +29,7 @@ SHENN/
 ## التشغيل السريع
 
 ```bash
-git clone https://github.com/enki-core/SHENN-ai.git
+git clone https://github.com/rvlb-org/SHENN-ai.git
 cd SHENN-ai
 python3 SHENN/main.py
 ```
