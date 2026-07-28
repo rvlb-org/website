@@ -3,6 +3,10 @@ title: "🔤 font-render"
 description: "توثيق مكتبة font-render في نظام Hisn-seL4 — System Core"
 ---
 
+<div class="lib-deprecated-banner">
+  ⛔ تم حذف هذه المكتبة — استُبدلت بـ <a href="/hisn/libs/eg-fb/"><strong>eg-fb</strong></a> + <strong>profont v0.7</strong> في يوليو ٢٠٢٦
+</div>
+
 # 🔤 font-render
 
 

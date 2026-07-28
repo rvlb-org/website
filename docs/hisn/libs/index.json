@@ -3,16 +3,18 @@
   "elf-parser",
   "font-render",
   "framebuffer",
+  "shamir",
   "ipc-sync",
   "net-driver",
   "pkg-format",
   "ps2-driver",
   "security-policy",
   "sel4-sys",
-  "shamir",
   "tor-cell",
   "tor-circuit",
   "tor-handshake",
   "tor-stream",
-  "vault-crypto"
+  "vault-crypto",
+  "eg-fb",
+  "talc-alloc"
 ]

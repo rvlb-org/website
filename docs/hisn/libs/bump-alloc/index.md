@@ -3,6 +3,10 @@ title: "📦 bump-alloc"
 description: "توثيق مكتبة bump-alloc في نظام Hisn-seL4 — System Core"
 ---
 
+<div class="lib-deprecated-banner">
+  ⛔ تم حذف هذه المكتبة — استُبدلت بـ <a href="/hisn/libs/talc-alloc/"><strong>talc-alloc</strong></a> في يوليو ٢٠٢٦
+</div>
+
 # 📦 bump-alloc
 
 

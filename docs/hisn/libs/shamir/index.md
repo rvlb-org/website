@@ -3,6 +3,10 @@ title: "🔐 shamir"
 description: "توثيق مكتبة shamir في نظام Hisn-seL4 — Security & Net"
 ---
 
+<div class="lib-deprecated-banner">
+  ⛔ تم حذف هذه المكتبة — أُدمج منطقها مباشرةً في <strong>crypto_vault</strong> عبر GF(256) في يوليو ٢٠٢٦
+</div>
+
 # 🔐 shamir
 
 

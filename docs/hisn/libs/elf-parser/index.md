@@ -3,6 +3,10 @@ title: "📦 elf-parser"
 description: "توثيق مكتبة elf-parser في نظام Hisn-seL4 — System Core"
 ---
 
+<div class="lib-deprecated-banner">
+  ⛔ تم حذف هذه المكتبة — استُبدلت بـ <strong>xmas-elf v0.9</strong> في يوليو ٢٠٢٦
+</div>
+
 # 📦 elf-parser
 
 
