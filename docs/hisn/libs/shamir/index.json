@@ -7,15 +7,50 @@
   "icon": "🔐",
   "iconClass": "pr-icon--shamir",
   "created_at": "24 يونيو 2026 (05:02 GMT+3)",
-  "tags": ["Bare-Metal", "no_std", "GF(2^8)", "SSS"],
+  "tags": [
+    "Bare-Metal",
+    "no_std",
+    "GF(2^8)",
+    "SSS"
+  ],
   "overview": "00_overview.html",
   "files": [
-    { "name": "Cargo.toml",                          "path": "libs/shamir/Cargo.toml",                          "content_file": "01_Cargo_toml.html" },
-    { "name": "src/lib.rs",                          "path": "libs/shamir/src/lib.rs",                          "content_file": "02_src_lib_rs.html" },
-    { "name": "src/gf256.rs",                        "path": "libs/shamir/src/gf256.rs",                        "content_file": "03_src_gf256_rs.html" },
-    { "name": "src/shamir.rs",                       "path": "libs/shamir/src/shamir.rs",                       "content_file": "04_src_shamir_rs.html" },
-    { "name": "src/shamir/shamir_01.rs",             "path": "libs/shamir/src/shamir/shamir_01.rs",             "content_file": "05_src_shamir_shamir_01_rs.html" },
-    { "name": "src/shamir/shamir_02.rs",             "path": "libs/shamir/src/shamir/shamir_02.rs",             "content_file": "06_src_shamir_shamir_02_rs.html" },
-    { "name": "src/shamir/shamir_03.rs",             "path": "libs/shamir/src/shamir/shamir_03.rs",             "content_file": "07_src_shamir_shamir_03_rs.html" }
-  ]
+    {
+      "name": "Cargo.toml",
+      "path": "libs/shamir/Cargo.toml",
+      "content_file": "01_Cargo_toml.html"
+    },
+    {
+      "name": "src/lib.rs",
+      "path": "libs/shamir/src/lib.rs",
+      "content_file": "02_src_lib_rs.html"
+    },
+    {
+      "name": "src/gf256.rs",
+      "path": "libs/shamir/src/gf256.rs",
+      "content_file": "03_src_gf256_rs.html"
+    },
+    {
+      "name": "src/shamir.rs",
+      "path": "libs/shamir/src/shamir.rs",
+      "content_file": "04_src_shamir_rs.html"
+    },
+    {
+      "name": "src/shamir/shamir_01.rs",
+      "path": "libs/shamir/src/shamir/shamir_01.rs",
+      "content_file": "05_src_shamir_shamir_01_rs.html"
+    },
+    {
+      "name": "src/shamir/shamir_02.rs",
+      "path": "libs/shamir/src/shamir/shamir_02.rs",
+      "content_file": "06_src_shamir_shamir_02_rs.html"
+    },
+    {
+      "name": "src/shamir/shamir_03.rs",
+      "path": "libs/shamir/src/shamir/shamir_03.rs",
+      "content_file": "07_src_shamir_shamir_03_rs.html"
+    }
+  ],
+  "is_deleted": true,
+  "deleted_at": "28 يوليو 2026"
 }

@@ -84,8 +84,83 @@ cat: "Architecture Refactoring & Library Migration"
 
 ---
 
-    المكتبات المحذوفة:
-    `libs/bump-alloc/` | `libs/elf-parser/` | `libs/framebuffer/` | `libs/font-render/` | `libs/shamir/` | `containers/tor/`
 
-    المكتبات الجديدة والمُضافة:
-    `libs/eg-fb/` | `libs/talc-alloc/` | `xmas-elf v0.9` | `embedded-graphics v0.8` | `profont v0.7` | `talc v4`
+<div class="ms-files-section">
+
+  <div class="ms-files-group ms-files-removed">
+    <div class="ms-files-label">⛔ المكتبات المحذوفة</div>
+    <div class="ms-files-list">
+      <code>libs/bump-alloc/</code>
+      <code>libs/elf-parser/</code>
+      <code>libs/framebuffer/</code>
+      <code>libs/font-render/</code>
+      <code>libs/shamir/</code>
+      <code>containers/tor/</code>
+    </div>
+  </div>
+
+  <div class="ms-files-group ms-files-added">
+    <div class="ms-files-label">✨ المكتبات الجديدة والمُضافة</div>
+    <div class="ms-files-list">
+      <code>libs/eg-fb/</code>
+      <code>libs/talc-alloc/</code>
+      <code>xmas-elf v0.9</code>
+      <code>embedded-graphics v0.8</code>
+      <code>profont v0.7</code>
+      <code>talc v4</code>
+    </div>
+  </div>
+
+</div>
+
+<style scoped>
+.ms-files-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+}
+.ms-files-group {
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.ms-files-removed {
+  background: color-mix(in srgb, #ef4444 10%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+}
+.ms-files-added {
+  background: color-mix(in srgb, #22c55e 10%, transparent);
+  border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+}
+.ms-files-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+.ms-files-removed .ms-files-label { color: #fca5a5; }
+.ms-files-added .ms-files-label { color: #86efac; }
+.ms-files-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ms-files-removed code {
+  background: color-mix(in srgb, #ef4444 18%, transparent);
+  color: #fca5a5;
+  border: 1px solid color-mix(in srgb, #ef4444 25%, transparent);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.ms-files-added code {
+  background: color-mix(in srgb, #22c55e 18%, transparent);
+  color: #86efac;
+  border: 1px solid color-mix(in srgb, #22c55e 25%, transparent);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+</style>
+

@@ -27,6 +27,7 @@ libs.value.sort((a, b) => a.timestamp - b.timestamp)
       :key="lib.id"
       :href="lib.href"
       class="pr-card"
+      :class="{ 'pr-card-deleted': lib.is_deleted, 'pr-card-new': lib.is_new }"
     >
       <div class="pr-card-header">
         <div class="pr-card-icon">{{ lib.icon }}</div>
@@ -37,6 +38,12 @@ libs.value.sort((a, b) => a.timestamp - b.timestamp)
           </h3>
           <span class="pr-card-type">{{ lib.type }} · {{ lib.files.length }} files</span>
         </div>
+      </div>
+      <div v-if="lib.is_deleted" class="pr-card-status pr-status-deleted">
+        ⛔ حُذفت في: {{ lib.deleted_at }}
+      </div>
+      <div v-else-if="lib.is_new" class="pr-card-status pr-status-new">
+        ✨ أُضيفت حديثاً
       </div>
       <div class="pr-card-footer">
         <div class="pr-card-date">🕒 {{ lib.created_at }}</div>
@@ -129,6 +136,39 @@ libs.value.sort((a, b) => a.timestamp - b.timestamp)
   flex-direction: column;
   gap: 12px;
   margin-top: 16px;
+}
+.pr-card-status {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.pr-status-deleted {
+  background: color-mix(in srgb, #ef4444 15%, transparent);
+  color: #fca5a5;
+  border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+}
+.pr-status-new {
+  background: color-mix(in srgb, #22c55e 15%, transparent);
+  color: #86efac;
+  border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+}
+.pr-card-deleted {
+  opacity: 0.75;
+  filter: grayscale(0.5);
+}
+.pr-card-deleted:hover {
+  opacity: 0.95;
+  filter: grayscale(0);
+}
+.pr-card-new {
+  border-color: color-mix(in srgb, #22c55e 40%, transparent);
+}
+.pr-card-new:hover {
+  box-shadow: 0 8px 30px color-mix(in srgb, #22c55e 12%, transparent);
 }
 .pr-card-date {
   font-family: 'Space Mono', monospace;

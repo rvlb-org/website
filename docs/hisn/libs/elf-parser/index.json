@@ -23,5 +23,7 @@
     }
   ],
   "number": 3,
-  "timestamp": 1782265061
+  "timestamp": 1782265061,
+  "is_deleted": true,
+  "deleted_at": "28 يوليو 2026"
 }

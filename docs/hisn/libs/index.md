@@ -1,5 +1,5 @@
 ---
-layout: doc
+layout: page
 title: المكتبات (Libraries)
 ---
 
@@ -9,7 +9,7 @@ title: المكتبات (Libraries)
     <div class="pr-badge">📚 Zero-Dependency Libraries</div>
     <h1 class="pr-title">مكتبات Hisn-seL4</h1>
     <p class="pr-subtitle">
-      يحتوي نظام <code>Hisn-seL4</code> على 16 مكتبة جوهرية تمت كتابتها من الصفر تماماً بلغة Rust لتعمل في بيئة Bare-Metal (بدون <code>std</code>)، توفر هذه المكتبات التشفير العسكري، اتصال الشبكات، الرسوميات، وإدارة الذاكرة.
+      يحتوي نظام <code>Hisn-seL4</code> على ١٨ مكتبة جوهرية — ١٦ مبنية من الصفر بلغة Rust و٢ جديدة تعتمد على مكتبات موثقة — تعمل جميعها في بيئة Bare-Metal (بدون <code>std</code>)، توفر التشفير العسكري، اتصال الشبكات، الرسوميات، وإدارة الذاكرة.
     </p>
   </div>
 </div>
@@ -74,5 +74,26 @@ title: المكتبات (Libraries)
   font-size: 0.85em;
   padding: 0.1em 0.4em;
   border-radius: 4px;
+}
+.lib-deprecated-banner {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 35%, transparent);
+  color: #fca5a5;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.lib-deprecated-banner a { color: #f87171; font-weight: 600; }
+.lib-new-badge {
+  background: color-mix(in srgb, #22c55e 12%, transparent);
+  border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
+  color: #86efac;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 </style>

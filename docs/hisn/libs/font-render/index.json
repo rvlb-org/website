@@ -7,11 +7,30 @@
   "icon": "🔤",
   "iconClass": "pr-icon--font-render",
   "created_at": "29 يونيو 2026 (13:12 GMT+3)",
-  "tags": ["Bare-Metal", "no_std", "Font", "Bitmap"],
+  "tags": [
+    "Bare-Metal",
+    "no_std",
+    "Font",
+    "Bitmap"
+  ],
   "overview": "00_overview.html",
   "files": [
-    { "name": "Cargo.toml",         "path": "libs/font-render/Cargo.toml",         "content_file": "01_Cargo_toml.html" },
-    { "name": "src/lib.rs",         "path": "libs/font-render/src/lib.rs",         "content_file": "02_src_lib_rs.html" },
-    { "name": "src/text_ctx.rs",    "path": "libs/font-render/src/text_ctx.rs",    "content_file": "03_src_text_ctx_rs.html" }
-  ]
+    {
+      "name": "Cargo.toml",
+      "path": "libs/font-render/Cargo.toml",
+      "content_file": "01_Cargo_toml.html"
+    },
+    {
+      "name": "src/lib.rs",
+      "path": "libs/font-render/src/lib.rs",
+      "content_file": "02_src_lib_rs.html"
+    },
+    {
+      "name": "src/text_ctx.rs",
+      "path": "libs/font-render/src/text_ctx.rs",
+      "content_file": "03_src_text_ctx_rs.html"
+    }
+  ],
+  "is_deleted": true,
+  "deleted_at": "28 يوليو 2026"
 }
