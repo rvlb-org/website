@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حِصن - Hisn-seL4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['IBM Plex Sans Arabic', 'Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3b82f6',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-text { background: linear-gradient(to right, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen bg-darkBg text-slate-200 antialiased font-sans relative overflow-x-hidden selection:bg-primary selection:text-white flex flex-col justify-center items-center">
+    
+    <!-- Background glow -->
+    <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/20 blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/20 blur-[120px] pointer-events-none"></div>
+
+    <main class="relative z-10 container mx-auto px-6 py-16 flex flex-col items-center max-w-4xl text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full border border-slate-700 bg-slate-800/50 text-sm font-medium text-slate-300 shadow-sm backdrop-blur-sm">
+            <span class="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+            حِصن (Hisn-seL4) — قيد البناء. كن أول من يعرف عند الإطلاق.
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-8 leading-tight">
+            نظام تشغيل يجعل الاختراق <br class="hidden md:block" /><span class="gradient-text">مستحيلاً هندسياً</span>
+        </h1>
+
+        <!-- Waitlist Form -->
+        <div class="w-full max-w-md mx-auto mb-12">
+            <form id="waitlist-form" class="flex flex-col sm:flex-row gap-3">
+                <input type="email" id="email-input" required placeholder="أدخل بريدك الإلكتروني..." 
+                    class="w-full px-5 py-3 rounded-lg bg-slate-800/80 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-inner">
+                <button type="submit" id="submit-btn" 
+                    class="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all shadow-lg hover:shadow-blue-500/30 whitespace-nowrap flex justify-center items-center gap-2">
+                    <span>أشعرني</span>
+                    <svg id="loading-spinner" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </button>
+            </form>
+            <div id="form-message" class="mt-3 text-sm font-medium h-5 transition-opacity opacity-0"></div>
+        </div>
+
+        <!-- Brief Description -->
+        <div class="max-w-2xl mx-auto mb-16 text-slate-300 text-lg leading-relaxed space-y-4">
+            <p>
+                نحن نعيد بناء مفهوم الأمان من جذوره. بدلاً من محاولة ترقيع أنظمة عفا عليها الزمن، قمنا ببناء <strong>حِصن</strong> من الصفر بالاعتماد على نواة <strong>seL4</strong>.
+            </p>
+            <p>
+                الهدف هو توفير بنية تحتية لا يمكن اختراقها، ليس بالصدفة، بل كحقيقة رياضية مثبتة. نظام مخصص للبيئات الحرجة التي لا تحتمل الخطأ.
+            </p>
+        </div>
+
+        <!-- Features Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-16 text-right">
+            <!-- Card 1 -->
+            <div class="glass-card p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 border border-blue-500/30 text-blue-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">عزل رياضي مُبرهن</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    يعتمد على نواة seL4 المثبتة رياضياً (Formally Verified)، مما يضمن عدم تسرب البيانات واستحالة تنفيذ الثغرات الشائعة.
+                </p>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="glass-card p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 border border-purple-500/30 text-purple-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002 2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">بلا كود موروث</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    تخلينا عن إرث الماضي لنتجنب نقاط الضعف المتراكمة في الأنظمة التقليدية، كل سطر مكتوب بعناية للغرض الأمني.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-card p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                <div class="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center mb-4 border border-teal-500/30 text-teal-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-white">منظومة RVLB الكاملة</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    جزء من منظومة متكاملة، يندمج حِصن بسلاسة مع أدواتنا وبنيتنا التحتية لتقديم أمان شامل على مستوى المؤسسة.
+                </p>
+            </div>
+        </div>
+
+        <!-- Transparency Section -->
+        <div class="border-t border-slate-700/50 pt-10 pb-6 text-center w-full max-w-2xl">
+            <h4 class="text-slate-300 font-semibold mb-2">الشفافية أولاً</h4>
+            <p class="text-slate-500 text-sm">
+                لسنا جاهزين للاستخدام اليومي بعد — نبني بعناية، وهذا يستحق الانتظار.
+            </p>
+        </div>
+
+        <!-- Footer / Links -->
+        <footer class="mt-8 flex gap-6 text-slate-500 hover:text-slate-400 transition-colors">
+            <a href="https://github.com/rvlb-org" target="_blank" class="flex items-center gap-2 hover:text-white transition">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                <span>GitHub</span>
+            </a>
+            <a href="#" class="hover:text-white transition">تابعنا</a>
+        </footer>
+    </main>
+
+    <script>
+        // قم بتعديل هذه القيم لتتطابق مع مشروعك في Supabase
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+
+        // تهيئة عميل Supabase فقط إذا تم تعيين القيم
+        let supabase = null;
+        if(SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE') {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        const form = document.getElementById('waitlist-form');
+        const emailInput = document.getElementById('email-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const spinner = document.getElementById('loading-spinner');
+        const btnText = submitBtn.querySelector('span');
+        const messageEl = document.getElementById('form-message');
+
+        const showMessage = (msg, isError = false) => {
+            messageEl.textContent = msg;
+            messageEl.className = `mt-3 text-sm font-medium h-5 transition-opacity opacity-100 ${isError ? 'text-red-400' : 'text-green-400'}`;
+            setTimeout(() => { messageEl.classList.remove('opacity-100'); messageEl.classList.add('opacity-0'); }, 5000);
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            if (!email) return;
+
+            if (!supabase) {
+                showMessage('تنبيه: يجب إعداد مفاتيح Supabase في الكود ليعمل التسجيل.', true);
+                return;
+            }
+
+            // UI Loading state
+            btnText.textContent = 'جاري الإرسال...';
+            spinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                // إدراج البريد في جدول waitlist
+                const { data, error } = await supabase
+                    .from('waitlist')
+                    .insert([{ email: email }]);
+
+                if (error) {
+                    // Check if error is due to unique constraint (email already registered)
+                    if (error.code === '23505') {
+                        showMessage('هذا البريد مسجل لدينا مسبقاً!', false); // Consider it success visually
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    showMessage('شكراً لك! تم تسجيل بريدك بنجاح.');
+                    emailInput.value = '';
+                }
+            } catch (err) {
+                console.error(err);
+                showMessage('حدث خطأ أثناء التسجيل، يرجى المحاولة لاحقاً.', true);
+            } finally {
+                // Restore UI state
+                btnText.textContent = 'أشعرني';
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
+    </script>
+</body>
+</html>
