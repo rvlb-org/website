@@ -4,32 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حِصن - Hisn-seL4</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['IBM Plex Sans Arabic', 'Cairo', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        obsidian: '#050505',
-                        neon: '#00f3ff',
-                        matrix: '#00ff66',
-                        darkBg: '#09090b',
-                        cardBg: '#111113'
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         body { background-color: #050505; color: #e2e8f0; }
         .glass-card { 
@@ -88,17 +67,29 @@
         <!-- Waitlist Form (Terminal Style) -->
         <div class="w-full max-w-lg mx-auto mb-20 relative group">
             <div class="absolute -inset-1 bg-gradient-to-r from-neon to-matrix rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <form id="waitlist-form" class="relative flex flex-col sm:flex-row p-1 bg-black rounded-lg border border-slate-800">
-                <div class="flex items-center pl-4 pr-2 text-neon font-mono text-sm opacity-70">></div>
-                <input type="email" id="email-input" required placeholder="sys.init(your_email@domain.com)..." 
-                    class="w-full px-2 py-4 bg-transparent text-white font-mono placeholder-slate-600 focus:outline-none focus:ring-0">
-                <button type="submit" id="submit-btn" 
-                    class="px-8 py-3 m-1 rounded-md bg-white text-black hover:bg-neon hover:text-black font-bold tracking-wide transition-colors whitespace-nowrap flex justify-center items-center gap-2">
-                    <span>أشعرني</span>
-                    <svg id="loading-spinner" class="animate-spin -ml-1 h-4 w-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                </button>
+            <form id="waitlist-form" class="relative flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row p-1 bg-black rounded-lg border border-slate-800 z-10">
+                    <div class="flex items-center pl-4 pr-2 text-neon font-mono text-sm opacity-70">></div>
+                    <input type="email" id="email-input" required placeholder="sys.init(your_email@domain.com)..." 
+                        class="w-full px-2 py-4 bg-transparent text-white font-mono placeholder-slate-600 focus:outline-none focus:ring-0">
+                    <button type="submit" id="submit-btn" 
+                        class="px-8 py-3 m-1 rounded-md bg-white text-black hover:bg-neon hover:text-black font-bold tracking-wide transition-colors whitespace-nowrap flex justify-center items-center gap-2">
+                        <span>أشعرني</span>
+                        <svg id="loading-spinner" class="animate-spin -ml-1 h-4 w-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </button>
+                </div>
+                <!-- Turnstile Widget (Production Key) -->
+                <div class="cf-turnstile mx-auto z-10" data-sitekey="0x4AAAAAAEBIYUGpqd3YdLrZ" data-theme="dark"></div>
             </form>
             <div id="form-message" class="absolute -bottom-8 right-0 left-0 text-center font-mono text-sm h-5 transition-opacity opacity-0"></div>
+        </div>
+
+        <div class="mt-2 mb-12 text-center w-full max-w-lg mx-auto z-10 relative">
+            <p class="text-slate-500 text-xs font-mono">
+                > ملاحظة: الإيميلات المؤقتة محظورة تماماً لأسباب أمنية. <br/>
+                <button type="button" id="toggle-domains-btn" class="text-neon hover:underline opacity-80 mt-2 cursor-pointer transition">عرض النطاقات المحظورة</button>
+            </p>
+            <div id="domains-list" class="hidden mt-4 p-4 bg-black/80 border border-slate-800 rounded-lg text-left text-[10px] font-mono text-slate-500 max-h-40 overflow-y-auto break-words whitespace-pre-wrap leading-relaxed shadow-inner" dir="ltr"></div>
         </div>
 
         <!-- Deep Tech Comparisons (Based on Docs) -->
@@ -191,13 +182,7 @@
     </main>
 
     <script>
-        const SUPABASE_URL = 'https://mginibfpwtceaytgqrit.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_19OBW6WPbjWpFIjrIr7cUA_CuaU7ebU';
-
-        let supabaseClient = null;
-        if(SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE') {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
+        const RATE_LIMIT_MS = 60000; // 60 seconds cooldown
 
         const form = document.getElementById('waitlist-form');
         const emailInput = document.getElementById('email-input');
@@ -217,8 +202,25 @@
             const email = emailInput.value.trim();
             if (!email) return;
 
-            if (!supabaseClient) {
-                showMessage('> ERROR: DB_CONNECTION_FAILED', true);
+            // استخراج توكن Turnstile
+            const turnstileToken = form.elements['cf-turnstile-response']?.value;
+            if (!turnstileToken) {
+                 showMessage('> ERROR: PLEASE_VERIFY_YOU_ARE_HUMAN', true);
+                 return;
+            }
+
+            // 1. Strict Email Validation
+            const emailRegex = /^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('> ERROR: INVALID_EMAIL_FORMAT', true);
+                return;
+            }
+
+            // 2. Client-side Rate Limiting
+            const lastSubmitTime = localStorage.getItem('lastSubmitTime');
+            if (lastSubmitTime && (Date.now() - parseInt(lastSubmitTime)) < RATE_LIMIT_MS) {
+                const remainingSecs = Math.ceil((RATE_LIMIT_MS - (Date.now() - parseInt(lastSubmitTime))) / 1000);
+                showMessage(`> ERROR: RATE_LIMIT. WAIT ${remainingSecs}s`, true);
                 return;
             }
 
@@ -227,19 +229,36 @@
             submitBtn.disabled = true;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('waitlist')
-                    .insert([{ email: email }]);
+                // الاتصال بـ Cloudflare Pages Function
+                const response = await fetch('/api/waitlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, turnstileToken: turnstileToken })
+                });
 
-                if (error) {
-                    if (error.code === '23505') {
+                if (response.status === 429 || response.status === 1015) {
+                    showMessage('> واجهنا ضغطاً هائلاً اليوم، نرجو العودة غداً للتسجيل!', true);
+                    return;
+                }
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    if (result.error === "ALREADY_REGISTERED") {
                         showMessage('> STATUS: ALREADY_REGISTERED', false); 
+                    } else if (result.error === "SERVER_CONFIG_ERROR") {
+                        showMessage('> ERROR: API_NOT_CONFIGURED (Missing Env Vars)', true);
+                    } else if (result.error === "DISPOSABLE_EMAIL") {
+                        showMessage('> ERROR: DISPOSABLE_EMAIL_NOT_ALLOWED', true);
+                    } else if (result.error === "BOT_DETECTED") {
+                        showMessage('> ERROR: BOT_DETECTED. ACCESS_DENIED.', true);
                     } else {
-                        throw error;
+                        throw new Error(result.error || 'Server error');
                     }
                 } else {
                     showMessage('> SUCCESS: SECURE_LINK_ESTABLISHED');
                     emailInput.value = '';
+                    localStorage.setItem('lastSubmitTime', Date.now().toString());
                 }
             } catch (err) {
                 console.error(err);
@@ -248,6 +267,22 @@
                 btnText.textContent = 'أشعرني';
                 spinner.classList.add('hidden');
                 submitBtn.disabled = false;
+            }
+        });
+
+        // Blocked Domains Display Logic
+        const blockedDomains = ['mailinator.com','guerrillamail.com','guerrillamail.net','guerrillamail.org','guerrillamail.biz','guerrillamail.de','guerrillamail.info','guerrillamailblock.com','tempmail.com','temp-mail.org','temp-mail.io','throwam.com','throwam.net','10minutemail.com','10minutemail.net','10minutemail.org','10minutemail.de','10minutemail.co.uk','10minutemail.co.za','10minutemail.info','10minutemail.nl','yopmail.com','yopmail.fr','yopmail.net','cool.fr.nf','jetable.fr.nf','nospam.ze.tc','nomail.xl.cx','mega.zik.dj','speed.1s.fr','courriel.fr.nf','moncourrier.fr.nf','monemail.fr.nf','monmail.fr.nf','sharklasers.com','grr.la','spam4.me','trashmail.com','trashmail.at','trashmail.io','trashmail.me','trashmail.net','trashmail.org','trashmail.xyz','trashmailer.com','mailnull.com','spamgourmet.com','spamgourmet.net','spamgourmet.org','mailnesia.com','spamfree24.org','spamfree24.de','spamfree24.eu','spamfree24.info','spamfree24.net','spamfree24.com','dispostable.com','discard.email','filzmail.com','fakeinbox.com','maildrop.cc','spamspot.com','spam.la','anonaddy.com','simplelogin.io','33mail.com','spamgobbler.com','meltmail.com','mintemail.com','mt2009.com','mt2014.com','mytempemail.com','mytrashmail.com','neomailbox.com','nepwk.com','nervmich.net','nervtmich.net','netmails.com','netmails.net','netzidiot.de','neverbox.com','nmail.cf','no-spam.ws','nobulk.com','nomail2me.com','nomorespamemails.com','nospamfor.us','nospamthanks.info','notmailinator.com','nowmymail.com','mohmal.com','getairmail.com','fakemailgenerator.com','crazymailing.com','mailinator2.com','spamherelots.com','spamhereplease.com','spamthisplease.com','spaml.com','spaml.de','spamoff.de','spamqc.com','emailtemporaire.fr','jetable.org','jetable.net','jetable.com','jetable.de','jetable.eu','temporaryemail.net','temporaryforwarding.com','temporaryinbox.com','throwme.com','trbvm.com','trbvn.com','turual.com','twinmail.de','tyldd.com','uggsrock.com','uroid.com','valemail.net','mailbolt.com','maileater.com','mailexpire.com','mailforspam.com','mailin8r.com','mailinater.com','mailincubator.com','mailismagic.com','mailme.ir','mailme24.com','mailmetrash.com','mailmoat.com','mailnew.com','mailsiphon.com','mailslite.com','mailzilla.com','mailzilla.org','e4ward.com','emailmiser.com','emailsensei.com','emailtemporanea.com','emailtemporanea.net','emailtemporanea.org','emailthe.net','emailtmp.com','emailwarden.com','emailx.at.hm','emailxfer.com','emkei.cz','ephemail.net','fakeinformation.com','fivemail.de','fleckens.hu','fr33mail.info','frapmail.com','freeinbox.cyou','freeletter.me','freemail.ms','freemails.ms','freemailzam.com','fudgerub.com','fwdisp.net','garbagemail.org','gedmail.win','gelitik.in','get1mail.com','getairmail.cf','getairmail.ga','getairmail.gq','getairmail.ml','getairmail.tk','gettempemail.com','gett.icu','gishpuppy.com','gmailbox.org','goemailbox.com','gotmail.com','gotmail.net','gotmail.org','grandmamail.com','grandmasmail.com','great-host.in','greensloth.com','gsrv.co.uk','guerillamail.biz','guerillamail.com','guerillamail.de','guerillamail.info','guerillamail.net','guerillamail.org','hatespam.org','herp.in','hidemail.de','hmamail.com','hopemail.biz','ieatspam.eu','ieatspam.info','ihateyoualot.info','iheartspam.org','imails.info','inbax.tk','inbox.si','inboxalias.com','incognitomail.com','incognitomail.net','incognitomail.org','inoutmail.de','inoutmail.eu','inoutmail.info','inoutmail.net','insorg-mail.info','instant-mail.de','internet-e-mail.de','internet-mail.org','internetemails.net','internetmailing.net','jetable.com.ar','jnxjn.com','joelpet.com','junk1.tk','junkmail.gq','junkmail.info','kasmail.com','kaspop.com','keepmymail.com','killmail.com','killmail.net','klassmaster.com','klassmaster.net','klassmaster.org','klzlk.com','koszmail.pl','kurzepost.de','letthemeatspam.com','lhsdv.com','lifebyfood.com','link2mail.net','litedrop.com','lol.ovpn.to','lookugly.com','lopl.co.cc','lortemail.dk','lovemeleaveme.com','lr78.com','lroid.com','lukop.dk','m21.cc','mail-filter.com','mail-temporaire.fr','mail.by','mail.mezimages.net','mail.zp.ua','mail1a.de','mail2rss.org','mail333.com','mailbidon.com','mailbiz.biz','mailblocks.com','mailbucket.org','mailcat.biz','mailcatch.com','mailde.de','mailde.info','maildu.de','maileimer.de','mailfreeonline.com','mailguard.me','mailhazard.com','mailhazard.us','mailimate.com','mailin8r.com','mailjet.top'];
+        const toggleBtn = document.getElementById('toggle-domains-btn');
+        const domainsList = document.getElementById('domains-list');
+        
+        toggleBtn.addEventListener('click', () => {
+            if (domainsList.classList.contains('hidden')) {
+                domainsList.textContent = blockedDomains.join(', ');
+                domainsList.classList.remove('hidden');
+                toggleBtn.textContent = 'إخفاء النطاقات المحظورة';
+            } else {
+                domainsList.classList.add('hidden');
+                toggleBtn.textContent = 'عرض النطاقات المحظورة';
             }
         });
     </script>

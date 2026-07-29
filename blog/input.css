@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@source "./index.html";
+
+@theme {
+    --color-obsidian: #050505;
+    --color-neon: #00f3ff;
+    --color-matrix: #00ff66;
+    --color-darkBg: #09090b;
+    --color-cardBg: #111113;
+
+    --font-sans: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

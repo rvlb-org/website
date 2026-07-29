@@ -1,0 +1,22 @@
+/*
+  # إصلاح HSTS - max-age كامل (سنة)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  # منع MIME Sniffing
+  X-Content-Type-Options: nosniff
+  # منع Clickjacking
+  X-Frame-Options: DENY
+  # إخفاء معلومات المتصفح عن مصدر الطلب
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Content Security Policy - منع XSS بالكامل
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self';
+  # منع هجمات XSS في المتصفحات القديمة
+  X-XSS-Protection: 1; mode=block
+  # Permissions Policy - تعطيل APIs غير الضرورية
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+/api/*
+  # تقييد CORS للـ API - منع أي موقع خارجي من الاستخدام
+  Access-Control-Allow-Origin: https://blog.rvlb.org
+  Access-Control-Allow-Methods: POST
+  Access-Control-Allow-Headers: Content-Type
+  Access-Control-Max-Age: 86400
